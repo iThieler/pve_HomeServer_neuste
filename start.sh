@@ -541,7 +541,8 @@ function containerSetup() {
   return $nextCTID
 }
 
-shellStart
+#shellStart
+startUserInput
 
 if ! [ -w ./lxcchoice ]; then echo -e "$error Die Konfigurationsdatei für die gewählten Container ist nicht lesbar." && exit 1; fi
 
