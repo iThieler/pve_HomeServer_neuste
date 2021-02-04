@@ -1,6 +1,6 @@
 welc="Willkommen"
 intr="Einleitung"
-intrtxt=Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus.
+intrtxt="Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus."
 netr="Netzwerkroboter"
 netrtxt="Es macht in einem Netzwerk Sinn, einen so genannten Netzwerkroboter zu erstellen.\n\nEin Netzwerkroboter hat auf allen Geräten im Netzwerk Administratorrechte. So könnnen mit einem Benutzer sämtliche automatisierten Aufgaben erledigt werden.\n\nNatürlich muss einem solchen Benutzer ein extrem sicheres Passwort zugewiesen werden. Wenn Du einen solchen Benutzer erstellst, gib diesem einen eindeutigen Namen wie z.B. netrobot."
 spwd="Sicheres Passwort"
