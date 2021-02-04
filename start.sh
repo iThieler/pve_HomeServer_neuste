@@ -134,56 +134,56 @@ function startUserInput() {
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -rqO ./lang $rawGitHubURL/lang/$lang
   source ./lang
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus." ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - Willkommen" --title "Netzwerkroboter" "Es macht in einem Netzwerk Sinn, einen so genannten Netzwerkroboter zu erstellen.\n\nEin Netzwerkroboter hat auf allen Geräten im Netzwerk Administratorrechte. So könnnen mit einem Benutzer sämtliche automatisierten Aufgaben erledigt werden.\n\nNatürlich muss einem solchen Benutzer ein extrem sicheres Passwort zugewiesen werden. Wenn Du einen solchen Benutzer erstellst, gib diesem einen eindeutigen Namen wie z.B. netrobot." ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - Willkommen" --title "Sicheres Passwort" "Dieses Passwort wird zufällig von diesem Skript erstellt, nach beenden des Skript gelöscht und kann nicht wiederhergestellt werden. Aus diesem Grund solltest du es notieren. Für diesen Zweck nutzt man am besten einen Passwortmanager wie z.B. safeincloud.\n\nAutomatisch generiertes Passwort: $networkrobotpw \n\nDie sicherheit deines Passworts kannst du z.B. auf der Internetseite https://password.kaspersky.com/de/ leicht überprüfen." ${r} ${c}
-  varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Proxmox Root-Passwort" "Wie lautet das Root-Passwort von deinem Proxmox Server?" ${r} ${c} 3>&1 1>&2 2>&3)
-  varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Netzwerkrobotername" "Welchen Benutzernamen hast du für deinen Networkrobot gewählt?" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
-  varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Netzwerkroboterpasswort" "Welches Passwort hast du für deinen Networkrobot gewählt?\n\nVorausgefüllt mit dem automatisch generierten Passwort." ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
-  whiptail --radiolist --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Gateway/Router" "Was für ein Gateway/Router verwendest du?" ${r} ${c} 3 \
-    "UniFi/Ubiquiti" "DreamMachine Pro oder CloudKey" on \
-    "AVM" "FRITZ!Box" off \
-    "Andere" "Ein nicht aufgührter Hersteller" off 2>gwchoice
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "$intrtxt" ${r} ${c}
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$netr" "$netrtxt" ${r} ${c}
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$spwd" "$spwdtxt" ${r} ${c}
+  varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$pvepwd" "$pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
+  varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrn" "$netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
+  varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrpwd" "$netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
+  wget -q $rawGitHubURL/gw.conf
+  source ./gw.conf
+  whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 3 \
+    "${gw[@]}" 2>gwchoice
   gwchoice=`cat gwchoice`
   if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
     vargwmanufacturer="unifi"
   elif [[ $gwchoice == "AVM" ]]; then
     vargwmanufacturer="avm"
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Gateway/Router" "Momentan kann dieses Script nur Geräte von Ubiquiti/Unifi und AVM (FRITZ!Box) automatisch bearbeiten." ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt1" ${r} ${c}
   fi
   if [[ $vargwmanufacturer == "unifi" ]]; then
-    whiptail --yesno --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "VLAN" "Nutzt Du VLANs in deinem Netzwerk?" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt" ${r} ${c}
     yesno=$?
     if [[ $yesno == 0 ]]; then
       vlanexists=y
-      varservervlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Server VLAN" "Wie lautet die VLAN-ID die für dein Servernetzwerk genutzt werden soll?\nDefault = 1" ${r} ${c} 1 3>&1 1>&2 2>&3)
-      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "SmartHome VLAN" "Wie lautet die VLAN-ID die für dein Smarthomenetzwerk genutzt werden soll?" ${r} ${c} 10 3>&1 1>&2 2>&3)
-      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Gast VLAN" "Wie lautet die VLAN-ID die für dein Gästenetzwerk genutzt werden soll?" ${r} ${c} 100 3>&1 1>&2 2>&3)
+      varservervlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt1" ${r} ${c} 1 3>&1 1>&2 2>&3)
+      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt2" ${r} ${c} 10 3>&1 1>&2 2>&3)
+      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt3" ${r} ${c} 100 3>&1 1>&2 2>&3)
     else
       vlanexists=n
     fi
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "VLAN" "Ein Virtual Local Area Network (VLAN) ist ein logisches Netz, das auf einem physischen LAN aufsetzt und ein Mehr an Flexibilität, Performance und Sicherheit bieten kann. Mit VLANs lassen sich physische LANs in voneinander isolierte, logische Teilnetze aufteilen. Die Unterteilung von LANs ist dabei kein Selbstzweck, sondern soll auch Performance und Sicherheit optimieren.\n\nAus diesem Grund solltest Du über die Verwendung von VLANs nachdenken." ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "$vlan" "$vlaninfo" ${r} ${c}
   fi
-  varrootmail=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Empfängeradresse" "An welche E-Mail-Adresse sollen Benachrichtigungen und Systemreports gesendet werden?" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailserver=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver" "Wie lautet der Hostname des Mailserver (Ein-/Ausgangsserver)?" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailport=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver" "Wie lautet der SMTP-Port des Mailservers (in den meisten Fällen 587)?" ${r} ${c} 587 3>&1 1>&2 2>&3)
-  varmailusername=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver - Benutzername" "Wie lautet der Benutzername der für den Login am Mailserver benötigt wird?" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver - Passwort" "Wie lautet das Passwort von $varmailusername, welches für den Login benötigt wird?" ${r} ${c} 3>&1 1>&2 2>&3)
-  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver - Absender" "Wie lautet die Absendeadresse?" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
-  whiptail --yesno --backtitle "SmartHome-IoT.net - E-Mailkonfiguration" --title "Mailserver - Sicherheit" "Wird für die Verbindung TLS/SSL benutzt?" ${r} ${c}
+  varrootmail=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailserver=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailport=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt2" ${r} ${c} 587 3>&1 1>&2 2>&3)
+  varmailusername=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt3" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt4" ${r} ${c} 3>&1 1>&2 2>&3)
+  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt5" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt6" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     vartls=yes
   else
     vartls=no
   fi
-  whiptail --yesno --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Befindet sich eine NAS (Qnap, Synology, usw.) in deinem Netzwerk?" ${r} ${c}
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconftxt" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     function pingNAS() {
-      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Wie lautet die IP-Adresse deiner NAS?" ${r} ${c} 3>&1 1>&2 2>&3)
+      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
       if ping -c 1 "$varnasip" > /dev/null 2>&1; then
         varnasexists=y
         {
@@ -191,49 +191,49 @@ function startUserInput() {
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "Deine NAS wird im Netzwerk gesucht ..." ${r} ${c} 50
+        } | whiptail --gauge "$nassearch" ${r} ${c} 50
       else
         {
           for ((i = 98 ; i <= 100 ; i+=1)); do
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "Deine NAS wird im Netzwerk gesucht ..." ${r} ${c} 22
-        whiptail --msgbox --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Die angegene IP-Adresse ist nicht erreichbar. Bitte prüfe ob die NAS angeschaltet und mit dem Netzwerk verbunden ist." ${r} ${c}
+        } | whiptail --gauge "$nassearch" ${r} ${c} 22
+        whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconferror" ${r} ${c}
         pingNAS
       fi
     }
     pingNAS
-    whiptail --yesno --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Handelt es sich bei dieser NAS um eine Synology DiskStation?" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfman" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       varsynologynas=y
     else
       varsynologynas=n
     fi
-    whiptail --yesno --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "In diesem Skript werden auf der NAS zwei freigegebene Ordner benötigt. Erstelle die folgenden Ordner und weise dem Benutzer $varrobotname Lese/Schreibrechte zu.\n\nbackups\nmedia\n\nHast Du diese Ordner erstellt und deinem Netzwerkroboter $varrobotname Lese/Schreibrechte zugewiesen?" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfo" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
-      whiptail --msgbox --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Wenn der Netzwerkroboter keine Lese-/Schreibrechte auf die Ordner besitzt, kann dieses Konfigurationsscript nicht ordnungsgemäß arbeiten, sorry.\n\nDas Skript wird beendet" ${r} ${c}
+      whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfoerror" ${r} ${c}
       exit 1
     fi
   else
     varnasexists=n
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - Speicher- und NAS-Konfiguration" --title "NAS-Konfiguration" "Es wird empfohlen eine NAS in einem privaten Netzwerk zu verbauen. Da du keine NAS besitzt oder angeben willst ist die Installation einiger Server nicht verfügbar." ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfo1" ${r} ${c}
   fi
   wget -q $rawGitHubURL/lxc.conf
   source ./lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - Containerkonfiguration" --title "Container - Installation" "Wähle aus der Liste die zu installierenden Server." ${r} ${c} 10\
+  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10\
           ReverseProxy "NGINX Proxy Manager" on \
           AdBlockerVPN "piHole mit piVPN"   on  \
           iDBGrafana "influxDB mit Grafana"   on \
           "${lxc[@]}" 2>lxcchoice
-  whiptail --yesno --backtitle "SmartHome-IoT.net - Konfigurationsabschluss" --title "Benutzereingaben beendet" "Die Konfiguration ist beendet, das Skript wird nun mit deinen Vorgaben ausgeführt. Je nachdem welche Container du für die Installation gewählt hast, werden weiter Benutzereingaben benötigt.\n\nSoll Proxmox nach deinen Vorgaben konfiguriert werden?" ${r} ${c}
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $endconf" --title "$endconf" "$endconftxt" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
     startConfig
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "Abbruch" "Es werden keine änderungen an deinem Proxmoxserver vorgenommen. Wenn du die konfiguration durch dieses Skript vornehmen möchtest, musst du es erneut ausführen." ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "$abort" "$aborttxt" ${r} ${c}
     exit 1
   fi
 }
@@ -472,44 +472,44 @@ function containerSetup() {
   # Loads the container template from the Internet if not available and saves it for further use
   function downloadTemplate() {
     pveam update > /dev/null 2>&1
-    echo -e "$info Prüfe ob das benötigte Template für $1 vorhanden ist"
+    echo -e "$info $infodwntmp"
     if [[ $1 == "ubuntu" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error Template nicht vorhanden, beginne download..."
+        echo -e "$error $errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok Templatedownload erfolgreich abgeschlossen"
+        echo -e "$ok $okdwntmp"
       else
-        echo -e "$ok Template vorhanden, kein download notwendig"
+        echo -e "$ok $okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "ubuntu18" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error Template nicht vorhanden, beginne download..."
+        echo -e "$error $errdwntmp"
         pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok Templatedownload erfolgreich abgeschlossen"
+        echo -e "$ok $okdwntmp"
       else
-        echo -e "$ok Template vorhanden, kein download notwendig"
+        echo -e "$ok $okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "debian" ]]; then
       ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error Template nicht vorhanden, beginne download..."
+        echo -e "$error $errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok Templatedownload erfolgreich abgeschlossen"
+        echo -e "$ok $okdwntmp"
       else
-        echo -e "$ok Template vorhanden, kein download notwendig"
+        echo -e "$ok $okdwntmp1"
       fi
       ctOstype="debian"
     else
-      echo -e "$error Kein Template für den Container gefunden, ein download ist nicht möglich."
+      echo -e "$error $errdwntmp1"
     fi
   }
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
-  echo -e "\e[1;35mErstelle Container $nextCTID - $2\e[0m"
+  echo -e "\e[1;35m$createlxc $nextCTID - $2\e[0m"
   downloadTemplate "$1"
   ctRootpw "$3"
   features="$7"
@@ -528,7 +528,7 @@ function containerSetup() {
     --unprivileged 1 \
     --start 1 \
     --features "$features" > /dev/null 2>&1
-  echo -e "$info Der Container $nextCTID - $2 wird aktualisiert"
+  echo -e "$info $lxc $nextCTID - $2 $updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
@@ -536,11 +536,11 @@ function containerSetup() {
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
   pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
   for package in $ctStandardsoftware; do
-    echo -e "$info $package wird auf dem Container $nextCTID - $2 installiert"
+    echo -e "$info $package $installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
   pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-  echo -e "$ok Der Container $nextCTID - $2 wurde erstellt und der die Grundkonfiguration wurde abgeschlossen"
+  echo -e "$ok $lxc $nextCTID - $2 $endlxc"
   pct shutdown $nextCTIP --timeout 5
   sleep 10
   return $nextCTID
@@ -549,18 +549,18 @@ function containerSetup() {
 #shellStart
 startUserInput
 
-if ! [ -w ./lxcchoice ]; then echo -e "$error Die Konfigurationsdatei für die gewählten Container ist nicht lesbar." && exit 1; fi
+if ! [ -w ./lxcchoice ]; then echo -e "$error $errorlxc" && exit 1; fi
 
 lxcchoice="$(cat ./lxcchoice)"
 
 for lxc in $lxcchoice; do
-  echo -e "$info Es wird versucht $lxc auf Proxmox zu installieren"
+  echo -e "$info $lxcinfo $lxc $lxcinfo1"
   ctName="$lxc"
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c "$lxc") -eq 0 ]; then
-    echo "Installation von $lxc beginnt!"
+    echo "$lxcinfo2 $lxc $lxcinfo3"
     #curl -sSL $rawGitHubURL/$lxc/install.sh
   else
-    echo -e "$error Es existiert bereits ein Container mit dem Namen $lxc"
+    echo -e "$error $lxcerror $lxc"
   fi
 done
