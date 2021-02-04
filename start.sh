@@ -34,6 +34,7 @@ ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 downloadPath="local"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
+workdir="/root/shiot"
 . /etc/os-release
 osname=$VERSION_CODENAME
 
@@ -129,19 +130,19 @@ function createPassword() {
 
 function startUserInput() {
   networkrobotpw=$(createPassword 20)
-  wget -rqO .\lng.conf $rawGitHubURL/lng.conf
-  source ./lng.conf
+  wget -rqO $workdir/lng.conf $rawGitHubURL/lng.conf
+  source $workdir/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  wget -rqO ./lang $rawGitHubURL/lang/$lang
-  source ./lang
+  wget -qO $workdir/lang $rawGitHubURL/lang/$lang
+  source $workdir/lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "$intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$netr" "$netrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$spwd" "$spwdtxt" ${r} ${c}
   varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$pvepwd" "$pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
   varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrn" "$netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrpwd" "$netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
-  wget -q $rawGitHubURL/gw.conf
-  source ./gw.conf
+  wget -qO $workdir/gw.conf $rawGitHubURL/gw.conf
+  source $workdir/gw.conf
   whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 3 \
     "${gw[@]}" 2>gwchoice
   gwchoice=`cat gwchoice`
@@ -221,8 +222,8 @@ function startUserInput() {
     varnasexists=n
     whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfo1" ${r} ${c}
   fi
-  wget -q $rawGitHubURL/lxc.conf
-  source ./lxc.conf
+  wget -qO $workdir/lxc.conf $rawGitHubURL/lxc.conf
+  source $workdir/lxc.conf
   whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10\
           ReverseProxy "NGINX Proxy Manager" on \
           AdBlockerVPN "piHole mit piVPN"   on  \
@@ -546,12 +547,14 @@ function containerSetup() {
   return $nextCTID
 }
 
+mkdir -p $workdir
+
 #shellStart
 startUserInput
 
-if ! [ -w ./lxcchoice ]; then echo -e "$error $errorlxc" && exit 1; fi
+if ! [ -w $workdir/lxcchoice ]; then echo -e "$error $errorlxc" && exit 1; fi
 
-lxcchoice="$(cat ./lxcchoice)"
+lxcchoice="$(cat $workdir/lxcchoice)"
 
 for lxc in $lxcchoice; do
   echo -e "$info $lxcinfo $lxc $lxcinfo1"
