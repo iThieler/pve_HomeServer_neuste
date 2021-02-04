@@ -131,7 +131,7 @@ function startUserInput() {
   networkrobotpw=$(createPassword 20)
   wget -q $rawGitHubURL/lng.conf
   source ./lng.conf
-  whiptail --backtitle "SmartHome-IoT.net" ${r} ${c} 10 --menu "choose" "${lng[@]}"
+  whiptail --menu --backtitle "SmartHome-IoT.net" --title "" "choose" "${lng[@]}" ${r} ${c} 10
   wget -qO ./lng $rawGitHubURL/lng/$?
   source ./lng
   rm ./lng.conf
