@@ -1,6 +1,6 @@
 welc="Welcome"
 intr="Introduction
-intrtxt=Before we can start we need some information about your proxmoxsystem and your network. Please make sure that all information is correct, otherwise this script cannot be executed completely or only incorrectly, and the configuration of your Proxmox system, as well as the creation and configuration of containers and virtual machines will not work.\n\nThe use of this script requires a new, not configured Proxmox installation.
+intrtxt="Before we can start we need some information about your proxmoxsystem and your network. Please make sure that all information is correct, otherwise this script cannot be executed completely or only incorrectly, and the configuration of your Proxmox system, as well as the creation and configuration of containers and virtual machines will not work.\n\nThe use of this script requires a new, not configured Proxmox installation."
 netr="networkrobot"
 netrtxt="It makes sense in a network to create a so-called network robot.\n\nA network robot has administrator rights on all devices in the network. So all automated tasks can be done with one user.\n\nOf course such a user must be assigned an extremely secure password. When you create such a user, give it a unique name such as netrobot."
 spwd="Secure password"
