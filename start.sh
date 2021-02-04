@@ -129,7 +129,12 @@ function createPassword() {
 
 function startUserInput() {
   networkrobotpw=$(createPassword 20)
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - Willkommen" --title "Einleitung" "Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus." ${r} ${c}
+  #wget -q $rawGitHubURL/lng.conf
+  source $rawGitHubURL/lng.conf
+  whiptail --backtitle "SmartHome-IoT.net" ${r} ${c} 10 --menu "choose" "${lng[@]}"
+  wget -qO ./lng $rawGitHubURL/lng/$?
+  source ./lng
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus." ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - Willkommen" --title "Netzwerkroboter" "Es macht in einem Netzwerk Sinn, einen so genannten Netzwerkroboter zu erstellen.\n\nEin Netzwerkroboter hat auf allen Geräten im Netzwerk Administratorrechte. So könnnen mit einem Benutzer sämtliche automatisierten Aufgaben erledigt werden.\n\nNatürlich muss einem solchen Benutzer ein extrem sicheres Passwort zugewiesen werden. Wenn Du einen solchen Benutzer erstellst, gib diesem einen eindeutigen Namen wie z.B. netrobot." ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - Willkommen" --title "Sicheres Passwort" "Dieses Passwort wird zufällig von diesem Skript erstellt, nach beenden des Skript gelöscht und kann nicht wiederhergestellt werden. Aus diesem Grund solltest du es notieren. Für diesen Zweck nutzt man am besten einen Passwortmanager wie z.B. safeincloud.\n\nAutomatisch generiertes Passwort: $networkrobotpw \n\nDie sicherheit deines Passworts kannst du z.B. auf der Internetseite https://password.kaspersky.com/de/ leicht überprüfen." ${r} ${c}
   varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "Proxmox Root-Passwort" "Wie lautet das Root-Passwort von deinem Proxmox Server?" ${r} ${c} 3>&1 1>&2 2>&3)
