@@ -33,7 +33,7 @@ otherDisks=$(lsblk -nd --output NAME | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 downloadPath="local"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
-rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/createContainers"
+rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
 . /etc/os-release
 osname=$VERSION_CODENAME
 
