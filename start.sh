@@ -181,11 +181,11 @@ function startUserInput() {
   else
     vartls=no
   fi
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconftxt" ${r} ${c}
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf1" "$nasconftxt" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     function pingNAS() {
-      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
+      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $nasconf2" --title "$nasconf" "$nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
       if ping -c 1 "$varnasip" > /dev/null 2>&1; then
         varnasexists=y
         {
@@ -201,27 +201,27 @@ function startUserInput() {
             echo $i
           done
         } | whiptail --gauge "$nassearch" ${r} ${c} 22
-        whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconferror" ${r} ${c}
+        whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf3" "$nasconferror" ${r} ${c}
         pingNAS
       fi
     }
     pingNAS
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfman" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf4" "$nasconfman" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       varsynologynas=y
     else
       varsynologynas=n
     fi
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfo" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf5" "$nasconfinfo" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
-      whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfoerror" ${r} ${c}
+      whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf6" "$nasconfinfoerror" ${r} ${c}
       exit 1
     fi
   else
     varnasexists=n
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf" "$nasconfinfo1" ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf" --title "$nasconf7" "$nasconfinfo1" ${r} ${c}
   fi
   wget -qO $workdir/lxc.conf $rawGitHubURL/lxc.conf
   source $workdir/lxc.conf
