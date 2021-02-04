@@ -131,7 +131,7 @@ function startUserInput() {
   networkrobotpw=$(createPassword 20)
   wget -rqO .\lng.conf $rawGitHubURL/lng.conf
   source ./lng.conf
-  lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}")
+  lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -rqO ./lang $rawGitHubURL/lang/$lang
   source ./lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus." ${r} ${c}
