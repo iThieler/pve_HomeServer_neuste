@@ -134,6 +134,7 @@ function startUserInput() {
   source $workdir/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO $workdir/lang $rawGitHubURL/lang/$lang
+  sed -e "s/\r//g" $workdir/lang
   source $workdir/lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$intr" "$intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $wlc" --title "$netr" "$netrtxt" ${r} ${c}
