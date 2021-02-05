@@ -1,3 +1,5 @@
+#!/bin/bash
+
 welc="Welcome"
 intr="Introduction
 intrtxt="Before we can start we need some information about your proxmoxsystem and your network. Please make sure that all information is correct, otherwise this script cannot be executed completely or only incorrectly, and the configuration of your Proxmox system, as well as the creation and configuration of containers and virtual machines will not work.\n\nThe use of this script requires a new, not configured Proxmox installation."
@@ -34,7 +36,7 @@ nasconftxt="Is there a NAS '(Qnap, Synology, etc.)' on your network?"
 nasconftxt1="What is the IP address of your NAS?"
 nassearch="Your NAS is searched on the network ..."
 nasconferror="The specified IP address is unreachable. Please check if the NAS is turned on and connected to the network."
-nasconfman="Is this NAS a Synology DiskStation?
+nasconfman="Is this NAS a Synology DiskStation?"
 nasconfinfo="In this script, two shared folders are needed on the NAS. Create the following folders and assign read/write permissions to user $varrobotname.\n\nbackups\nmedia\n\nHave you created these folders and assigned read/write permissions to your network robot $varrobotname?"
 nasconfinfoerror="If the network robot does not have read/write permissions to the folders, this configuration script cannot work properly, sorry.\n\nThe script will be terminated."
 nasconfinfo1="It is recommended to install a NAS in a private network. Since you don't own or want to specify a NAS the installation of some servers is not available."
