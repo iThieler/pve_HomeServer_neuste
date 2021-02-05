@@ -95,7 +95,7 @@ function shellStart() {
     echo "#                                                                                                #"
     echo "# Es wird Bugs oder Dinge geben, an die ich nicht gedacht habe - sorry - wenn das so ist,        #"
     echo "# versuchst Du am besten es selbst zu lösen oder lass es mich bitte wissen, eventuell kann ich   #"
-    echo "# dir helfen das Problem zu lösen.                                                             #"
+    echo "# dir helfen das Problem zu lösen.                                                               #"
     echo "#                                                                                                #"
     echo -e "# \e[1;35mVERWENDUNG\e[0m                                                                                     #"
     echo "# Du kannst dieses Skript direkt ausführen, indem Du eine Konsole über deine Proxmox WebGUI      #"
