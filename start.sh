@@ -35,6 +35,8 @@ downloadPath="local"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
 workdir="/root/shiot"
+fqdn=$(hostname -f)
+hostname=$(hostname)
 . /etc/os-release
 osname=$VERSION_CODENAME
 
@@ -412,6 +414,20 @@ function startConfig() {
     return 0
   }
 
+  function configFirewall() {
+    mkdir -p /etc/pve/firewall
+    mkdir -p /etc/pve/nodes/$hostname
+    clusterfile="/etc/pve/firewall/cluster.fw"
+    hostfile="/etc/pve/nodes/$hostname/host.fw"
+
+    # Firewall auf Clusterebene
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n\n$networkIP.0/$cidr\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfile
+    
+    # Firewall auf Hostebene
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfile
+    return 0
+  }
+
   # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
   if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
     echo -e "$info Entferne Enterprise Repository"
@@ -447,6 +463,7 @@ function startConfig() {
   fi
 
   configHDD
+  configFirewall
 
   return 0
 }
