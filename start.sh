@@ -526,6 +526,7 @@ function containerSetup() {
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate $1
   echo -e "$info $createlxc $nextCTID - $2"
+  echo "Passwort: $3"
   pct create $nextCTID \
     $downloadPath:vztmpl/$ctTemplate \
     --ostype $ctOstype \
