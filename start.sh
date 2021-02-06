@@ -524,7 +524,7 @@ function containerSetup() {
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   echo -e "$info $createlxc $nextCTID - $2"
-  echo "$1 $2 $3 $4 $5 $6 $7"
+  if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate "$1"
   features="$7"
   pct create "$nextCTID" \
@@ -532,7 +532,7 @@ function containerSetup() {
     --ostype "$ctOstype" \
     --hostname "$2" \
     --password "$3" \
-    --rootfs "$downloadPath":"$4" \
+    --rootfs "$rootfs":"$4" \
     --cores "$5" \
     --memory "$6" \
     --swap $(( $6 / 2 )) \
