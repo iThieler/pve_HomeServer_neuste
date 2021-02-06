@@ -1,5 +1,3 @@
-#!/bin/bash
-
 welc="Welcome"
 intr="Introduction"
 intrtxt="Before we can start we need some information about your proxmoxsystem and your network. Please make sure that all information is correct, otherwise this script cannot be executed completely or only incorrectly, and the configuration of your Proxmox system, as well as the creation and configuration of containers and virtual machines will not work.\n\nThe use of this script requires a new, not configured Proxmox installation."

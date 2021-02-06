@@ -1,5 +1,3 @@
-#!/bin/bash
-
 welc="Willkommen"
 intr="Einleitung"
 intrtxt="Bevor es los gehen kann werden noch einige angaben zu deinem Proxmoxsystem und deinem Netzwerk benötigt. Bitte stelle sicher, das alle angaben korrekt sind, da dieses Skript sonst nicht vollständig oder nur fehlerhaft ausgeführt werden kann, und die Konfiguration deines Proxmoxsystems, sowie die Erstellung und Konfiguration von Containern und virtuellen Maschinen nicht funktioniert.\n\nDie verwendung dieses Skripts setzt eine neue nicht konfigurierte Proxmox Installation vorraus."
