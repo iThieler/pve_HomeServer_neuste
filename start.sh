@@ -524,7 +524,7 @@ function containerSetup() {
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   echo -e "$info $createlxc $nextCTID - $2"
-  echo $1 $2 $3 $4 $5 $6 $7
+  echo "$1 $2 $3 $4 $5 $6 $7"
   downloadTemplate "$1"
   features="$7"
   pct create "$nextCTID" \
