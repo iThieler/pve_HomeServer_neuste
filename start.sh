@@ -524,25 +524,8 @@ function containerSetup() {
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
-  template=$1
-  echo -e "Download Template $template"
-  downloadTemplate $template
+  downloadTemplate $1
   echo -e "$info $createlxc $nextCTID - $2"
-  echo -e "(pct create $nextCTID \
-    data:vztmpl/$ctTemplate \
-    --ostype $ctOstype \
-    --hostname "$2" \
-    --password "$3" \
-    --rootfs $rootfs:$4 \
-    --cores $5 \
-    --memory $6 \
-    --swap $(( $6 / 2 )) \
-    --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
-    --onboot 1 \
-    --force 1 \
-    --unprivileged 1 \
-    --start 1 \
-    --features "$7")"
   pct create $nextCTID \
     data:vztmpl/$ctTemplate \
     --ostype $ctOstype \
@@ -557,7 +540,7 @@ function containerSetup() {
     --force 1 \
     --unprivileged 1 \
     --start 1 \
-    --features "$7" #> /dev/null 2>&1
+    --features "$7" > /dev/null 2>&1
   echo -e "$info $lxc $nextCTID - $2 $updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
