@@ -588,7 +588,7 @@ for lxc in $lxcchoice; do
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     echo -e "$ok $lxcinfo \"$lxc\""
     sleep 5
-    wget -qO /root/inst_$ctName.sh
+    wget -qO /root/inst_$ctName.sh $rawGitHubURL/$ctName/install.sh
     source inst_$ctName.sh
     #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
   else
