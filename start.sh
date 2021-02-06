@@ -565,13 +565,13 @@ testFunction
 # Start creating the selected containers
 #lxcchoice=$(cat $workdir/lxcchoice)
 for lxc in $lxcchoice; do
+  echo -e "$info $lxcinfo $lxc $lxcinfo1"
   ctName="$lxc"
-  echo -e "$info $lxcinfo"
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c "$lxc") -eq 0 ]; then
-    echo -e "$ok $lxcinfo1"
+    echo -e "$ok $lxcinfo2 $lxc $lxcinfo3"
     #curl -sSL $rawGitHubURL/$lxc/install.sh
   else
-    echo -e "$error $lxcerror"
+    echo -e "$error $lxcerror $lxc"
   fi
 done
