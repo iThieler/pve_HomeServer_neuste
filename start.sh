@@ -550,7 +550,7 @@ function testFunction() {
   varnasexists=y
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  lxcchoice=$(whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 3>&1 1>&2 2>&3)
 }
 
 mkdir -p $workdir
@@ -562,7 +562,7 @@ testFunction
 
 
 # Start creating the selected containers
-lxcchoice=$(cat $workdir/lxcchoice)
+#lxcchoice=$(cat $workdir/lxcchoice)
 for lxc in $lxcchoice; do
   echo -e "$info $lxcinfo $lxc $lxcinfo1"
   ctName="$lxc"
