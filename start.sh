@@ -568,7 +568,7 @@ for lxc in $lxcchoice; do
   shellLogo
   ctName=$($lxc | sed "s#\"##g")
   ctRootpw=$(createPassword 12)
-  if [ $(pct list | grep -c $ctName) -eq 0 ]; then
+  if [ $(pct list | grep -c "$ctName") -eq 0 ]; then
     echo -e "$ok $lxcinfo $lxc"
     sleep 5
     #curl -sSL $rawGitHubURL/$lxc/install.sh
