@@ -529,8 +529,7 @@ function containerSetup() {
   createIDIP
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate $1
-  echo -e "$info $lng_createlxc $nextCTID - $2"
-  echo "Passwort: $3"
+  echo -e "$info $lng_createlxc \"$2\""
   pct create $nextCTID \
     $downloadPath:vztmpl/$ctTemplate \
     --ostype $ctOstype \
@@ -546,7 +545,7 @@ function containerSetup() {
     --unprivileged 1 \
     --start 1 \
     --features "$7" > /dev/null 2>&1
-  echo -e "$info $lng_lxc $nextCTID - $2 $lng_updatelxc"
+  echo -e "$info $lng_lxc \"$2\" $lng_updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
@@ -558,7 +557,7 @@ function containerSetup() {
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
   #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-  echo -e "$ok $lng_lxc $nextCTID - $2 $lng_endlxc"
+  echo -e "$ok $lng_lxc \"$2\" $lng_endlxc"
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID

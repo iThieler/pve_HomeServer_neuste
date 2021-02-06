@@ -13,7 +13,7 @@ containerSoftware="docker.io docker-compose"
 pct start $ctID
 sleep 10
 
-echo -e "$info $lng_lxc $ctID - $ctName $lng_installlxc1"
+echo -e "$info $lng_lxc \"$ctName\" $lng_installlxc1"
 
 for package in $containerSoftware; do
   echo -e "$info $package $lng_installlxc"
@@ -26,12 +26,12 @@ pct exec $ctID -- bash -ci "wget -qO /root/npm/config.json $rawGitHubURL/$ctName
 pct exec $ctID -- bash -ci "wget -qO /root/npm/docker-compose.yml $rawGitHubURL/$ctName/docker-compose.yml"
 pct exec $ctID -- bash -ci "sed -i 's+ROOTPASSWORDTOCHANGE+$ctRootpw+g' /root/npm/config.json"
 pct exec $ctID -- bash -ci "sed -i 's+ROOTPASSWORDTOCHANGE+$ctRootpw+g' /root/npm/docker-compose.yml"
-pct exec $ctID -- bash -ci "cd npm && docker-compose up -d --quiet-pull"
+pct exec $ctID -- bash -ci "cd npm && docker-compose up -d --quiet-pull > /dev/null 2>&1"
 
 # Container description in the Proxmox web interface
 pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':81\nBenutzer: admin@example.com\nPasswort: changeme'
 
 # Creates firewall rules for the container
-echo -e "$info $lng_lxcfw $ctID - $ctName"
+echo -e "$info $lng_lxcfw \"$ctName\""
 echo -e "[group reverseproxy]\n\nIN HTTPS(ACCEPT) -log nolog\nIN HTTP(ACCEPT) -log nolog\nIN ACCEPT -source +network -p tcp -dport 81 -log nolog # Weboberfläche\n\n" >> $clusterfile
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP reverseproxy" > /etc/pve/firewall/$ctID.fw
