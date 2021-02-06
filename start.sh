@@ -223,11 +223,7 @@ function startUserInput() {
   fi
   wget -qO $workdir/lxc.conf $rawGitHubURL/lxc.conf
   source $workdir/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10\
-          ReverseProxy "NGINX Proxy Manager" on \
-          AdBlockerVPN "piHole mit piVPN"   on  \
-          iDBGrafana "influxDB mit Grafana"   on \
-          "${lxc[@]}" 2>lxcchoice
+  lxcchoice=$(whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 3>&1 1>&2 2>&3)
   whiptail --yesno --backtitle "SmartHome-IoT.net - $endconf" --title "$endconf" "$endconftxt" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
