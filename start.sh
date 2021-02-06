@@ -566,12 +566,14 @@ testFunction
 for lxc in $lxcchoice; do
   clear
   shellLogo
-  ctName="$lxc"
+  ctName=$($lxc | sed "s#\"##g")
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     echo -e "$ok $lxcinfo $lxc"
+    sleep 5
     #curl -sSL $rawGitHubURL/$lxc/install.sh
   else
     echo -e "$error $lxcerror $lxc"
+    sleep 5
   fi
 done
