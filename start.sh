@@ -222,7 +222,9 @@ function startUserInput() {
   fi
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>lxcchoice
+  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  sed -i 's#\"##g' $workdir/lxcchoice
+  lxcchoice=$(cat $workdir/lxcchoice)
   whiptail --yesno --backtitle "SmartHome-IoT.net - $endconf" --title "$endconf" "$endconftxt" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
@@ -557,11 +559,8 @@ function testFunction() {
 
 mkdir -p $workdir
 
-#shellStart
-testFunction
-#startUserInput
-
-
+#testFunction
+startUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
