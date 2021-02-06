@@ -132,7 +132,7 @@ function createPassword() {
 
 function startUserInput() {
   networkrobotpw=$(createPassword 20)
-  wget -rqO /root/lng.conf $rawGitHubURL/lng.conf
+  wget -rqO /root/lng.conf $rawGitHubURL/config/lng.conf
   source /root/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO $workdir/lang $rawGitHubURL/lang/$lang
@@ -143,7 +143,7 @@ function startUserInput() {
   varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_pvepwd" "$lng_pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
   varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrn" "$lng_netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrpwd" "$lng_netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
-  wget -qO /root/gw.conf $rawGitHubURL/gw.conf
+  wget -qO /root/gw.conf $rawGitHubURL/config/gw.conf
   source /root/gw.conf
   gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_gwr" "$lng_gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
@@ -222,7 +222,7 @@ function startUserInput() {
     varnasexists=n
     whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 7" --title "$lng_nasconf" "$lng_nasconfinfo1" ${r} ${c}
   fi
-  wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
+  wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
   source /root/lxc.conf
   whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
   sed -i 's#\"##g' $workdir/lxcchoice
@@ -564,13 +564,13 @@ function containerSetup() {
 }
 
 function testFunction() {
-  wget -rqO /root/lng.conf $rawGitHubURL/lng.conf
+  wget -rqO /root/lng.conf $rawGitHubURL/config/lng.conf
   source /root/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO /root/lang $rawGitHubURL/lang/$lang
   source /root/lang
   varnasexists=y
-  wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
+  wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
   source /root/lxc.conf
   whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
   sed -i 's#\"##g' $workdir/lxcchoice
@@ -591,7 +591,7 @@ for lxc in $lxcchoice; do
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     echo -e "$ok $lng_lxcinfo \"$lxc\""
     sleep 5
-    wget -qO /root/inst_$ctName.sh $rawGitHubURL/$ctName/install.sh
+    wget -qO /root/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
     source inst_$ctName.sh
     #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
   else
