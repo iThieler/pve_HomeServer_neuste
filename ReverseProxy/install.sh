@@ -19,7 +19,8 @@ for package in $containerSoftware; do
   echo -e "$info $package $installlxc"
   pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
 done
-
+pct exec $ctID -- bash -ci "dockerd --debug"
+pct reboot $ctID --timeout 5
 pct exec $ctID -- bash -ci "systemctl start docker && systemctl enable docker > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /root/npm"
 pct exec $ctID -- bash -ci "wget -qO /root/npm/config.json $rawGitHubURL/$ctName/config.json"
