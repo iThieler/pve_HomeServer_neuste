@@ -134,7 +134,6 @@ function startUserInput() {
   source $workdir/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO $workdir/lang $rawGitHubURL/lang/$lang
-  #sed -i -e ´s/\r$//´ $workdir/$lang.sh
   source $workdir/lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$intr" "$intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$netr" "$netrtxt" ${r} ${c}
@@ -142,11 +141,10 @@ function startUserInput() {
   varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$pvepwd" "$pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
   varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrn" "$netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrpwd" "$netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
-  wget -qO $workdir/gw.conf $rawGitHubURL/gw.conf
-  source $workdir/gw.conf
-  whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 3 \
-    "${gw[@]}" 2>gwchoice
-  gwchoice=`cat gwchoice`
+  wget -qO /root/gw.conf $rawGitHubURL/gw.conf
+  source /root/gw.conf
+  gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
+  #gwchoice=`cat $workdir/gwchoice`
   if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
     vargwmanufacturer="unifi"
   elif [[ $gwchoice == "AVM" ]]; then
