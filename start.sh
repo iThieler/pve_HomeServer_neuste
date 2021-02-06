@@ -528,6 +528,21 @@ function containerSetup() {
   echo -e "Download Template $template"
   downloadTemplate $template
   echo -e "$info $createlxc $nextCTID - $2"
+  echo -e "(pct create $nextCTID \
+    data:vztmpl/$ctTemplate \
+    --ostype $ctOstype \
+    --hostname "$2" \
+    --password "$3" \
+    --rootfs $rootfs:$4 \
+    --cores $5 \
+    --memory $6 \
+    --swap $(( $6 / 2 )) \
+    --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
+    --onboot 1 \
+    --force 1 \
+    --unprivileged 1 \
+    --start 1 \
+    --features "$7")"
   pct create $nextCTID \
     data:vztmpl/$ctTemplate \
     --ostype $ctOstype \
