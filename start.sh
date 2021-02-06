@@ -527,7 +527,7 @@ function containerSetup() {
   downloadTemplate $1
   echo -e "$info $createlxc $nextCTID - $2"
   pct create $nextCTID \
-    data:vztmpl/$ctTemplate \
+    $downloadPath:vztmpl/$ctTemplate \
     --ostype $ctOstype \
     --hostname "$2" \
     --password "$3" \
