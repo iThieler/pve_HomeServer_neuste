@@ -542,6 +542,11 @@ function containerSetup() {
 }
 
 function testFunction() {
+  wget -rqO /root/lng.conf $rawGitHubURL/lng.conf
+  source /root/lng.conf
+  lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  wget -qO /root/lang $rawGitHubURL/lang/$lang
+  source /root/lang
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
   lxcchoice=$(whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 3>&1 1>&2 2>&3)
