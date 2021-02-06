@@ -526,22 +526,21 @@ function containerSetup() {
   echo -e "$info $createlxc $nextCTID - $2"
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate "$1"
-  features="$7"
-  pct create "$nextCTID" \
-    data:vztmpl/"$ctTemplate" \
-    --ostype "$ctOstype" \
+  pct create $nextCTID \
+    data:vztmpl/$ctTemplate \
+    --ostype $ctOstype \
     --hostname "$2" \
     --password "$3" \
-    --rootfs "$rootfs":"$4" \
-    --cores "$5" \
-    --memory "$6" \
+    --rootfs $rootfs:$4 \
+    --cores $5 \
+    --memory $6 \
     --swap $(( $6 / 2 )) \
     --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
     --onboot 1 \
     --force 1 \
     --unprivileged 1 \
     --start 1 \
-    --features "$features" > /dev/null 2>&1
+    --features "$7" > /dev/null 2>&1
   echo -e "$info $lxc $nextCTID - $2 $updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
