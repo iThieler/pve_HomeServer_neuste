@@ -58,5 +58,5 @@ errorlxc="Die Konfigurationsdatei für die gewählten Container ist nicht lesbar
 lxcinfo="Es wird versucht"
 lxcinfo1="auf Proxmox zu installieren"
 lxcinfo2="Die installation von"
-lxcindo3="beginnt"
+lxcinfo3="beginnt"
 lxcerror="Es existiert bereits ein Container mit dem Namen"
