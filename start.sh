@@ -553,7 +553,7 @@ function containerSetup() {
     echo -e "$info $package $installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
-  pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
+  #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
   echo -e "$ok $lxc $nextCTID - $2 $endlxc"
   pct shutdown $nextCTID --timeout 5
   sleep 10
