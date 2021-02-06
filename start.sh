@@ -554,7 +554,7 @@ function containerSetup() {
   done
   pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
   echo -e "$ok $lxc $nextCTID - $2 $endlxc"
-  pct shutdown $nextCTIP --timeout 5
+  pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
 }
