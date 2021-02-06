@@ -137,54 +137,54 @@ function startUserInput() {
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO $workdir/lang $rawGitHubURL/lang/$lang
   source $workdir/lang
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$intr" "$intrtxt" ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$netr" "$netrtxt" ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$spwd" "$spwdtxt" ${r} ${c}
-  varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$pvepwd" "$pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
-  varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrn" "$netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
-  varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$netrpwd" "$netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_intr" "$lng_intrtxt" ${r} ${c}
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_netr" "$lng_netrtxt" ${r} ${c}
+  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_spwd" "$lng_spwdtxt" ${r} ${c}
+  varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_pvepwd" "$lng_pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
+  varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrn" "$lng_netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
+  varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrpwd" "$lng_netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
   wget -qO /root/gw.conf $rawGitHubURL/gw.conf
   source /root/gw.conf
-  gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
+  gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_gwr" "$lng_gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
     vargwmanufacturer="unifi"
   elif [[ $gwchoice == "AVM" ]]; then
     vargwmanufacturer="avm"
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt1" ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_gwr" "$lng_gwrtxt1" ${r} ${c}
   fi
   if [[ $vargwmanufacturer == "unifi" ]]; then
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt" ${r} ${c}
     yesno=$?
     if [[ $yesno == 0 ]]; then
       vlanexists=y
-      varservervlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt1" ${r} ${c} 1 3>&1 1>&2 2>&3)
-      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt2" ${r} ${c} 10 3>&1 1>&2 2>&3)
-      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $netinf" --title "$vlan" "$vlantxt3" ${r} ${c} 100 3>&1 1>&2 2>&3)
+      varservervlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt1" ${r} ${c} 1 3>&1 1>&2 2>&3)
+      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt2" ${r} ${c} 10 3>&1 1>&2 2>&3)
+      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt3" ${r} ${c} 100 3>&1 1>&2 2>&3)
     else
       vlanexists=n
     fi
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - Netzwerkinfrastruktur" --title "$vlan" "$vlaninfo" ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlaninfo" ${r} ${c}
   fi
-  varrootmail=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailserver=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailport=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt2" ${r} ${c} 587 3>&1 1>&2 2>&3)
-  varmailusername=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt3" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt4" ${r} ${c} 3>&1 1>&2 2>&3)
-  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt5" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $mailconf" --title "$mailconf" "$mailconftxt6" ${r} ${c}
+  varrootmail=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailserver=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailport=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt2" ${r} ${c} 587 3>&1 1>&2 2>&3)
+  varmailusername=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt3" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt4" ${r} ${c} 3>&1 1>&2 2>&3)
+  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt5" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt6" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     vartls=yes
   else
     vartls=no
   fi
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf 1" --title "$nasconf" "$nasconftxt" ${r} ${c}
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 1" --title "$lng_nasconf" "$lng_nasconftxt" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     function pingNAS() {
-      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $nasconf 2" --title "$nasconf" "$nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
+      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_nasconf 2" --title "$lng_nasconf" "$lng_nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
       if ping -c 1 "$varnasip" > /dev/null 2>&1; then
         varnasexists=y
         {
@@ -192,47 +192,47 @@ function startUserInput() {
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "$nassearch" ${r} ${c} 50
+        } | whiptail --gauge "$lng_nassearch" ${r} ${c} 50
       else
         {
           for ((i = 98 ; i <= 100 ; i+=1)); do
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "$nassearch" ${r} ${c} 22
-        whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf 3" --title "$nasconf" "$nasconferror" ${r} ${c}
+        } | whiptail --gauge "$lng_nassearch" ${r} ${c} 22
+        whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 3" --title "$lng_nasconf" "$lng_nasconferror" ${r} ${c}
         pingNAS
       fi
     }
     pingNAS
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf 4" --title "$nasconf" "$nasconfman" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 4" --title "$lng_nasconf" "$lng_nasconfman" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       varsynologynas=y
     else
       varsynologynas=n
     fi
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $nasconf 5" --title "$nasconf" "$nasconfinfo" ${r} ${c}
+    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 5" --title "$lng_nasconf" "$lng_nasconfinfo" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
-      whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf 6" --title "$nasconf" "$nasconfinfoerror" ${r} ${c}
+      whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 6" --title "$lng_nasconf" "$lng_nasconfinfoerror" ${r} ${c}
       exit 1
     fi
   else
     varnasexists=n
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf 7" --title "$nasconf" "$nasconfinfo1" ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 7" --title "$lng_nasconf" "$lng_nasconfinfo1" ${r} ${c}
   fi
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
   sed -i 's#\"##g' $workdir/lxcchoice
   lxcchoice=$(cat $workdir/lxcchoice)
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $endconf" --title "$endconf" "$endconftxt" ${r} ${c}
+  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_endconf" --title "$lng_endconf" "$lng_endconftxt" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
     startConfig
   else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "$abort" "$aborttxt" ${r} ${c}
+    whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "$lng_abort" "$lng_aborttxt" ${r} ${c}
     exit 1
   fi
 }
@@ -464,7 +464,7 @@ function startConfig() {
 
   # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
   sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
-  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf  
+  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
 
   configHDD
   configFirewall
@@ -490,46 +490,46 @@ function containerSetup() {
   # Loads the container template from the Internet if not available and saves it for further use
   function downloadTemplate() {
     pveam update > /dev/null 2>&1
-    echo -e "$info $infodwntmp"
+    echo -e "$info $lng_infodwntmp"
     if [[ $1 == "ubuntu" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $errdwntmp"
+        echo -e "$error $lng_errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $okdwntmp"
+        echo -e "$ok $lng_okdwntmp"
       else
-        echo -e "$ok $okdwntmp1"
+        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "ubuntu18" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $errdwntmp"
+        echo -e "$error $lng_errdwntmp"
         pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $okdwntmp"
+        echo -e "$ok $lng_okdwntmp"
       else
-        echo -e "$ok $okdwntmp1"
+        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "debian" ]]; then
       ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $errdwntmp"
+        echo -e "$error $lng_errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $okdwntmp"
+        echo -e "$ok $lng_okdwntmp"
       else
-        echo -e "$ok $okdwntmp1"
+        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="debian"
     else
-      echo -e "$error $errdwntmp1"
+      echo -e "$error $lng_errdwntmp1"
     fi
   }
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate $1
-  echo -e "$info $createlxc $nextCTID - $2"
+  echo -e "$info $lng_createlxc $nextCTID - $2"
   echo "Passwort: $3"
   pct create $nextCTID \
     $downloadPath:vztmpl/$ctTemplate \
@@ -546,7 +546,7 @@ function containerSetup() {
     --unprivileged 1 \
     --start 1 \
     --features "$7" > /dev/null 2>&1
-  echo -e "$info $lxc $nextCTID - $2 $updatelxc"
+  echo -e "$info $lng_lxc $nextCTID - $2 $lng_updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
@@ -554,11 +554,11 @@ function containerSetup() {
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
   pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
   for package in $ctStandardsoftware; do
-    echo -e "$info $package $installlxc"
+    echo -e "$info $package $lng_installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
   #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-  echo -e "$ok $lxc $nextCTID - $2 $endlxc"
+  echo -e "$ok $lng_lxc $nextCTID - $2 $lng_endlxc"
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
@@ -590,13 +590,13 @@ for lxc in $lxcchoice; do
   ctName=$lxc
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
-    echo -e "$ok $lxcinfo \"$lxc\""
+    echo -e "$ok $lng_lxcinfo \"$lxc\""
     sleep 5
     wget -qO /root/inst_$ctName.sh $rawGitHubURL/$ctName/install.sh
     source inst_$ctName.sh
     #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
   else
-    echo -e "$error $lxcerror \"$lxc\""
+    echo -e "$error $lng_lxcerror \"$lxc\""
     sleep 5
   fi
 done
