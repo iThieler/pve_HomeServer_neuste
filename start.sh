@@ -462,6 +462,10 @@ function startConfig() {
     smartctl -s on -a /dev/"$rootDisk"
   fi
 
+  # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
+  sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
+  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf  
+
   configHDD
   configFirewall
 
