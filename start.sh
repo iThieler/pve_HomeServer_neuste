@@ -551,6 +551,7 @@ function testFunction() {
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
   whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  sed 's#\"##g' $workdir/lxcchoice
   lxcchoice=$(cat $workdir/lxcchoice)
 }
 
@@ -566,9 +567,9 @@ testFunction
 for lxc in $lxcchoice; do
   clear
   shellLogo
-  ctName=$($lxc | sed "s#\"##g")
+  ctName=$lxc
   ctRootpw=$(createPassword 12)
-  if [ $(pct list | grep -c "$ctName") -eq 0 ]; then
+  if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     echo -e "$ok $lxcinfo $lxc"
     sleep 5
     #curl -sSL $rawGitHubURL/$lxc/install.sh
