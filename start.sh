@@ -544,12 +544,13 @@ function containerSetup() {
 mkdir -p $workdir
 
 #shellStart
-startUserInput
+#startUserInput
 
-if ! [ -w $workdir/lxcchoice ]; then echo -e "$error $errorlxc" && exit 1; fi
+wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
+source /root/lxc.conf
+lxcchoice=$(whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 3>&1 1>&2 2>&3)
 
-lxcchoice="$(cat $workdir/lxcchoice)"
-
+# Start creating the selected containers
 for lxc in $lxcchoice; do
   echo -e "$info $lxcinfo $lxc $lxcinfo1"
   ctName="$lxc"
