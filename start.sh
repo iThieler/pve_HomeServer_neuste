@@ -573,7 +573,7 @@ function testFunction() {
   varnasexists=y
   wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
   source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
   sed -i 's#\"##g' $workdir/lxcchoice
   lxcchoice=$(cat $workdir/lxcchoice)
 }
