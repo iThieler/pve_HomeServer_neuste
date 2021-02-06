@@ -130,11 +130,11 @@ function createPassword() {
 
 function startUserInput() {
   networkrobotpw=$(createPassword 20)
-  wget -rqO $workdir/lng.conf $rawGitHubURL/lng.conf
-  source $workdir/lng.conf
+  wget -rqO /root/lng.conf $rawGitHubURL/lng.conf
+  source /root/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  wget -qO $workdir/lang $rawGitHubURL/lang/$lang
-  source $workdir/lang
+  wget -qO /root/lang $rawGitHubURL/lang/$lang
+  source /root/lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$intr" "$intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$netr" "$netrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $welc" --title "$spwd" "$spwdtxt" ${r} ${c}
@@ -144,7 +144,6 @@ function startUserInput() {
   wget -qO /root/gw.conf $rawGitHubURL/gw.conf
   source /root/gw.conf
   gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $netinf" --title "$gwr" "$gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
-  #gwchoice=`cat $workdir/gwchoice`
   if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
     vargwmanufacturer="unifi"
   elif [[ $gwchoice == "AVM" ]]; then
@@ -221,8 +220,8 @@ function startUserInput() {
     varnasexists=n
     whiptail --msgbox --backtitle "SmartHome-IoT.net - $nasconf 7" --title "$nasconf" "$nasconfinfo1" ${r} ${c}
   fi
-  wget -qO $workdir/lxc.conf $rawGitHubURL/lxc.conf
-  source $workdir/lxc.conf
+  wget -qO /root/lxc.conf $rawGitHubURL/lxc.conf
+  source /root/lxc.conf
   lxcchoice=$(whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lxcconf" --title "$lxcconf" "$lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 3>&1 1>&2 2>&3)
   whiptail --yesno --backtitle "SmartHome-IoT.net - $endconf" --title "$endconf" "$endconftxt" ${r} ${c}
   exitstatus=$?
