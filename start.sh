@@ -542,7 +542,7 @@ function containerSetup() {
     --force 1 \
     --unprivileged 1 \
     --start 1 \
-    --features "$7" > /dev/null 2>&1
+    --features "$7" #> /dev/null 2>&1
   echo -e "$info $lxc $nextCTID - $2 $updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
