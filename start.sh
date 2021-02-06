@@ -561,7 +561,7 @@ testFunction
 
 
 # Start creating the selected containers
-lxcchoice=´$(cat $workdir/lxcchoice)´
+lxcchoice=$(cat $workdir/lxcchoice)
 for lxc in $lxcchoice; do
   echo -e "$info $lxcinfo $lxc $lxcinfo1"
   ctName="$lxc"
