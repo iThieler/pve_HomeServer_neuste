@@ -403,8 +403,7 @@ function startConfig() {
       pvesm set local --content snippets
       echo -e "$ok Die NAS wurde als Backuplaufwerk in Proxmox eingebunden"
     fi
-  fi
-  return 0
+    return 0
   }
 
   # Erzeugt einen Adminbenutzer für Proxmox, um sich nicht als Root einloggen zu müssen
