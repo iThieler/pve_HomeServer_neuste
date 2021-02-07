@@ -417,14 +417,14 @@ function startConfig() {
   function configFirewall() {
     mkdir -p /etc/pve/firewall
     mkdir -p /etc/pve/nodes/$hostname
-    clusterfile="/etc/pve/firewall/cluster.fw"
-    hostfile="/etc/pve/nodes/$hostname/host.fw"
+    clusterfileFW="/etc/pve/firewall/cluster.fw"
+    hostfileFW="/etc/pve/nodes/$hostname/host.fw"
 
     # Firewall auf Clusterebene
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n\n$networkIP.0/$cidr\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfile
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # alle privaten Netzwerke\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
     
     # Firewall auf Hostebene
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfile
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
     return 0
   }
 
