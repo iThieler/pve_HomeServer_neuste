@@ -357,7 +357,7 @@ function startConfig() {
   }
 
   # Prüft ob im System eine weitere SSD verbaut ist, und richtet diese als Datenfestplatte ein
-  function configHDD() {
+  function configStorage() {
     countDisks=$(echo "$otherDisks" | wc -l)
     if [ "$countDisks" -eq 0 ]; then
       echo -e "$info In diesem System wurden keine weiteren Festplatten gefunden."
@@ -397,7 +397,14 @@ function startConfig() {
       echo -e "$info Es wurden mehrere zusätzliche Festplatten im System gefunden."
       return 1
     fi
-    return 0
+    if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
+      echo -e "$info Die NAS wird als Backupspeicher in Proxmox eingebunden"
+      pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
+      pvesm set local --content snippets
+      echo -e "$ok Die NAS wurde als Backuplaufwerk in Proxmox eingebunden"
+    fi
+  fi
+  return 0
   }
 
   # Erzeugt einen Adminbenutzer für Proxmox, um sich nicht als Root einloggen zu müssen
@@ -466,10 +473,20 @@ function startConfig() {
   sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
   sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
 
-  configHDD
+  configStorage
   configFirewall
 
   return 0
+}
+
+function lxcMountNAS() {
+  pct exec $1 -- bash -ci "mkdir -p /media"
+  pct exec $1 -- bash -ci "mkdir -p /mnt/backup"
+  pct exec $1 -- bash -ci "echo ""//$varnasip/media  /media  cifs credentials=/home/.smbmedia,uid=1000,gid=1000 0 0"" >> /etc/fstab"
+  pct exec $1 -- bash -ci "echo ""//$varnasip/backups  /mnt/backup  cifs credentials=/home/.smbbackup,uid=1000,gid=1000 0 0"" >> /etc/fstab"
+  pct exec $1 -- bash -ci "echo -e username=$varrobotname\npassword=$varrobotpw > /home/.smbmedia"
+  pct exec $1 -- bash -ci "echo -e username=$varrobotname\npassword=$varrobotpw > /home/.smbbackup"
+  pct exec $1 -- bash -ci "mount -a"
 }
 
 function containerSetup() {
@@ -525,7 +542,7 @@ function containerSetup() {
       echo -e "$error $lng_errdwntmp1"
     fi
   }
-# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
+# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate $1
@@ -542,9 +559,9 @@ function containerSetup() {
     --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
     --onboot 1 \
     --force 1 \
-    --unprivileged 1 \
+    --unprivileged "$7" \
     --start 1 \
-    --features "$7" > /dev/null 2>&1
+    --features "$8" > /dev/null 2>&1
   echo -e "$info $lng_lxc \"$2\" $lng_updatelxc"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
@@ -556,31 +573,16 @@ function containerSetup() {
     echo -e "$info $package $lng_installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
-  #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
+  pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
   echo -e "$ok $lng_lxc \"$2\" $lng_endlxc"
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
 }
 
-function testFunction() {
-  wget -rqO /root/lng.conf $rawGitHubURL/config/lng.conf
-  source /root/lng.conf
-  lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  wget -qO /root/lang $rawGitHubURL/lang/$lang
-  source /root/lang
-  varnasexists=y
-  wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
-  source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
-  sed -i 's#\"##g' $workdir/lxcchoice
-  lxcchoice=$(cat $workdir/lxcchoice)
-}
-
 mkdir -p $workdir
 
-testFunction
-#startUserInput
+startUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do

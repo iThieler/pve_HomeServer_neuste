@@ -1,15 +1,15 @@
 #!/bin/bash
 
 # Container Configuration
-# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 8 1 512 ""
+# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
+containerSetup ubuntu $ctName $ctRootpw 8 1 512 1 ""
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
 
 # Software that must be installed on the container
 # example - containerSoftware="docker.io docker-compose"
-containerSoftware="nginx php7.3-fpm php7.3-cgi php7.3-xml php7.3-sqlite3 php7.3-intl apache2-utils samba samba-common-bin"
+containerSoftware="nginx php-fpm php-cgi php-xml php-sqlite3 php-intl apache2-utils samba samba-common-bin"
 
 # Start Container, because Container stoped aftrer creation
 pct start $ctID

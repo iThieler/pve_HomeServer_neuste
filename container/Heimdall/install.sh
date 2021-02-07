@@ -2,14 +2,14 @@
 
 # Container Configuration
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 8 1 512 1 "keyctl=1,nesting=1"
+containerSetup ubuntu $ctName $ctRootpw 2 1 256 1 "keyctl=1,nesting=1"
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
 
 # Software that must be installed on the container
 # example - containerSoftware="docker.io docker-compose"
-containerSoftware=""
+containerSoftware="docker.io docker-compose"
 
 # Start Container, because Container stoped aftrer creation
 pct start $ctID
@@ -26,23 +26,19 @@ for package in $containerSoftware; do
 done
 
 # Execute commands on containers
-pct exec $ctID -- bash -ci ""
-
-# If NAS exist in Network, bind to Container, only privileged and mount=cifs Feature is set
-if [[ $nasexists == "y" ]]; then
-  lxcMountNAS $ctID
-  pct exec $ctID -- bash -ci "mkdir -p /media/FOLDERNAMEYOUWISH"
-fi
+pct exec $ctID -- bash -ci "systemctl start docker && systemctl enable docker > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "mkdir -p /root/heimdall"
+pct exec $ctID -- bash -ci "wget -qO /root/heimdall/docker-compose.yml $rawGitHubURL/container/$ctName/docker-compose.yml"
+pct exec $ctID -- bash -ci "cd heimdall && docker-compose up -d --quiet-pull > /dev/null 2>&1"
 
 # Container description in the Proxmox web interface
-pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':81\nBenutzer: admin@example.com\nPasswort: changeme'
+pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$'\nAdresse: https://'"$nextCTIP"$'\n'
 
 # echo [INFO] Create firewall rules for container "CONTAINERNAME"
 echo -e "$info $lng_lxcfw \"$ctName\""
 
-# Creates firewall rules for the container
 # Create Firewallgroup - If a port should only be accessible from the local network - IN ACCEPT -source +network -p tcp -dport PORTNUMBER -log nolog
-echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN HTTPS(ACCEPT) -log nolog\nIN HTTP(ACCEPT) -log nolog\nIN ACCEPT -source +network -p tcp -dport 81 -log nolog # Weboberfläche\n\n" >> $clusterfile
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN HTTPS(ACCEPT) -source +network -log nolog\nIN HTTP(ACCEPT) -source +network -log nolog" >> $clusterfileFW
 
 # Allow Firewallgroup
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
