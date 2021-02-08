@@ -373,8 +373,8 @@ function startConfig() {
               echo "UUID=$UUID /mnt/data ext4 defaults 0 2" > /etc/fstab
               pvesm add dir data --path /mnt/data
               pvesm set data --content iso,vztmpl,rootdir,images
-              pvesm set local --content snippets,backup
-              pvesm set local-lvm --content images
+              #pvesm set local --content snippets,backup
+              #pvesm set local-lvm --content images
               downloadPath="data"
               echo -e "$ok Die Festplatte wurde mit dem Namen $(echo -e '\e[1;36m')data$(echo -e '\e[0m') in Proxmox eingebunden."
 
@@ -398,7 +398,7 @@ function startConfig() {
     if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
       echo -e "$info Die NAS wird als Backupspeicher in Proxmox eingebunden"
       pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
-      pvesm set local --content snippets
+      #pvesm set local --content snippets
       echo -e "$ok Die NAS wurde als Backuplaufwerk in Proxmox eingebunden"
     fi
     return 0
