@@ -46,10 +46,9 @@ pct exec $ctID -- bash -ci "grafana-cli admin reset-admin-password changeme > /d
 pct exec $ctID -- bash -ci "systemctl stop grafana-server"
 pct exec $ctID -- bash -ci "rm /var/log/grafana/grafana.log"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/*"
-pct exec $ctID -- bash -ci "systemctl unmask influxdb.service > /dev/null 2>&1 && systemctl start influxdb > /dev/null 2>&1"
-pct exec $ctID -- bash -ci "systemctl daemon-reload > /dev/null 2>&1 && systemctl enable grafana-server > /dev/null 2>&1 && systemctl start grafana-server > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "systemctl unmask influxdb.service && systemctl start influxdb"
+pct exec $ctID -- bash -ci "systemctl daemon-reload && systemctl enable grafana-server > /dev/null 2>&1 && systemctl start grafana-server"
 echo -e "influxdb: InfluxDB\n        port 8089\n        server $nextCTIP" > /etc/pve/status.cfg
-
 
 # Container description in the Proxmox web interface
 pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nGrafana WebGUI\nAdresse: http://'"$nextCTIP"$':3000\nBenutzer: admin\nPasswort: changeme'
