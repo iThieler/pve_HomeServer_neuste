@@ -33,7 +33,7 @@ pct exec $ctID -- bash -ci "wget -qO /root/libicu57_57.1-6+deb9u4_amd64.deb http
 pct exec $ctID -- bash -ci "apt-get -y install dphys-swapfile > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "dpkg -i /root/libicu57_57.1-6+deb9u4_amd64.deb > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "rm /root/libicu57_57.1-6+deb9u4_amd64.deb"
-pct exec $ctID -- bash -ci "apt-get -y install 3cxpbx"
+#pct exec $ctID -- bash -ci "apt-get -y install 3cxpbx"
 
 # Container description in the Proxmox web interface
 pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nAdministrations WebGUI\nAdresse: https://'"$nextCTIP"$':5001\nBenutzer: \nPasswort: \n\nBenutzer WebGUI\nAdresse: https://'"$nextCTIP"$':5001/webclient\nBenutzer: Nebenstellennummer \nPasswort: per E-Mail erhalten\n\nWebGUI Ersteinrichtung\nAdresse: http://'"$nextCTIP"$':5015?v=2'

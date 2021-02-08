@@ -230,6 +230,8 @@ function startUserInput() {
   whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_endconf" --title "$lng_endconf" "$lng_endconftxt" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
+    clear
+    shellLogo
     startConfig
   else
     whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "$lng_abort" "$lng_aborttxt" ${r} ${c}
