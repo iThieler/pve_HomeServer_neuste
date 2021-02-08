@@ -37,8 +37,7 @@ rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
 workdir="/root/shiot"
 fqdn=$(hostname -f)
 hostname=$(hostname)
-. /etc/os-release
-osname=$VERSION_CODENAME
+osname=buster
 
 ##################### Functions #####################
 
@@ -370,7 +369,7 @@ function startConfig() {
               mkdir -p /mnt/data > /dev/null 2>&1
               mount -o defaults /dev/"$otherDisks"1 /mnt/data > /dev/null 2>&1
               UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
-              echo "UUID=$UUID /mnt/data ext4 defaults 0 2" > /etc/fstab
+              echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
               pvesm add dir data --path /mnt/data
               pvesm set data --content iso,vztmpl,rootdir,images
               #pvesm set local --content snippets,backup
@@ -447,7 +446,7 @@ function startConfig() {
   fi
 
   # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
-  softwaretoinstall="parted smartmontools"# libsasl2-modules
+  softwaretoinstall="parted smartmontools libsasl2-modules"
   echo -e "$info Benötigte Updates werden geladen und installiert, je nach Internetverbindung kann dies einige Zeit in Anspruch nehmen."
   apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
   echo -e "$ok Alle Systemupdates und benötigte Software wurde installiert"
