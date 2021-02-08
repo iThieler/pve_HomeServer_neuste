@@ -376,7 +376,7 @@ function startConfig() {
               #pvesm set local --content snippets,backup
               #pvesm set local-lvm --content images
               downloadPath="data"
-              echo -e "$ok Die Festplatte wurde mit dem Namen $(echo -e '\e[1;36m')data$(echo -e '\e[0m') in Proxmox eingebunden."
+              echo -e "$ok Die Festplatte wurde mit dem Namen \"data\" in Proxmox eingebunden."
 
               # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
               sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$otherDisks"'"+' /etc/default/smartmontools
@@ -447,15 +447,13 @@ function startConfig() {
   fi
 
   # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
-  softwaretoinstall="curl parted smartmontools libsasl2-modules"
+  softwaretoinstall="parted smartmontools"# libsasl2-modules
   echo -e "$info Benötigte Updates werden geladen und installiert, je nach Internetverbindung kann dies einige Zeit in Anspruch nehmen."
-  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
   echo -e "$ok Alle Systemupdates und benötigte Software wurde installiert"
   for package in $softwaretoinstall; do
-    if [ $(dpkg-query -W -f='${Status}' "$package" | grep -c "ok installed") -eq 0 ]; then
-      apt-get install -y "$package" > /dev/null 2>&1
-      echo -e "$ok $package wurde installiert"
-    fi
+    apt-get install -y "$package" > /dev/null 2>&1
+    echo -e "$ok $package wurde installiert"
   done
 
   configEmail
