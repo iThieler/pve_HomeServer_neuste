@@ -140,7 +140,7 @@ function startUserInput() {
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_intr" "$lng_intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_netr" "$lng_netrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_spwd" "$lng_spwdtxt" ${r} ${c}
-  varpverootpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_pvepwd" "$lng_pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
+  varpverootpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_pvepwd" "$lng_pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
   varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrn" "$lng_netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrpwd" "$lng_netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
   wget -qO /root/gw.conf $rawGitHubURL/config/gw.conf
