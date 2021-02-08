@@ -266,11 +266,7 @@ function startConfig() {
 
       # TLS-Einstellungen prüfen
       echo -e "$info Es werden die richtigen TLS-/SSL-Einstellungen vorgenommen"
-      if [ $vartls -eq 0 ]; then
-        postconf smtp_use_tls=yes
-      else
-        postconf smtp_use_tls=yes
-      fi
+      postconf smtp_use_tls=$vartls
 
       # Prüfen auf Passwort-Hash-Eingabe
       if grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
