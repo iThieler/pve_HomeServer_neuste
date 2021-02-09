@@ -482,6 +482,7 @@ function lxcMountNAS() {
   pct exec $1 -- bash -ci "echo -e ""username=$varrobotname\npassword=$varrobotpw"" > /home/.smbmedia"
   pct exec $1 -- bash -ci "echo -e ""username=$varrobotname\npassword=$varrobotpw"" > /home/.smbbackup"
   pct exec $1 -- bash -ci "mount -a"
+  nasFolder=$'\n\nNAS Verzeichnisse\nMedienverzeichnis: /media\nBackupverzeichnis: /mnt/backup'
 }
 
 function containerSetup() {

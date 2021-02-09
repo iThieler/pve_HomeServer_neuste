@@ -2,7 +2,7 @@
 
 # Container Configuration
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 8 1 2048 0 "mount=nfs;cifs"
+containerSetup ubuntu $ctName $ctRootpw 8 1 2048 0 "nesting=1,mount=nfs;cifs"
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
@@ -26,7 +26,7 @@ for package in $containerSoftware; do
 done
 
 # Execute commands on containers
-pct exec $ctID -- bash -ci "wget https://github.com/MediaBrowser/Emby.Releases/releases/download/4.6.0.22/emby-server-deb_4.6.0.22_amd64.deb"
+pct exec $ctID -- bash -ci "wget -q https://github.com/MediaBrowser/Emby.Releases/releases/download/4.6.0.22/emby-server-deb_4.6.0.22_amd64.deb"
 pct exec $ctID -- bash -ci "dpkg -i emby-server-deb_4.6.0.22_amd64.deb > /dev/null 2>&1"
 #if [ $(ls -la /dev/dri/card0 | grep -c video) -eq 1 ]; then
 #  whiptail --yesno --backtitle "SmartHome-IoT.net - JellyFin" --title "Grafikkarte" "In deinem System wurde eine Grafikkarte erkannt. Diese kann in JellyFin eingebunden werden um das Transkodieren von Videodateien zu beschleunigen und zu verbessern. Soll die Grafikkarte in JellyFin eingebunden werden?" ${r} ${c}
@@ -47,7 +47,7 @@ if [[ $nasexists == "y" ]]; then
 fi
 
 # Container description in the Proxmox web interface
-pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':8096'
+pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':8096'"$nasFolder"
 
 # echo [INFO] Create firewall rules for container "CONTAINERNAME"
 echo -e "$info $lng_lxcfw \"$ctName\""

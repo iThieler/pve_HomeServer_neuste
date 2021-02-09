@@ -49,7 +49,7 @@ if [[ $nasexists == "y" ]]; then
 fi
 
 # Container description in the Proxmox web interface
-pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':8096'
+pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':8096'"$nasFolder"
 
 # echo [INFO] Create firewall rules for container "CONTAINERNAME"
 echo -e "$info $lng_lxcfw \"$ctName\""
