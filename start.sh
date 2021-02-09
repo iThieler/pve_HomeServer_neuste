@@ -3,6 +3,7 @@
 osUbuntu="ubuntu-20.04"         # Container Template für Ubuntu v20.04
 osUbuntu18="ubuntu-18.04"       # Container Template für Ubuntu v18.04
 osDebian="debian-10-standard"   # Container Template für Debian v10
+osDebian9="debian-9.0-standard"   # Container Template für Debian v9
 
 ##################### Script Variables #####################
 
@@ -532,6 +533,16 @@ function containerSetup() {
         echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="debian"
+    elif [[ $1 == "debian9" ]]; then
+      ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+        echo -e "$error $lng_errdwntmp"
+        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+        echo -e "$ok $lng_okdwntmp"
+      else
+        echo -e "$ok $lng_okdwntmp1"
+      fi
+      ctOstype="debian"
     else
       echo -e "$error $lng_errdwntmp1"
     fi
@@ -555,8 +566,14 @@ function containerSetup() {
     --force 1 \
     --unprivileged "$7" \
     --start 1 \
-    --features "$8" > /dev/null 2>&1
+    --features "$8" > /dev/null 2>&1          
   echo -e "$info $lng_lxc \"$2\" $lng_updatelxc"
+  if [[ $ctOStype == "debian" ]]; then
+    pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
+    pct exec $nextCTID -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
+    pct exec $nextCTID -- bash -c "sed -i 's+# en_US.UTF-8 UTF-8+en_US.UTF-8 UTF-8+g'  /etc/locale.gen" # get en_US Language Support for the shell
+    pct exec $nextCTID -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
+  fi
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
