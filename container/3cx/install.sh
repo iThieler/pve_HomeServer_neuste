@@ -2,7 +2,7 @@
 
 # Container Configuration
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 8 1 1024 1 ""
+containerSetup debian $ctName $ctRootpw 8 1 1024 0 "mount=cifs;nfs"
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
@@ -33,6 +33,10 @@ pct exec $ctID -- bash -ci "wget -qO /root/libicu57_57.1-6+deb9u4_amd64.deb http
 pct exec $ctID -- bash -ci "apt-get -y install dphys-swapfile > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "dpkg -i /root/libicu57_57.1-6+deb9u4_amd64.deb > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "rm /root/libicu57_57.1-6+deb9u4_amd64.deb"
+
+#PermitRootLogin prohibit-password+PermitRootLogin yes
+#/etc/init.d/ssh restart > /dev/null 2>&1
+
 #pct exec $ctID -- bash -ci "apt-get -y install 3cxpbx"
 
 # Container description in the Proxmox web interface
