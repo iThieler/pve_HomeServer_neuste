@@ -479,8 +479,8 @@ function lxcMountNAS() {
   pct exec $1 -- bash -ci "mkdir -p /mnt/backup"
   pct exec $1 -- bash -ci "echo ""//$varnasip/media  /media  cifs credentials=/home/.smbmedia,uid=1000,gid=1000 0 0"" >> /etc/fstab"
   pct exec $1 -- bash -ci "echo ""//$varnasip/backups  /mnt/backup  cifs credentials=/home/.smbbackup,uid=1000,gid=1000 0 0"" >> /etc/fstab"
-  pct exec $1 -- bash -ci "echo -e username=$varrobotname\npassword=$varrobotpw > /home/.smbmedia"
-  pct exec $1 -- bash -ci "echo -e username=$varrobotname\npassword=$varrobotpw > /home/.smbbackup"
+  pct exec $1 -- bash -ci "echo -e ""username=$varrobotname\npassword=$varrobotpw"" > /home/.smbmedia"
+  pct exec $1 -- bash -ci "echo -e ""username=$varrobotname\npassword=$varrobotpw"" > /home/.smbbackup"
   pct exec $1 -- bash -ci "mount -a"
 }
 
