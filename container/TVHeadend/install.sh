@@ -2,14 +2,14 @@
 
 # Container Configuration
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 8 1 1024 0 "mount=cifs;nfs"
+containerSetup ubuntu $ctName $ctRootpw 8 1 1024 0 "nesting=1,mount=cifs;nfs"
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
 
 # Software that must be installed on the container
 # example - containerSoftware="docker.io docker-compose"
-containerSoftware="cifs-utils apt-transport-https coreutils wget lsb-release ca-certificates"
+containerSoftware="cifs-utils apt-transport-https coreutils lsb-release ca-certificates"
 
 # Start Container, because Container stoped aftrer creation
 pct start $ctID
@@ -57,7 +57,7 @@ pct exec $ctID -- bash -ci "apt-get install -y tvheadend > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "systemctl start tvheadend && systemctl enable tvheadend > /dev/null 2>&1"
 
 # Container description in the Proxmox web interface
-pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':9981'
+pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$':9981'"$nasFolder"$'\n\nPicons/Kanalsymbole\nAdresse: https://marhycz.github.io/picons/1024/%C.png'
 
 # echo [INFO] Create firewall rules for container "CONTAINERNAME"
 echo -e "$info $lng_lxcfw \"$ctName\""
