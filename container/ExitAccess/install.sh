@@ -52,7 +52,7 @@ pct exec $ctID -- bash -ci "systemctl stop lighttpd && systemctl disable lighttp
 pct exec $ctID -- bash -ci "curl -sSL $rawGitHubURL/container/$ctName/updateAdlistPihole.sh | bash"
 # Install and configure piVPN
 pct exec $ctID -- bash -ci "useradd -m -p $ctRootpw pivpn"
-pct exec $ctID -- bash -ci "mkdir -p /etc/pivpn/openvpn/"
+pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpn/"
 pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
 publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
 hostname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "Hostname - öffentliche IP" "Wie lautet der Hostname (FQDN) oder die öffentliche IP zu diesem Container?" ${r} ${c} $publicIP 3>&1 1>&2 2>&3)
