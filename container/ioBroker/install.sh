@@ -19,11 +19,13 @@ sleep 10
 echo -e "$info $lng_lxc \"$ctName\" $lng_installlxc1"
 
 # Install the packages specified as containerSoftware
-for package in $containerSoftware; do
-  # echo [INFO] "PACKAGENAME" will be installed
-  echo -e "$info \"$package\" $lng_installlxc"
-  pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
-done
+if [[ ! $ontainerSoftware == "" ]]; then
+  for package in $containerSoftware; do
+    # echo [INFO] "PACKAGENAME" will be installed
+    echo -e "$info \"$package\" $lng_installlxc"
+    pct exec $nextCTID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
+  done
+fi
 
 adapter="parser javascript web vis vis-inventwo vis-icontwo influxdb proxmox"
 
@@ -37,7 +39,7 @@ pct exec $ctID -- bash -ci "curl -sLf https://iobroker.net/install.sh | bash > /
 # Install Adapter ioBroker Adapter
 for adp in $adapter; do
   # echo [INFO] "PACKAGENAME" will be installed
-  echo -e "$info \"$i\" $lng_installlxc"
+  echo -e "$info \"$adp\" $lng_installlxc"
   pct exec $ctID -- bash -ci "iobroker add iobroker.$adp --enabled > /dev/null 2>&1"
 done
 
