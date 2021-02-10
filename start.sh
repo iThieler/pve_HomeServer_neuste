@@ -553,24 +553,38 @@ function containerSetup() {
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   downloadTemplate $1
   echo -e "$info $lng_createlxc \"$2\""
-  if [[ ! $8 == "" ]]; then
-    features="--features \"$8\" \ "
+  if [[ $8 == "" ]]; then
+    pct create $nextCTID \
+      $downloadPath:vztmpl/$ctTemplate \
+      --ostype $ctOstype \
+      --hostname "$2" \
+      --password "$3" \
+      --rootfs $rootfs:$4 \
+      --cores $5 \
+      --memory $6 \
+      --swap $(( $6 / 2 )) \
+      --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
+      --onboot 1 \
+      --force 1 \
+      --unprivileged "$7" \
+      --start 1 > /dev/null 2>&1
+  else
+    pct create $nextCTID \
+      $downloadPath:vztmpl/$ctTemplate \
+      --ostype $ctOstype \
+      --hostname "$2" \
+      --password "$3" \
+      --rootfs $rootfs:$4 \
+      --cores $5 \
+      --memory $6 \
+      --swap $(( $6 / 2 )) \
+      --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
+      --onboot 1 \
+      --force 1 \
+      --unprivileged "$7" \
+      --start 1 \
+      --features "$8" > /dev/null 2>&1
   fi
-  pct create $nextCTID \
-    $downloadPath:vztmpl/$ctTemplate \
-    --ostype $ctOstype \
-    --hostname "$2" \
-    --password "$3" \
-    --rootfs $rootfs:$4 \
-    --cores $5 \
-    --memory $6 \
-    --swap $(( $6 / 2 )) \
-    --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
-    --onboot 1 \
-    --force 1 \
-    --unprivileged "$7" \
-    $features
-    --start 1 > /dev/null 2>&1          
   echo -e "$info $lng_lxc \"$2\" $lng_updatelxc"
   if [[ $ctOStype == "debian" ]]; then
     pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
@@ -597,7 +611,7 @@ function containerSetup() {
 
 mkdir -p $workdir
 
-startUserInput
+#startUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
