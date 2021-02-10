@@ -582,7 +582,7 @@ function containerSetup() {
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
   pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
   for package in $ctStandardsoftware; do
-    echo -e "$info $package $lng_installlxc"
+    echo -e "$info \"$package\" $lng_installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
   pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
