@@ -611,7 +611,7 @@ function containerSetup() {
 
 mkdir -p $workdir
 
-#startUserInput
+startUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
