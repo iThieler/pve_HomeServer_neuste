@@ -40,7 +40,7 @@ echo -e "$info $lng_lxcfw \"$ctName\""
 
 # Creates firewall rules for the container
 # Create Firewallgroup - If a port should only be accessible from the local network - IN ACCEPT -source +network -p tcp -dport PORTNUMBER -log nolog
-echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -p tcp -dport 5015 -log nolog # Weboberfläche zur Ersteinrichtung\nIN ACCEPT -p tcp -dport 5001 -log nolog # Weboberfläche HTTPs\nIN ACCEPT -p udp -dport 5062 -log nolog # SIP\nIN ACCEPT -p tcp -dport 5062 -log nolog # SIP\nIN ACCEPT -p tcp -dport 5063 -log nolog # secure SIP\nIN ACCEPT -p udp -dport 5090 -log nolog # Tunnel\nIN ACCEPT -p tcp -dport 5090 -log nolog # Tunnel\nIN ACCEPT -p udp -dport 9000:10999 -log nolog # RTP\n\n" >> $clusterfile
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -p tcp -dport 5015 -log nolog # Weboberfläche zur Ersteinrichtung\nIN ACCEPT -p tcp -dport 5001 -log nolog # Weboberfläche HTTPs\nIN ACCEPT -p udp -dport 5062 -log nolog # SIP\nIN ACCEPT -p tcp -dport 5062 -log nolog # SIP\nIN ACCEPT -p tcp -dport 5063 -log nolog # secure SIP\nIN ACCEPT -p udp -dport 5090 -log nolog # Tunnel\nIN ACCEPT -p tcp -dport 5090 -log nolog # Tunnel\nIN ACCEPT -p udp -dport 9000:10999 -log nolog # RTP\n\n" >> $clusterfileFW
 
 # Allow Firewallgroup
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw

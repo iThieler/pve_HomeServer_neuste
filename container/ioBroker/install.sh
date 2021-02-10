@@ -88,7 +88,7 @@ echo -e "$info $lng_lxcfw \"$ctName\""
 
 # Creates firewall rules for the container
 # Create Firewallgroup - If a port should only be accessible from the local network - IN ACCEPT -source +network -p tcp -dport PORTNUMBER -log nolog
-echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN HTTPS(ACCEPT) -log nolog\nIN HTTP(ACCEPT) -log nolog\nIN ACCEPT -source +network -p tcp -dport 1880 -log nolog #node-red\nIN ACCEPT -source +network -p tcp -dport 1883 -log nolog #mqtt\nIN ACCEPT -source +network -p tcp -dport 2001 -log nolog #homematic\nIN ACCEPT -source +network -p tcp -dport 8081 -log nolog #iobroker admin\nIN ACCEPT -source +network -p tcp -dport 8082 -log nolog #iobroker vis\nIN ACCEPT -source +network -p tcp -dport 8282 -log nolog #flot\n\n" >> $clusterfile
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN HTTPS(ACCEPT) -log nolog\nIN HTTP(ACCEPT) -log nolog\nIN ACCEPT -source +network -p tcp -dport 1880 -log nolog #node-red\nIN ACCEPT -source +network -p tcp -dport 1883 -log nolog #mqtt\nIN ACCEPT -source +network -p tcp -dport 2001 -log nolog #homematic\nIN ACCEPT -source +network -p tcp -dport 8081 -log nolog #iobroker admin\nIN ACCEPT -source +network -p tcp -dport 8082 -log nolog #iobroker vis\nIN ACCEPT -source +network -p tcp -dport 8282 -log nolog #flot\n\n" >> $clusterfileFW
 
 # Allow Firewallgroup
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
