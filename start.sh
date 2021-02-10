@@ -449,7 +449,7 @@ function startConfig() {
   # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
   softwaretoinstall="parted smartmontools libsasl2-modules"
   echo -e "$info Benötigte Updates werden geladen und installiert, je nach Internetverbindung kann dies einige Zeit in Anspruch nehmen."
-  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null #&& apt-get dist-upgrade -y 2>&1 >/dev/null
   echo -e "$ok Alle Systemupdates und benötigte Software wurde installiert"
   for package in $softwaretoinstall; do
     apt-get install -y "$package" > /dev/null 2>&1
@@ -588,7 +588,7 @@ function containerSetup() {
     echo -e "$info \"$package\" $lng_installlxc"
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
-  pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
+  #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
   echo -e "$ok $lng_lxc \"$2\" $lng_endlxc"
   pct shutdown $nextCTID --timeout 5
   sleep 10
