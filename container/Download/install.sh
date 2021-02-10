@@ -9,7 +9,7 @@ ctID=$?
 
 # Software that must be installed on the container
 # example - containerSoftware="docker.io docker-compose"
-containerSoftware="gnupg ca-certificates mediainfo"
+containerSoftware="gnupg ca-certificates mediainfo cifs-utils"
 
 # Start Container, because Container stoped aftrer creation
 pct start $ctID
@@ -32,7 +32,7 @@ pct exec $ctID -- bash -ci "echo 'deb https://download.mono-project.com/repo/ubu
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
 echo -e "$info Nicht ungeduldig werden, das wird jetzt einige Zeit dauern ... :-)"
 pct exec $ctID -- bash -ci "apt-get install -y mono-devel > /dev/null 2>&1"
-systemctl disable binfmt-support
+pct exec $ctID -- bash -ci "systemctl disable binfmt-support"
 # Install sabnzbd
 pct exec $ctID -- bash -ci "add-apt-repository multiverse > /dev/null 2>&1 && add-apt-repository universe > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "add-apt-repository -y ppa:jcfp/nobetas > /dev/null 2>&1 && add-apt-repository -y ppa:jcfp/sab-addons > /dev/null 2>&1"
@@ -76,5 +76,3 @@ echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -source
 
 # Allow Firewallgroup
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
-
-echo -e "[group downloadserver]\n\n" >> $fwcluster
