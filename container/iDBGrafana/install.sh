@@ -58,7 +58,7 @@ echo -e "$info $lng_lxcfw \"$ctName\""
 
 # Creates firewall rules for the container
 # Create Firewallgroup - If a port should only be accessible from the local network - IN ACCEPT -source +network -p tcp -dport PORTNUMBER -log nolog
-echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -source +network -p tcp -dport 3000 -log nolog # Weboberfläche\n\n" >> $clusterfileFW
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -source +network -p tcp -dport 3000 -log nolog # Weboberfläche\nIN ACCEPT -source +pnetwork -p tcp -dport 8086 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8088 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 8089 -log nolog\n\n" >> $clusterfileFW
 
 # Allow Firewallgroup
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
