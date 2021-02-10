@@ -49,7 +49,7 @@ pct exec $ctID -- bash -ci "iobroker set influxdb.0 --host $(lxc-info $(pct list
 pct exec $(pct list | grep iDBGrafana | awk '{print $1}') -- bash -ci 'echo -e "apiVersion: 1\n\ndatasources:\n  - name: ioBroker\n    type: influxdb\n    url: http://localhost:8086\n    access: proxy\n    database: iobroker\n    user: iobroker\n    password: $ctRootpw" > /etc/grafana/provisioning/datasources/iobroker.yaml'
 pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip "$pveIP" --name root --pwd "$varpverootpw" > /dev/null 2>&1"
 if [[ $nasexists == "y" ]]; then
-  pct exec $ctID -- bash -ci "iobroker add iobroker.backitup --enabled > /dev/null 2>&1 && iobroker set backitup.0 --minimalEnabled true --cifsEnabled true --minimalTime '03:00' --cifsMount $varnasip --cifsUser $varrobotname --cifsPassword $varrobotpw --cifsDir $varnasbackupfolder/ioBroker --select-options-4f98f850-ad68-5bc7-44f6-9227549e9ece1 --select-options-0d8216bb-6c27-0582-e419-78db89aa8f3c1 > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "iobroker add iobroker.backitup --enabled > /dev/null 2>&1 && iobroker set backitup.0 --minimalEnabled true --cifsEnabled true --minimalTime '03:00' --cifsMount $varnasip --cifsUser $varrobotname --cifsPassword $varrobotpw --cifsDir $varnasbackupfolder/ioBroker > /dev/null 2>&1"
   if [[ $varrobotname != "" ]] && [[ $varsynologynas == "y" ]]; then
     pct exec $ctID -- bash -ci "iobroker add iobroker.synology --enabled > /dev/null 2>&1 && iobroker set synology.0 --host $varnasip --login $varrobotname --password $varrobotpw > /dev/null 2>&1"
   fi
