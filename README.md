@@ -3,8 +3,8 @@
         <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4">
     </a>
     <br>
-    [English](https://github.com/shiot/prepve#proxmox-configurationscript) - [Deutsch](https://github.com/shiot/prepve#proxmox-konfigurationsskript)
 </p>
+    [<strong>English</strong>](https://github.com/shiot/prepve#proxmox-configurationscript) - [<strong>Deutsch</strong>](https://github.com/shiot/prepve#proxmox-konfigurationsskript)
 
 -----
 
