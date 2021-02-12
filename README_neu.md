@@ -37,10 +37,10 @@ Du kannst dieses Skript direkt ausführen, indem Du eine Konsole über deine Pro
 ### Methode 1
 `curl -sSL https://install.shiot.de | bash`
 
-Methode 2 (direct link)
+### Methode 2 (direct link)
 `curl https://raw.githubusercontent.com/shiot/prepve/master/start.sh | bash`
 
-Methode 3 (clone repo)
+### Methode 3 (clone repo)
 ``git clone https://github.com/shiot/prepve.git
 bash prepve/start.sh``
 
