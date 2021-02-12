@@ -6,6 +6,8 @@
     <strong>Proxmox Configurationskript</strong>
 </p>
 
+-----
+## English - German below
 
 ## ABOUT
 Visit the [SmartHome-IoT](https://www.smarthome-iot.net) website for more information. This is a set of shell scripts designed to easily turn your home server into a configured "secure" home server. During configuration, the following configurations are applied in a newly installed [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte) system:
@@ -50,7 +52,8 @@ The script starts with some questions about your system, your proxmox installati
 This script is intended for private end-users only. I am not a programmer or software developer, but come from the IT world. This script may contain errors, so called bugs due to which your server may become unusable.
 If you use this script, you do so at your own risk. I am in no way responsible if something breaks on your system, even if the probability of it disappearing is low.
 
------ Deutsch
+-----
+## Deutsch
 
 ## ÜBER
 Besuchen Sie die [SmartHome-IoT](https://www.smarthome-iot.net) Webseite für weitere Informationen. Dies ist eine Reihe von Shell-Skripten, die dazu dienen, Ihren Homeserver auf einfache Weise in einen konfigurierten „sicheren“ Homeserver zu verwandeln. Während der Konfiguration werden in einem neu installierten [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte)-System folgende Konfigurationen angewendet:
