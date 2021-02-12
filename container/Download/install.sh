@@ -2,7 +2,7 @@
 
 # Container Configuration
 # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-containerSetup ubuntu $ctName $ctRootpw 4 1 512 0 "mount=cifs;nfs"
+containerSetup ubuntu $ctName $ctRootpw 4 1 1024 0 "mount=cifs;nfs"
 
 # Comes from Mainscript - start.sh --> Function containerSetup
 ctID=$?
@@ -41,7 +41,7 @@ pct exec $ctID -- bash -ci "apt-get install -y sabnzbdplus > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "systemctl stop sabnzbdplus"
 pct exec $ctID -- bash -ci "sed -i 's#USER=#USER=root#g' /etc/default/sabnzbdplus"
 pct exec $ctID -- bash -ci "sed -i 's#HOST=#HOST=0.0.0.0#g' /etc/default/sabnzbdplus"
-pct exec $ctID -- bash -ci "sed -i 's#PORT=#PORT=8080#g' /etc/default/sabnzbdplus"
+pct exec $ctID -- bash -ci "sed -i 's#PORT=#PORT=6767#g' /etc/default/sabnzbdplus"
 pct exec $ctID -- bash -ci "systemctl start sabnzbdplus && systemctl enable sabnzbdplus > /dev/null 2>&1"
 # Install Radarr
 pct exec $ctID -- bash -ci "curl -L -O $( curl -s https://api.github.com/repos/Radarr/Radarr/releases | grep linux.tar.gz | grep browser_download_url | head -1 | cut -d \" -f 4 ) > /dev/null 2>&1"
@@ -62,10 +62,11 @@ if [[ $nasexists == "y" ]]; then
   lxcMountNAS $ctID
   pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/complete"
   pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/incomplete"
+  pct exec $ctID -- bash -ci "/media/Downloads/manualNZB"
 fi
 
 # Container description in the Proxmox web interface
-pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nsabnzbd: http://'"$nextCTIP"$':8080/sabnzbd\nRadarr: http://'"$nextCTIP"$':7878\nSonarr: http://'"$nextCTIP"$':8989\n'
+pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nsabnzbd: http://'"$nextCTIP"$':6767/sabnzbd\nRadarr: http://'"$nextCTIP"$':7878\nSonarr: http://'"$nextCTIP"$':8989\n'
 
 # echo [INFO] Create firewall rules for container "CONTAINERNAME"
 echo -e "$info $lng_lxcfw \"$ctName\""
