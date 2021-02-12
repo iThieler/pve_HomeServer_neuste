@@ -35,10 +35,14 @@ Du solltest schonmal einen Computer installiert haben und wissen was IP-Adressen
 Du kannst dieses Skript direkt ausführen, indem Du eine Konsole über deine Proxmox WebGUI öffnest und folgendes eingibst:
 
 ### Methode 1
-`curl -sSL https://install.shiot.de | bash`
+```bash
+curl -sSL https://install.shiot.de | bash
+```
 
 ### Methode 2 (direct link)
-`curl https://raw.githubusercontent.com/shiot/prepve/master/start.sh | bash`
+```bash
+curl https://raw.githubusercontent.com/shiot/prepve/master/start.sh | bash
+```
 
 ### Methode 3 (clone repo)
 ```bash
