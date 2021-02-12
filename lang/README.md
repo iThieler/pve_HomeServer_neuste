@@ -1,3 +1,10 @@
+<p align="center">
+    <a href="https://smarthome-iot.net/">
+        <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4" width=200px>
+    </a>
+    <br>
+</p>
+
 ## Proxmox Configurationscript
 
 ## ABOUT
@@ -44,6 +51,13 @@ This script is intended for private end-users only. I am not a programmer or sof
 If you use this script, you do so at your own risk. I am in no way responsible if something breaks on your system, even if the probability of it disappearing is low.
 
 -----
+
+<p align="center">
+    <a href="https://smarthome-iot.net/">
+        <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4" width=200px>
+    </a>
+    <br>
+</p>
 
 ## Proxmox Konfigurationsskript
 
