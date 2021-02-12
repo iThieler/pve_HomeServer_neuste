@@ -9,7 +9,7 @@
 
 
 ## ABOUT
-Visit the [SmartHome-IoT](https://www.smarthome-iot.net) website for more information. This is a set of shell scripts designed to easily turn your home server into a configured "secure" home server. During configuration, the following configurations are applied in a newly installed [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte) system:
+Visit the [SmartHome-IoT](https://www.smarthome-iot.net) website for more information. This is a set of shell scripts designed to easily turn your home server into a configured "secure" home server. During configuration, the following configurations are applied in a newly installed [Proxmox](https://www.proxmox.com/en/proxmox-ve/get-started) system:
 - Setting the community repository's (pve-no-subscription).
 - Update of the complete system
 - Installation of the software packages (parted, smartmontools, libsasl2-modules)
