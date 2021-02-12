@@ -43,7 +43,8 @@ Du kannst dieses Skript direkt ausführen, indem Du eine Konsole über deine Pro
 ### Methode 3 (clone repo)
 ```bash
 git clone https://github.com/shiot/prepve.git
-bash prepve/start.sh```
+bash prepve/start.sh
+```
 
 Das Skript startet mit einigen Fragen zu deinem System, deiner Proxmox Installation, und deinem Netzwerk. Nach der Auswahl der Container, die du installieren willst, läuft das Skript Großteiles automatisch und führt die Konfiguration von deinem Server, sowie die Installation der gewählten Container aus.
 
