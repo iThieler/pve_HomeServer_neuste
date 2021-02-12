@@ -77,39 +77,6 @@ function shellStart() {
   if [[ $REPLY =~ ^[JjYy]$ ]]; then
     clear
     shellLogo
-    echo -e "##################### Rechtliche Hinweise / \e[1;30mLegal notice\e[0m - Deutsch / \e[1;30mGerman\e[0m ######################"
-    echo "#                                                                                                #"
-    echo "# Ein Skript, welches schnell und einfach die ersten wichtigsten Konfigurationen von Proxmox VE  #"
-    echo "# übernimmt. Nach der Ausführung dieses Skripts sind E-Mailbenachrichtigungen, Firewall          #"
-    echo "# Einstellungen, Backups und evtl. ZFS-Pools in Proxmox VE eingerichtet. Außerdem werden einige  #"
-    echo "# Container (CT) / virtuelle Maschinen (VM) eingerichtet. Ziel ist es Neulingen den einstieg     #"
-    echo "# in Proxmox VE zu erleichtern und schnell einen ""sicheren"" Homeserver an die Hand zu geben.   #"
-    echo "#                                                                                                #"
-    echo -e "# \e[1;35mHAFTUNGSAUSSCHLUSS\e[0m                                                                             #"
-    echo "# Ich gehe davon aus, dass Du weisst was Du tust, und es sich um ein neu installiertes System    #"
-    echo "# in der Standardkonfiguration handelt.                                                          #"
-    echo "#                                                                                                #"
-    echo "# !!! Ich bin in keiner Weise dafür verantwortlich, wenn an deinem System etwas kaputt geht,     #"
-    echo "# auch wenn die wahrscheinlich dafür verschwindet gering ist !!!                                 #"
-    echo "#                                                                                                #"
-    echo "# Ich bin kein Programmierer oder Softwareentwickler. Ich versuche nur, einigen Anfängern das    #"
-    echo "# Leben ein wenig zu erleichtern. ;-)                                                            #"
-    echo "#                                                                                                #"
-    echo "# Es wird Bugs oder Dinge geben, an die ich nicht gedacht habe - sorry - wenn das so ist,        #"
-    echo "# versuchst Du am besten es selbst zu lösen oder lass es mich bitte wissen, eventuell kann ich   #"
-    echo "# dir helfen das Problem zu lösen.                                                               #"
-    echo "#                                                                                                #"
-    echo -e "# \e[1;35mVERWENDUNG\e[0m                                                                                     #"
-    echo "# Du kannst dieses Skript direkt ausführen, indem Du eine Konsole über deine Proxmox WebGUI      #"
-    echo "# öffnest und folgendes eingibst:                                                                #"
-    echo "# # bash <(wget -qO- https://install.shiot.de/pveConfig.sh)                                      #"
-    echo "#                                                                                                #"
-    echo "# Du kannst dieses Skript vor der Benutzung bearbeiten in dem Du es in der Shell herunterlädst   #"
-    echo "# # wget https://install.shiot.de/pveConfig.sh                                                   #"
-    echo "#                                                                                                #"
-    echo "##################################################################################################"
-    echo ""
-    echo ""
     read -p "$(echo -e "$question") Ich habe den Text gelesen, zur Kenntnis genommen und bin damit einverstanden. $(echo -e "$yesno") " -rn1 && echo ""
     if [[ $REPLY =~ ^[JjYy]$ ]]; then
       startUserInput
@@ -447,9 +414,9 @@ function startConfig() {
   fi
 
   # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
-  softwaretoinstall="parted smartmontools libsasl2-modules"
+  softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
   echo -e "$info Benötigte Updates werden geladen und installiert, je nach Internetverbindung kann dies einige Zeit in Anspruch nehmen."
-  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null #&& apt-get dist-upgrade -y 2>&1 >/dev/null
+  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
   echo -e "$ok Alle Systemupdates und benötigte Software wurde installiert"
   for package in $softwaretoinstall; do
     apt-get install -y "$package" > /dev/null 2>&1
