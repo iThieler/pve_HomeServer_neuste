@@ -79,7 +79,7 @@ function shellStart() {
     shellLogo
     read -p "$(echo -e "$question") Ich habe den Text gelesen, zur Kenntnis genommen und bin damit einverstanden. $(echo -e "$yesno") " -rn1 && echo ""
     if [[ $REPLY =~ ^[JjYy]$ ]]; then
-      startUserInput
+      firstUserInput
     else
       echo -e "$error Unter diesen Umständen kann das Skript nicht ausgeführt werden, sorry."
       exit 1
@@ -97,13 +97,13 @@ function createPassword() {
   done 
 }
 
-function startUserInput() {
+function firstUserInput() {
   networkrobotpw=$(createPassword 20)
   wget -rqO /root/lng.conf $rawGitHubURL/config/lng.conf
   source /root/lng.conf
   lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  wget -qO $workdir/lang $rawGitHubURL/lang/$lang
-  source $workdir/lang
+  wget -qO /root/lang $rawGitHubURL/lang/$lang
+  source /root/lang
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_intr" "$lng_intrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_netr" "$lng_netrtxt" ${r} ${c}
   whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_spwd" "$lng_spwdtxt" ${r} ${c}
@@ -576,9 +576,9 @@ function containerSetup() {
   return $nextCTID
 }
 
-mkdir -p $workdir
+if [ ! -d $workdir ]; then mkdir -p $workdir; fi
 
-startUserInput
+firstUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
@@ -589,7 +589,7 @@ for lxc in $lxcchoice; do
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     echo -e "$ok $lng_lxcinfo \"$lxc\""
     sleep 5
-    wget -qO /root/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
+    wget -qO $workdir/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
     source inst_$ctName.sh
     #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
   else
