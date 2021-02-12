@@ -578,7 +578,7 @@ function containerSetup() {
 
 if [ ! -d $workdir ]; then mkdir -p $workdir; fi
 
-firstUserInput
+#firstUserInput
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
@@ -590,7 +590,7 @@ for lxc in $lxcchoice; do
     echo -e "$ok $lng_lxcinfo \"$lxc\""
     sleep 5
     wget -qO $workdir/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
-    source inst_$ctName.sh
+    source $workdir/inst_$ctName.sh
     #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
   else
     echo -e "$error $lng_lxcerror \"$lxc\""
