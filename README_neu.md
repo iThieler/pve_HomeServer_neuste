@@ -1,8 +1,8 @@
 <!-- markdownlint-configure-file { "MD004": { "style": "consistent" } } -->
 <!-- markdownlint-disable MD033 -->
 <p align="center">
-    <a href="https://pi-hole.net/">
-        <img src="https://pi-hole.github.io/graphics/Vortex/Vortex_with_Wordmark.svg" width="150" height="260" alt="Pi-hole">
+    <a href="https://smarthome-iot.net/">
+        <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4" width="150" height="260" alt="Pi-hole">
     </a>
     <br>
     <strong>Network-wide ad blocking via your own Linux hardware</strong>
