@@ -579,7 +579,7 @@ function containerSetup() {
 if [ ! -d $workdir ]; then mkdir -p $workdir; fi
 
 #firstUserInput
-
+lxcchoice=$(cat $workdir/lxcchoice)
 # Start creating the selected containers
 for lxc in $lxcchoice; do
   clear
