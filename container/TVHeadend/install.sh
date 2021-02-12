@@ -51,7 +51,7 @@ fi
 #fi
 if [[ $nasexists == "y" ]]; then
   lxcMountNAS $ctID
-  pct exec $ctID -- bash -ci "mkdir -p /media/Records"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Records\" ]; then mkdir -p \"/media/Records\"; fi"
 fi
 pct exec $ctID -- bash -ci "apt-get install -y tvheadend > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "systemctl start tvheadend && systemctl enable tvheadend > /dev/null 2>&1"

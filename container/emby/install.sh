@@ -41,9 +41,9 @@ pct exec $ctID -- bash -ci "dpkg -i emby-server-deb_4.6.0.22_amd64.deb > /dev/nu
 #fi
 if [[ $nasexists == "y" ]]; then
   lxcMountNAS $ctID
-  pct exec $ctID -- bash -ci "mkdir -p /media/Movies"
-  pct exec $ctID -- bash -ci "mkdir -p /media/Series"
-  pct exec $ctID -- bash -ci "mkdir -p /media/Photos"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Movies\" ]; then mkdir -p \"/media/Movies\"; fi"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Series\" ]; then mkdir -p \"/media/Series\"; fi"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Photos\" ]; then mkdir -p \"/media/Photos\"; fi"
 fi
 
 # Container description in the Proxmox web interface

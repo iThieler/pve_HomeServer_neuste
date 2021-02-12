@@ -60,9 +60,9 @@ pct exec $ctID -- bash -ci "systemctl start sonarr && systemctl enable sonarr > 
 # If NAS exist in Network, bind to Container, only privileged and mount=cifs Feature is set
 if [[ $nasexists == "y" ]]; then
   lxcMountNAS $ctID
-  pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/complete"
-  pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/incomplete"
-  pct exec $ctID -- bash -ci "/media/Downloads/manualNZB"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Downloads/complete\" ]; then mkdir -p \"/media/Downloads/complete\"; fi"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Downloads/incomplete\" ]; then mkdir -p \"/media/Downloads/incomplete\"; fi"
+  pct exec $ctID -- bash -ci "if [ ! -d \"/media/Downloads/manualNZB\" ]; then mkdir -p \"/media/Downloads/manualNZB\"; fi"
 fi
 
 # Container description in the Proxmox web interface
