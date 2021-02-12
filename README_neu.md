@@ -1,5 +1,3 @@
-<!-- markdownlint-configure-file { "MD004": { "style": "consistent" } } -->
-<!-- markdownlint-disable MD033 -->
 <p align="center">
     <a href="https://smarthome-iot.net/">
         <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4">
@@ -7,11 +5,8 @@
     <br>
     <strong>Proxmox Konfigurationsskript</strong>
 </p>
-<!-- markdownlint-enable MD033 -->
 
 #
-
-Proxmox Konfigurationsskript
 
 ## ÜBER
 Besuchen Sie die [SmartHome-IoT](https://www.smarthome-iot.net) Webseite für weitere Informationen. Dies ist eine Reihe von Shell-Skripten, die dazu dienen, Ihren Homeserver auf einfache Weise in einen konfigurierten „sicheren“ Homeserver zu verwandeln. Während der Konfiguration werden in einem neu installierten [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte)-System folgende Konfigurationen angewendet:
