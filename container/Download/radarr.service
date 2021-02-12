@@ -10,7 +10,7 @@ Group=root
 Type=simple
 
 # Change the path to Radarr or mono here if it is in a different location for you.
-ExecStart=/usr/bin/mono --debug /opt/Radarr/Radarr.exe -nobrowser
+ExecStart=/usr/bin/mono /opt/Radarr/Radarr.exe -nobrowser
 TimeoutStopSec=20
 KillMode=process
 Restart=on-failure
