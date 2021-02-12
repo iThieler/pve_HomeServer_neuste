@@ -4,7 +4,7 @@
     </a>
     <br>
 </p>
-    [<strong>English</strong>](https://github.com/shiot/prepve#proxmox-configurationscript) - [<strong>Deutsch</strong>](https://github.com/shiot/prepve#proxmox-konfigurationsskript)
+[English](https://github.com/shiot/prepve#proxmox-configurationscript) - [Deutsch](https://github.com/shiot/prepve#proxmox-konfigurationsskript)
 
 -----
 
