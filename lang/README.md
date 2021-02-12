@@ -1,3 +1,5 @@
+## Proxmox Configurationscript
+
 <p align="center">
     <a href="https://smarthome-iot.net/">
         <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4" width=200px>
@@ -5,7 +7,6 @@
     <br>
 </p>
 
-## Proxmox Configurationscript
 
 ## ABOUT
 Visit the [SmartHome-IoT](https://www.smarthome-iot.net) website for more information. This is a set of shell scripts designed to easily turn your home server into a configured "secure" home server. During configuration, the following configurations are applied in a newly installed [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte) system:
@@ -52,6 +53,8 @@ If you use this script, you do so at your own risk. I am in no way responsible i
 
 -----
 
+## Proxmox Konfigurationsskript
+
 <p align="center">
     <a href="https://smarthome-iot.net/">
         <img src="https://avatars.githubusercontent.com/u/39486895?s=460&u=9535216fe331e8c63d6be8c7410448c4999def32&v=4" width=200px>
@@ -59,7 +62,6 @@ If you use this script, you do so at your own risk. I am in no way responsible i
     <br>
 </p>
 
-## Proxmox Konfigurationsskript
 
 ## ÜBER
 Besuchen Sie die [SmartHome-IoT](https://www.smarthome-iot.net) Webseite für weitere Informationen. Dies ist eine Reihe von Shell-Skripten, die dazu dienen, Ihren Homeserver auf einfache Weise in einen konfigurierten „sicheren“ Homeserver zu verwandeln. Während der Konfiguration werden in einem neu installierten [Proxmox]( https://www.proxmox.com/de/proxmox-ve/erste-schritte)-System folgende Konfigurationen angewendet:
