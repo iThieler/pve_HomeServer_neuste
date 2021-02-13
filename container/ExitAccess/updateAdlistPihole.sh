@@ -32,7 +32,7 @@ sort $list | uniq -d >> $nlist
 
 create_sql_dump "$nlist" "$TMP_SQL"
 if [ ! $? -eq 0 ]; then
-    echo "ERROR: Unable to fetch adlist"
+    echo "ERROR: Unable to fetch adlist" >> $workDir/log.txt
     rm $TMP_SQL
     exit 1
 fi

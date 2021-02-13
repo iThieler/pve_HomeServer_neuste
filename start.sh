@@ -376,7 +376,7 @@ function lxcMountNAS() {
   nasFolder=$'\n\nNAS Verzeichnisse\nMedienverzeichnis: /media\nBackupverzeichnis: /mnt/backup'
 }
 
-function containerSetup() {
+function lxcSetup() {
   # Generates an ID and an IP address for the container to be created
   function createIDIP() {
     if [ $(pct list | grep -c 100) -eq 0 ]; then
@@ -424,11 +424,11 @@ function containerSetup() {
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
   {
     sleep 0.5
-    echo -e "XXX\n0\nDer Container bekommt eine ID und eine IP zugewiesen\nXXX"
+    echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
     createIDIP
-    echo -e "XXX\n17\nWenn nicht vorhanden, wird das benötigte Template downgeloaded\nXXX"
+    echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
     downloadTemplate $1
-    echo -e "XXX\n33\nDer Container wird in Proxmox installiert\nXXX"
+    echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
     if [[ $8 == "" ]]; then
       pct create $nextCTID \
         rootfs="$downloadPath":vztmpl/$ctTemplate \
@@ -461,7 +461,7 @@ function containerSetup() {
         --start 1 \
         --features "$8" > /dev/null 2>&1
     fi
-    echo -e "XXX\n65\nDer Container wird aktualisiert\nXXX"
+    echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
     if [[ $ctOStype == "debian" ]]; then
       pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
       pct exec $nextCTID -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
@@ -474,16 +474,16 @@ function containerSetup() {
     pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
     pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
     pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-    echo -e "XXX\n88\nDie Containersoftware wird installiert\nXXX"
+    echo -e "XXX\n88\n$lng_lxc_setup_text_software_install\nXXX"
     for package in $ctStandardsoftware; do
       pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
     done
     #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-    echo -e "XXX\n98\nDie Containererstellung wird beendet\nXXX"
+    echo -e "XXX\n98\n$lng_lxc_setup_text_finish\nXXX"
     pct shutdown $nextCTID --timeout 5
     sleep 10
     return $nextCTID
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "Installiere $2" --gauge "Vorbereitung" 6 60 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $2" --gauge "$lng_lxc_setup_text" 6 60 0
 }
 
 if [ ! -d $workdir ]; then mkdir -p $workdir; fi
@@ -497,6 +497,7 @@ emailConfig
 nasConfig
 firewallConfig
 lxcConfig
+lxcSetup
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
