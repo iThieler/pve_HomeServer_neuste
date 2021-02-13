@@ -413,52 +413,53 @@ function lxcMountNAS() {
 }
 
 function lxcSetup() {
-  # Generates an ID and an IP address for the container to be created
-  function createIDIP() {
-    if [ $(pct list | grep -c 100) -eq 0 ]; then
-      nextCTID=100
-      lastCTIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4)
-      nextCTIP=$networkIP.$(( "$lastCTIP" + 5 ))
-    else
-      lastCTID=$(pct list | tail -n1 | awk '{print $1}')
-      nextCTID=$(( "$lastCTID" + 1 ))
-      lastCTIP=$(lxc-info "$lastCTID" -iH | grep "$networkIP" | cut -d. -f4)
-      nextCTIP=$networkIP.$(( "$lastCTIP" + 1 ))
-    fi
-  }
+  {
+    # Generates an ID and an IP address for the container to be created
+    function createIDIP() {
+      if [ $(pct list | grep -c 100) -eq 0 ]; then
+        nextCTID=100
+        lastCTIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4)
+        nextCTIP=$networkIP.$(( "$lastCTIP" + 5 ))
+      else
+        lastCTID=$(pct list | tail -n1 | awk '{print $1}')
+        nextCTID=$(( "$lastCTID" + 1 ))
+        lastCTIP=$(lxc-info "$lastCTID" -iH | grep "$networkIP" | cut -d. -f4)
+        nextCTIP=$networkIP.$(( "$lastCTIP" + 1 ))
+      fi
+    }
 
-  # Loads the container template from the Internet if not available and saves it for further use
-  function downloadTemplate() {
-    pveam update > /dev/null 2>&1
-    if [[ $1 == "ubuntu" ]]; then
-      ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+    # Loads the container template from the Internet if not available and saves it for further use
+    function downloadTemplate() {
+      pveam update > /dev/null 2>&1
+      if [[ $1 == "ubuntu" ]]; then
+        ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
+        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+        fi
+        ctOstype="ubuntu"
+      elif [[ $1 == "ubuntu18" ]]; then
+        ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
+        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+          pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
+        fi
+        ctOstype="ubuntu"
+      elif [[ $1 == "debian" ]]; then
+        ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
+        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+        fi
+        ctOstype="debian"
+      elif [[ $1 == "debian9" ]]; then
+        ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
+        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+        fi
+        ctOstype="debian"
       fi
-      ctOstype="ubuntu"
-    elif [[ $1 == "ubuntu18" ]]; then
-      ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
-      fi
-      ctOstype="ubuntu"
-    elif [[ $1 == "debian" ]]; then
-      ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-      fi
-      ctOstype="debian"
-    elif [[ $1 == "debian9" ]]; then
-      ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-      fi
-      ctOstype="debian"
-    fi
-  }
+    }
 
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-  {
+  # {
     sleep 0.5
     echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
     createIDIP
