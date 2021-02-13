@@ -2,9 +2,9 @@
 {
   # Container Configuration
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-  containerSetup ubuntu $ctName $ctRootpw 4 1 2048 0 "nesting=1,mount=nfs;cifs"
+  lxcSetup ubuntu $ctName $ctRootpw 4 1 2048 0 "nesting=1,mount=nfs;cifs"
 
-  # Comes from Mainscript - start.sh --> Function containerSetup
+  # Comes from Mainscript - start.sh --> Function lxcSetup
   ctID=$?
 
   # Software that must be installed on the container
