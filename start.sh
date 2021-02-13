@@ -485,7 +485,8 @@ function containerSetup() {
     pct shutdown $nextCTID --timeout 5
     sleep 10
     return $nextCTID
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "Installiere $2" --gauge "Vorbereitung" 6 60 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "Installiere $2" --gauge "Vorbereitung" 6 60 0
+}
 
 if [ ! -d $workdir ]; then mkdir -p $workdir; fi
 
