@@ -100,7 +100,7 @@ function pveConfig() {
     # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
     echo -e "XXX\n32\n$lng_pve_configuration_update\nXXX"
     apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
-    echo -e "XXX\n32\n$lng_pve_configuration_install\nXXX"
+    echo -e "XXX\n84\n$lng_pve_configuration_install\nXXX"
     softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
     for package in $softwaretoinstall; do
       apt-get install -y "$package" > /dev/null 2>&1
