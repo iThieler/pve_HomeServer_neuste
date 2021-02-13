@@ -115,7 +115,7 @@ function pveConfig() {
     echo -e "XXX\n99\n$lng_pve_configuration_forward\nXXX"
     sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
     sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_pve_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_pve_configuration" --gauge "$lng_pve_configuration_text" 6 70 0
   return 0
 }
 
@@ -131,11 +131,7 @@ function networkConfig() {
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   wget -qO /root/gw.conf $rawGitHubURL/config/gw.conf
   source /root/gw.conf
-  vargwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 \
-  "unifi" "Ubiquiti/UniFi DreamMachine Pro $lng_or CloudKey" off \
-  "avm" "AVM FRITZ!Box" off \
-  "andere" "$lng_another_manufacturer" off \
-  3>&1 1>&2 2>&3)
+  vargwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
@@ -252,7 +248,7 @@ function emailConfig() {
         sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
         systemctl start smartmontools
       fi
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 70 0
     return 0
   }
 
@@ -312,7 +308,7 @@ function nasConfig() {
         echo -e "XXX\n87\n$lng_nas_configuration_nas\nXXX"
         pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
       fi
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_pve_configuration_text" 6 70 0
     return 0
   }
 
@@ -328,14 +324,14 @@ function nasConfig() {
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "$lng_nas_ip_check" ${r} ${c} 50
+        } | whiptail --gauge "$lng_nas_ip_check" 6 70 50
       else
         {
           for ((i = 98 ; i <= 100 ; i+=1)); do
             sleep 0.5
             echo $i
           done
-        } | whiptail --gauge "$lng_nas_ip_check" ${r} ${c} 22
+        } | whiptail --gauge "$lng_nas_ip_check" 6 70 22
         whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_error" ${r} ${c}
         pingNAS
       fi
@@ -520,7 +516,7 @@ function lxcSetup() {
     pct shutdown $nextCTID --timeout 5
     sleep 10
     return $nextCTID
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $2" --gauge "$lng_lxc_setup_text" 6 60 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $2" --gauge "$lng_lxc_setup_text" 6 70 0
 }
 
 #if [ ! -f $configFile ]; then
