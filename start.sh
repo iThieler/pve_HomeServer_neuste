@@ -32,7 +32,7 @@ networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ 
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
 otherDisks=$(lsblk -nd --output NAME | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n# #' | sed 's# s#s#g' | sed 's# h#h#g' | sed ':M;N;$!bM;s#\n# #g')
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
-downloadPath="local"
+downloadPath="local-lvm"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
 workdir="/root/shiot"
@@ -57,39 +57,6 @@ function shellLogo() {
   echo "                                                                                                                                                   "
 }
 
-function shellStart() {
-  clear
-  shellLogo
-  echo "################################ copyright SmartHome - IoT - 2021 ##################################"
-  echo "#                                                                                                  #"
-  echo "# Ich empfehle Proxmox auf einer SSD zu installieren, 128GB reichen völlig aus. Für Festplatten    #"
-  echo "# von virtuellen Maschinen und Containern empfehle ich eine zweite SSD. Diese SSD sollte mit einer #"
-  echo "# größe von 128GB - 512GB (je nach nutzung von Containern und virtuellen Maschinen ausreichen.     #"
-  echo "# Natürlich kann in Proxmox auch ein Raid als Medien/Dokumentenfestplatte eingerichtet werden,     #"
-  echo "# dies würde ich allerdings nicht empfehlen. Nutze hierfür eine NAS (QNap, Synology, o. ä.).       #"
-  echo "# Wenn ein Raid/ZFS-Pool für diesen Zweck verwendet werden soll, musst die deinen Server mit ge-   #"
-  echo "# nügend Arbeitsspeicher ausstatten. Als Faustformel gilt 1GB RAM pro 1TB Festplattenkapazität.    #"
-  echo "#                                                                                                  #"
-  echo "####################################################################################################"
-  echo ""
-  echo ""
-  read -p "$(echo -e "$question") Ich habe den Text gelesen, zur Kenntnis genommen und bin damit einverstanden. $(echo -e "$yesno") " -rn1 && echo ""
-  if [[ $REPLY =~ ^[JjYy]$ ]]; then
-    clear
-    shellLogo
-    read -p "$(echo -e "$question") Ich habe den Text gelesen, zur Kenntnis genommen und bin damit einverstanden. $(echo -e "$yesno") " -rn1 && echo ""
-    if [[ $REPLY =~ ^[JjYy]$ ]]; then
-      firstUserInput
-    else
-      echo -e "$error Unter diesen Umständen kann das Skript nicht ausgeführt werden, sorry."
-      exit 1
-    fi
-  else
-    echo -e "$error Unter diesen Umständen kann das Skript nicht ausgeführt werden, sorry."
-    exit 1
-  fi
-}
-
 function createPassword() {
   chars=({0..9} {a..z} {A..Z} "_" "%" "&" "+" "-")
   for i in $(eval echo "{1..$1}"); do
@@ -97,128 +64,63 @@ function createPassword() {
   done 
 }
 
-function firstUserInput() {
-  networkrobotpw=$(createPassword 20)
+function selectLanguage() {
   wget -rqO /root/lng.conf $rawGitHubURL/config/lng.conf
   source /root/lng.conf
-  lang=$(whiptail --backtitle "SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO /root/lang $rawGitHubURL/lang/$lang
   source /root/lang
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_intr" "$lng_intrtxt" ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_netr" "$lng_netrtxt" ${r} ${c}
-  whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_welc" --title "$lng_spwd" "$lng_spwdtxt" ${r} ${c}
-  varpverootpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_pvepwd" "$lng_pvepwdtxt" ${r} ${c} 3>&1 1>&2 2>&3)
-  varrobotname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrn" "$lng_netrntxt" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
-  varrobotpw=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_netrpwd" "$lng_netrpwdtxt" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
+}
+
+function startupInfo() {
+  networkrobotpw=$(createPassword 20)
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" "$lng_start_info" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" "$lng_introduction_text" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" "$lng_netrobot_text" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text" ${r} ${c}
+}
+
+function networkConfig() {
+  varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_pve_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  varrobotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  varrobotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [[ "$exitstatus" = 1 ]]; then exit; fi
   wget -qO /root/gw.conf $rawGitHubURL/config/gw.conf
   source /root/gw.conf
-  gwchoice=$(whiptail --radiolist --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_gwr" "$lng_gwrtxt" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
-  if [[ $gwchoice == "UniFi/Ubiquiti" ]]; then
-    vargwmanufacturer="unifi"
-  elif [[ $gwchoice == "AVM" ]]; then
-    vargwmanufacturer="avm"
-  else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_gwr" "$lng_gwrtxt1" ${r} ${c}
-  fi
+  vargwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 \
+  "unifi" "Ubiquiti/UniFi DreamMachine Pro $lng_or CloudKey" off \
+  "avm" "AVM FRITZ!Box" off \
+  "andere" "$lng_another_manufacturer" off \
+  3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
   if [[ $vargwmanufacturer == "unifi" ]]; then
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt" ${r} ${c}
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_info" ${r} ${c}
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
     yesno=$?
     if [[ $yesno == 0 ]]; then
       vlanexists=y
-      varservervlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt1" ${r} ${c} 1 3>&1 1>&2 2>&3)
-      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt2" ${r} ${c} 10 3>&1 1>&2 2>&3)
-      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlantxt3" ${r} ${c} 100 3>&1 1>&2 2>&3)
+      varservervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_server" ${r} ${c} 1 3>&1 1>&2 2>&3)
+      varsmarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_smarthome" ${r} ${c} 10 3>&1 1>&2 2>&3)
+      varguestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_guest" ${r} ${c} 100 3>&1 1>&2 2>&3)
     else
       vlanexists=n
     fi
-  else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_netinf" --title "$lng_vlan" "$lng_vlaninfo" ${r} ${c}
-  fi
-  varrootmail=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailserver=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailport=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt2" ${r} ${c} 587 3>&1 1>&2 2>&3)
-  varmailusername=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt3" ${r} ${c} 3>&1 1>&2 2>&3)
-  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt4" ${r} ${c} 3>&1 1>&2 2>&3)
-  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt5" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_mailconf" --title "$lng_mailconf" "$lng_mailconftxt6" ${r} ${c}
-  yesno=$?
-  if [[ $yesno == 0 ]]; then
-    vartls=yes
-  else
-    vartls=no
-  fi
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 1" --title "$lng_nasconf" "$lng_nasconftxt" ${r} ${c}
-  yesno=$?
-  if [[ $yesno == 0 ]]; then
-    function pingNAS() {
-      varnasip=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - $lng_nasconf 2" --title "$lng_nasconf" "$lng_nasconftxt1" ${r} ${c} 3>&1 1>&2 2>&3)
-      if ping -c 1 "$varnasip" > /dev/null 2>&1; then
-        varnasexists=y
-        {
-          for ((i = 98 ; i <= 100 ; i+=1)); do
-            sleep 0.5
-            echo $i
-          done
-        } | whiptail --gauge "$lng_nassearch" ${r} ${c} 50
-      else
-        {
-          for ((i = 98 ; i <= 100 ; i+=1)); do
-            sleep 0.5
-            echo $i
-          done
-        } | whiptail --gauge "$lng_nassearch" ${r} ${c} 22
-        whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 3" --title "$lng_nasconf" "$lng_nasconferror" ${r} ${c}
-        pingNAS
-      fi
-    }
-    pingNAS
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 4" --title "$lng_nasconf" "$lng_nasconfman" ${r} ${c}
-    yesno=$?
-    if [[ $yesno == 1 ]]; then
-      varsynologynas=y
-    else
-      varsynologynas=n
-    fi
-    whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_nasconf 5" --title "$lng_nasconf" "$lng_nasconfinfo" ${r} ${c}
-    yesno=$?
-    if [[ $yesno == 1 ]]; then
-      whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 6" --title "$lng_nasconf" "$lng_nasconfinfoerror" ${r} ${c}
-      exit 1
-    fi
-  else
-    varnasexists=n
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - $lng_nasconf 7" --title "$lng_nasconf" "$lng_nasconfinfo1" ${r} ${c}
-  fi
-  wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
-  source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "SmartHome-IoT.net - $lng_lxcconf" --title "$lng_lxcconf" "$lng_lxcconftxt" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
-  sed -i 's#\"##g' $workdir/lxcchoice
-  lxcchoice=$(cat $workdir/lxcchoice)
-  whiptail --yesno --backtitle "SmartHome-IoT.net - $lng_endconf" --title "$lng_endconf" "$lng_endconftxt" ${r} ${c}
-  exitstatus=$?
-  if [ $exitstatus = 0 ]; then
-    clear
-    shellLogo
-    startConfig
-  else
-    whiptail --msgbox --backtitle "SmartHome-IoT.net" --title "$lng_abort" "$lng_aborttxt" ${r} ${c}
-    exit 1
   fi
 }
 
-# Grundeinstellungen für Proxmox
-function startConfig() {
-  # Richtet Proxmox richtig für E-Mailbenachrichtigungen ein
-  function configEmail() {
+function emailConfig() {
+    function configEmail() {
     if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
-      echo -e "$info Beginne bearbeitung!"
-      echo -e "$info Aliase setzen"
       if grep "root:" /etc/aliases; then
-        echo -e "$info Aliases-Eintrag wurde gefunden: Bearbeitung für $varrootmail"
         sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
       else
-        echo -e "$error Kein Root-Alias gefunden"
-        echo -e "$info Root-Alias wird hinzugefügt"
         echo "root: $varrootmail" >> /etc/aliases
       fi
       echo "root $varsenderaddress" >> /etc/postfix/canonical
@@ -232,82 +134,67 @@ function startConfig() {
       sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$varmailserver]:"$varmailport""/"  /etc/postfix/main.cf
 
       # TLS-Einstellungen prüfen
-      echo -e "$info Es werden die richtigen TLS-/SSL-Einstellungen vorgenommen"
       postconf smtp_use_tls=$vartls
 
       # Prüfen auf Passwort-Hash-Eingabe
       if grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
         echo -e "$info Passwort-Hash wurde gefunden"
       else
-        echo -e "$error Kein Passwort-Hash gefunden: wird hinzugefügt"
         postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
       fi
 
       #Überprüfung auf Zertifikat
-      if grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
-        echo -e "$info TLS/SSL CA Zertifikat gefunden"
-      else
+      if ! grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
         postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
       fi
 
       # Hinzufügen von sasl-Sicherheitsoptionen und beseitigt standardmäßige Sicherheitsoptionen, die nicht mit Google Mail kompatibel sind
-      if grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
-        echo -e "$info Google smtp_sasl_security_options gefunden"
-      else
+      if ! grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
         postconf smtp_sasl_security_options=noanonymous
       fi
-      if grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
-        echo -e "$info Authentifizierung aktiviert"
-      else
+      if ! grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
         postconf smtp_sasl_auth_enable=yes
       fi 
-      if grep "sender_canonical_maps" /etc/postfix/main.cf; then
-        echo -e "$info Canonical Eintrag gefunden"
-      else
+      if ! grep "sender_canonical_maps" /etc/postfix/main.cf; then
         postconf sender_canonical_maps=hash:/etc/postfix/canonical
       fi 
 
-      echo -e "$info Passwort und Canonical Eintrag verschlüsseln"
       postmap /etc/postfix/sasl_passwd
       postmap /etc/postfix/canonical
-      echo -e "$info Neustart von postfix und Aktivierung des autostarts"
       systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/null
-      echo -e "$info Bereinigung der Datei die zum Erzeugen des Passwort-Hashes verwendet wird"
       rm -rf "/etc/postfix/sasl_passwd"
-      echo -e "$info Dateien bereinigt"
 
       # Testen der E-Mail Einstellungen
-      emailSTATUS="$ok E-Mail erfolgreich zugestellt"
-      echo -e "$ok Konfiguration abgeschlossen, testen wir das ganze..."
-      echo -e "$info Es wird eine E-Mail an folgende Adresse versendet: $varrootmail"
-      echo -e "Wenn diese E-Mail empfangen wurde, kann in dem Skript weiter gemacht werden.\n\nBitte bestätigen Sie den Empfang der E-Mail mit ""Ja"" im Skript." | mail -s "[pve] Testnachricht Installationsskript" "$varrootmail"
-      read -p "$(echo -e "$question") Wurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)? $(echo -e "$yesno") " -rn1 && echo ""
-      if [[ $REPLY =~ ^[Nn]$ ]]; then
-        echo -e "$error Prüfe auf bekannte Fehler, die in Protokollen gefunden werden können"
+      echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+      yesno=$?
+      if [[ $yesno == 1 ]]; then
+        NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
         if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
-          echo -e "$ok Es könnten Fehler gefunden worden sein"
-          read -p "$(echo -e "$question") Sieht aus, als gäbe es einen Fehler mit der SMTPUTF8 konfiguration. Soll versucht werden diese zu beheben? $(echo -e "$yesno") " -rn1 && echo ""
-          if [[ $REPLY =~ ^[Jj]$ ]]; then
-            if grep "smtputf8_enable = no" /etc/postfix/main.cf; then
-              echo -e "$info Korrektur bereits angewendet!"
-            else
-              echo -e "$info Setzen von ""smtputf8_enable=no"" zur Korrektur von ""SMTPUTF8 was required but not supported"""
-              postconf smtputf8_enable=no
-              postfix reload
-            fi
+          if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
+            postconf smtputf8_enable=no
+            postfix reload
           fi
-        else
-          echo -e "$info Keine konfigurationsfehler gefunden"
         fi
-        echo -e "Wenn diese E-Mail empfangen wurde, kann in dem Skript weiter gemacht werden.\n\nBitte bestätigen Sie den Empfang der E-Mail mit ""Ja"" im Skript." | mail -s "[pve] Testnachricht Installationsskript" "$varrootmail"
-        read -p "$(echo -e "$question") Wurde die E-Mail jetzt erfolgreich zugestellt? $(echo -e "$yesno") " -rn1 && echo ""
-        if [[ $REPLY =~ ^[Nn]$ ]]; then
-          emailSTATUS="$error E-Mail konnte nicht erfolgreich zugestellt werden."
-          echo -e "$info Das Fehlerprotokol ist in der Datei ""/var/log/mail.log"" zu finden. Dieses Skript kann hier nichts mehr tun. - Sorry"
-          exit 1
+        echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+        whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+        yesno=$?
+        if [[ $yesno == 1 ]]; then
+          NEWT_COLORS='
+            window=,red
+            border=white,red
+            textbox=white,red
+            button=black,white
+          ' \
+          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
         fi
       fi
-      echo -e "$emailSTATUS"
 
       # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
       sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
@@ -321,109 +208,155 @@ function startConfig() {
     return 0
   }
 
-  # Prüft ob im System eine weitere SSD verbaut ist, und richtet diese als Datenfestplatte ein
+  varrootmail=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_root" "$lng_mail_root_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailserver=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server" "$lng_mail_server_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailport=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_port" "$lng_mail_server_port_text" ${r} ${c} 587 3>&1 1>&2 2>&3)
+  varmailusername=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user" "$lng_mail_server_user_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varmailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varsenderaddress=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_sender" "$lng_mail_sender_text" ${r} ${c} "notify@$(echo "$varrootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
+  whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_tls" "$lng_mail_tls_text" ${r} ${c}
+  yesno=$?
+  if [[ $yesno == 0 ]]; then
+    vartls=yes
+  else
+    vartls=no
+  fi
+  # Executes the notification configuration
+  configEmail
+}
+
+function nasConfig() {
   function configStorage() {
     countDisks=$(echo "$otherDisks" | wc -l)
-    if [ "$countDisks" -eq 0 ]; then
-      echo -e "$info In diesem System wurden keine weiteren Festplatten gefunden."
-    elif [ "$countDisks" -eq 1 ]; then
+    if [ "$countDisks" -eq 1 ]; then
       if [ $(pvesm status | grep -c data) -eq 0 ]; then
         if [ $(cat /sys/block/"$otherDisks"/queue/rotational) -eq 0 ]; then
-            if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
-              echo -e "$info Es wurde eine weitere Festplatte SSD im System gefunden. Diese wird als Datenfestplatte eingebunden."
-              parted -s /dev/"$otherDisks" "mklabel gpt" > /dev/null 2>&1
-              parted -s -a opt /dev/"$otherDisks" mkpart primary ext4 0% 100% > /dev/null 2>&1
-              mkfs.ext4 -Fq -L data /dev/"$otherDisks"1 > /dev/null 2>&1
-              mkdir -p /mnt/data > /dev/null 2>&1
-              mount -o defaults /dev/"$otherDisks"1 /mnt/data > /dev/null 2>&1
-              UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
-              echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
-              pvesm add dir data --path /mnt/data
-              pvesm set data --content iso,vztmpl,rootdir,images
-              #pvesm set local --content snippets,backup
-              #pvesm set local-lvm --content images
-              downloadPath="data"
-              echo -e "$ok Die Festplatte wurde mit dem Namen \"data\" in Proxmox eingebunden."
+          if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
+            parted -s /dev/"$otherDisks" "mklabel gpt" > /dev/null 2>&1
+            parted -s -a opt /dev/"$otherDisks" mkpart primary ext4 0% 100% > /dev/null 2>&1
+            mkfs.ext4 -Fq -L data /dev/"$otherDisks"1 > /dev/null 2>&1
+            mkdir -p /mnt/data > /dev/null 2>&1
+            mount -o defaults /dev/"$otherDisks"1 /mnt/data > /dev/null 2>&1
+            UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
+            echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
+            pvesm add dir data --path /mnt/data
+            pvesm set data --content iso,vztmpl,rootdir,images
+            downloadPath="data"
 
-              # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
-              sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$otherDisks"'"+' /etc/default/smartmontools
-              sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$otherDisks"' -a -d sat+' /etc/smartd.conf
-              sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$otherDisks"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
-              systemctl restart smartmontools
-              confignotemailcontent="${confignotemailcontent}Eingebundene Festplatten\nFestplatten Typ: SSD\nFestplatte: /dev/$otherDisks\nMountpfad: /mnt/data\nProxmox Name: data\n\n\n"
-            fi
-        else
-          echo -e "$error Die im System gefundene Festplatte ist keine SSD!"
+            # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
+            sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$otherDisks"'"+' /etc/default/smartmontools
+            sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$otherDisks"' -a -d sat+' /etc/smartd.conf
+            sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$otherDisks"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
+            systemctl restart smartmontools
+            confignotemailcontent="${confignotemailcontent}Eingebundene Festplatten\nFestplatten Typ: SSD\nFestplatte: /dev/$otherDisks\nMountpfad: /mnt/data\nProxmox Name: data\n\n\n"
+          fi
         fi
       else
         downloadPath="data"
       fi
-    else
-      echo -e "$info Es wurden mehrere zusätzliche Festplatten im System gefunden."
-      return 1
     fi
     if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
-      echo -e "$info Die NAS wird als Backupspeicher in Proxmox eingebunden"
       pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
-      #pvesm set local --content snippets
-      echo -e "$ok Die NAS wurde als Backuplaufwerk in Proxmox eingebunden"
     fi
     return 0
   }
 
-  # Erzeugt einen Adminbenutzer für Proxmox, um sich nicht als Root einloggen zu müssen
-  function configUser() {
-    if [ $(pveum user list | grep -c 'Proxmox WebGUI-Administrator') -eq 0 ]; then
-      echo -e "$info Um sich nicht als ROOT an der WebGUI anmelden zu müssen, wird ein Adminbenutzer für die WebGUI erstellt"
-      adminpw=$(createPassword 8)
-      pveum groupadd admin -comment "WebGUI Administrator"
-      sleep 5
-      pveum aclmod / -group admin -role Administrator
-      sleep 5
-      pveum useradd "admin@pve" -comment "Proxmox WebGUI-Administrator" -groups admin -password "$adminpw"
+  whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_ask" ${r} ${c}
+  yesno=$?
+  if [[ $yesno == 0 ]]; then
+    function pingNAS() {
+      varnasip=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_text" ${r} ${c} 3>&1 1>&2 2>&3)
+      if ping -c 1 "$varnasip" > /dev/null 2>&1; then
+        varnasexists=y
+        {
+          for ((i = 98 ; i <= 100 ; i+=1)); do
+            sleep 0.5
+            echo $i
+          done
+        } | whiptail --gauge "$lng_nas_ip_check" ${r} ${c} 50
+      else
+        {
+          for ((i = 98 ; i <= 100 ; i+=1)); do
+            sleep 0.5
+            echo $i
+          done
+        } | whiptail --gauge "$lng_nas_ip_check" ${r} ${c} 22
+        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_error" ${r} ${c}
+        pingNAS
+      fi
+    }
+    pingNAS
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
+    yesno=$?
+    if [[ $yesno == 1 ]]; then
+      varsynologynas=y
+    else
+      varsynologynas=n
     fi
-    return 0
-  }
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text" ${r} ${c}
+    yesno=$?
+    if [[ $yesno == 1 ]]; then
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_error" ${r} ${c}
+      exit
+    fi
+  else
+    varnasexists=n
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_error" ${r} ${c}
+  fi
+  # Executes the Storage configuration
+  configStorage
+}
 
-  function configFirewall() {
-    mkdir -p /etc/pve/firewall
-    mkdir -p /etc/pve/nodes/$hostname
-    clusterfileFW="/etc/pve/firewall/cluster.fw"
-    hostfileFW="/etc/pve/nodes/$hostname/host.fw"
+function firewallConfig() {
+  mkdir -p /etc/pve/firewall
+  mkdir -p /etc/pve/nodes/$hostname
+  clusterfileFW="/etc/pve/firewall/cluster.fw"
+  hostfileFW="/etc/pve/nodes/$hostname/host.fw"
 
-    # Firewall auf Clusterebene
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # alle privaten Netzwerke\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
-    
-    # Firewall auf Hostebene
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
-    return 0
-  }
+  # Firewall auf Clusterebene
+  echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # alle privaten Netzwerke\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
+  
+  # Firewall auf Hostebene
+  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
+  return 0
+}
 
+function lxcConfig() {
+  wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
+  source /root/lxc.conf
+  whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration" "$lng_lxc_configuration_text" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
+  sed -i 's#\"##g' $workdir/lxcchoice
+  lxcchoice=$(cat $workdir/lxcchoice)
+  whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
+  exitstatus=$?
+  if [ $exitstatus = 0 ]; then
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
+    return
+  else
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+    exit
+  fi
+}
+
+function pveConfig() {
   # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
   if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
-    echo -e "$info Entferne Enterprise Repository"
     rm /etc/apt/sources.list.d/pve-enterprise.list
   fi
   if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-    echo -e "$info Erstelle Community Repository"
     echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
   fi
   if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-    echo -e "$info Erstelle Ceph Repository"
     echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" > /etc/apt/sources.list.d/ceph.list
   fi
 
   # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
   softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
-  echo -e "$info Benötigte Updates werden geladen und installiert, je nach Internetverbindung kann dies einige Zeit in Anspruch nehmen."
   apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
-  echo -e "$ok Alle Systemupdates und benötigte Software wurde installiert"
   for package in $softwaretoinstall; do
     apt-get install -y "$package" > /dev/null 2>&1
     echo -e "$ok $package wurde installiert"
   done
-
-  configEmail
 
   # Aktiviere S.M.A.R.T. support auf Systemfestplatte
   if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
@@ -434,11 +367,6 @@ function startConfig() {
   # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
   sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
   sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
-
-  configStorage
-  configFirewall
-
-  return 0
 }
 
 function lxcMountNAS() {
@@ -515,85 +443,90 @@ function containerSetup() {
       echo -e "$error $lng_errdwntmp1"
     fi
   }
-# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-  createIDIP
-  if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
-  downloadTemplate $1
-  echo -e "$info $lng_createlxc \"$2\""
-  if [[ $8 == "" ]]; then
-    pct create $nextCTID \
-      $downloadPath:vztmpl/$ctTemplate \
-      --ostype $ctOstype \
-      --hostname "$2" \
-      --password "$3" \
-      --rootfs $rootfs:$4 \
-      --cores $5 \
-      --memory $6 \
-      --swap $(( $6 / 2 )) \
-      --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
-      --onboot 1 \
-      --force 1 \
-      --unprivileged "$7" \
-      --start 1 > /dev/null 2>&1
-  else
-    pct create $nextCTID \
-      $downloadPath:vztmpl/$ctTemplate \
-      --ostype $ctOstype \
-      --hostname "$2" \
-      --password "$3" \
-      --rootfs $rootfs:$4 \
-      --cores $5 \
-      --memory $6 \
-      --swap $(( $6 / 2 )) \
-      --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
-      --onboot 1 \
-      --force 1 \
-      --unprivileged "$7" \
-      --start 1 \
-      --features "$8" > /dev/null 2>&1
-  fi
-  echo -e "$info $lng_lxc \"$2\" $lng_updatelxc"
-  if [[ $ctOStype == "debian" ]]; then
-    pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
-    pct exec $nextCTID -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
-    pct exec $nextCTID -- bash -c "sed -i 's+# en_US.UTF-8 UTF-8+en_US.UTF-8 UTF-8+g'  /etc/locale.gen" # get en_US Language Support for the shell
-    pct exec $nextCTID -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
-  fi
-  pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
-  pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
-  pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
-  pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
-  pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
-  pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-  for package in $ctStandardsoftware; do
-    echo -e "$info \"$package\" $lng_installlxc"
-    pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
-  done
-  #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-  echo -e "$ok $lng_lxc \"$2\" $lng_endlxc"
-  pct shutdown $nextCTID --timeout 5
-  sleep 10
-  return $nextCTID
-}
+
+  # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
+  {
+    sleep 0.5
+    echo -e "XXX\n0\nDer Container bekommt eine ID und eine IP zugewiesen\nXXX"
+    createIDIP
+    echo -e "XXX\n17\nWenn nicht vorhanden, wird das benötigte Template downgeloaded\nXXX"
+    downloadTemplate $1
+    echo -e "XXX\n33\nDer Container wird in Proxmox installiert\nXXX"
+    if [[ $8 == "" ]]; then
+      pct create $nextCTID \
+        rootfs="$downloadPath":vztmpl/$ctTemplate \
+        --ostype $ctOstype \
+        --hostname "$2" \
+        --password "$3" \
+        --rootfs $rootfs:$4 \
+        --cores $5 \
+        --memory $6 \
+        --swap $(( $6 / 2 )) \
+        --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
+        --onboot 1 \
+        --force 1 \
+        --unprivileged "$7" \
+        --start 1 > /dev/null 2>&1
+    else
+      pct create $nextCTID \
+        rootfs="$downloadPath":vztmpl/$ctTemplate \
+        --ostype $ctOstype \
+        --hostname "$2" \
+        --password "$3" \
+        --rootfs $rootfs:$4 \
+        --cores $5 \
+        --memory $6 \
+        --swap $(( $6 / 2 )) \
+        --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
+        --onboot 1 \
+        --force 1 \
+        --unprivileged "$7" \
+        --start 1 \
+        --features "$8" > /dev/null 2>&1
+    fi
+    echo -e "XXX\n65\nDer Container wird aktualisiert\nXXX"
+    if [[ $ctOStype == "debian" ]]; then
+      pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
+      pct exec $nextCTID -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
+      pct exec $nextCTID -- bash -c "sed -i 's+# en_US.UTF-8 UTF-8+en_US.UTF-8 UTF-8+g'  /etc/locale.gen" # get en_US Language Support for the shell
+      pct exec $nextCTID -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
+    fi
+    pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
+    pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
+    pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
+    pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
+    pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
+    pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+    echo -e "XXX\n88\nDie Containersoftware wird installiert\nXXX"
+    for package in $ctStandardsoftware; do
+      echo -e "$info \"$package\" $lng_installlxc"
+      pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
+    done
+    #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
+    echo -e "XXX\n98\nDie Containererstellung wird beendet\nXXX"
+    pct shutdown $nextCTID --timeout 5
+    sleep 10
+    return $nextCTID
+} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "Installiere $2" --gauge "Vorbereitung" 6 60 0
 
 if [ ! -d $workdir ]; then mkdir -p $workdir; fi
 
-#firstUserInput
-lxcchoice=$(cat $workdir/lxcchoice)
+
+selectLanguage
+startupInfo
+pveConfig
+networkConfig
+emailConfig
+nasConfig
+firewallConfig
+lxcConfig
+
 # Start creating the selected containers
 for lxc in $lxcchoice; do
-  clear
-  shellLogo
   ctName=$lxc
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
-    echo -e "$ok $lng_lxcinfo \"$lxc\""
-    sleep 5
     wget -qO $workdir/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
     source $workdir/inst_$ctName.sh
-    #curl -sSL $rawGitHubURL/$lxc/inst_$ctName.sh | bash
-  else
-    echo -e "$error $lng_lxcerror \"$lxc\""
-    sleep 5
   fi
 done
