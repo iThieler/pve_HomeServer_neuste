@@ -355,12 +355,10 @@ function pveConfig() {
   apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
   for package in $softwaretoinstall; do
     apt-get install -y "$package" > /dev/null 2>&1
-    echo -e "$ok $package wurde installiert"
   done
 
   # Aktiviere S.M.A.R.T. support auf Systemfestplatte
   if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
-    echo -e "$info Aktiviere S.M.A.R.T. Support auf der Systemfestplatte"
     smartctl -s on -a /dev/"$rootDisk"
   fi
 
@@ -398,49 +396,30 @@ function containerSetup() {
   # Loads the container template from the Internet if not available and saves it for further use
   function downloadTemplate() {
     pveam update > /dev/null 2>&1
-    echo -e "$info $lng_infodwntmp"
     if [[ $1 == "ubuntu" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $lng_errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $lng_okdwntmp"
-      else
-        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "ubuntu18" ]]; then
       ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $lng_errdwntmp"
         pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $lng_okdwntmp"
-      else
-        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="ubuntu"
     elif [[ $1 == "debian" ]]; then
       ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $lng_errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $lng_okdwntmp"
-      else
-        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="debian"
     elif [[ $1 == "debian9" ]]; then
       ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
       if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-        echo -e "$error $lng_errdwntmp"
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        echo -e "$ok $lng_okdwntmp"
-      else
-        echo -e "$ok $lng_okdwntmp1"
       fi
       ctOstype="debian"
-    else
-      echo -e "$error $lng_errdwntmp1"
     fi
   }
 
@@ -499,7 +478,6 @@ function containerSetup() {
     pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     echo -e "XXX\n88\nDie Containersoftware wird installiert\nXXX"
     for package in $ctStandardsoftware; do
-      echo -e "$info \"$package\" $lng_installlxc"
       pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
     done
     #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
