@@ -98,9 +98,10 @@ function pveConfig() {
     fi
 
     # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
+    echo -e "XXX\n32\n$lng_pve_configuration_update\nXXX"
+    apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
     echo -e "XXX\n32\n$lng_pve_configuration_install\nXXX"
     softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
-    apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
     for package in $softwaretoinstall; do
       apt-get install -y "$package" > /dev/null 2>&1
     done
@@ -413,114 +414,112 @@ function lxcMountNAS() {
 }
 
 function lxcSetup() {
-  {
-    # Generates an ID and an IP address for the container to be created
-    function createIDIP() {
-      if [ $(pct list | grep -c 100) -eq 0 ]; then
-        nextCTID=100
-        lastCTIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4)
-        nextCTIP=$networkIP.$(( "$lastCTIP" + 5 ))
-      else
-        lastCTID=$(pct list | tail -n1 | awk '{print $1}')
-        nextCTID=$(( "$lastCTID" + 1 ))
-        lastCTIP=$(lxc-info "$lastCTID" -iH | grep "$networkIP" | cut -d. -f4)
-        nextCTIP=$networkIP.$(( "$lastCTIP" + 1 ))
-      fi
-    }
+  # Generates an ID and an IP address for the container to be created
+  function createIDIP() {
+    if [ $(pct list | grep -c 100) -eq 0 ]; then
+      nextCTID=100
+      lastCTIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4)
+      nextCTIP=$networkIP.$(( "$lastCTIP" + 5 ))
+    else
+      lastCTID=$(pct list | tail -n1 | awk '{print $1}')
+      nextCTID=$(( "$lastCTID" + 1 ))
+      lastCTIP=$(lxc-info "$lastCTID" -iH | grep "$networkIP" | cut -d. -f4)
+      nextCTIP=$networkIP.$(( "$lastCTIP" + 1 ))
+    fi
+  }
 
-    # Loads the container template from the Internet if not available and saves it for further use
-    function downloadTemplate() {
-      pveam update > /dev/null 2>&1
-      if [[ $1 == "ubuntu" ]]; then
-        ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
-        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        fi
-        ctOstype="ubuntu"
-      elif [[ $1 == "ubuntu18" ]]; then
-        ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
-        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-          pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
-        fi
-        ctOstype="ubuntu"
-      elif [[ $1 == "debian" ]]; then
-        ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
-        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        fi
-        ctOstype="debian"
-      elif [[ $1 == "debian9" ]]; then
-        ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
-        if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
-          pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
-        fi
-        ctOstype="debian"
+  # Loads the container template from the Internet if not available and saves it for further use
+  function downloadTemplate() {
+    pveam update > /dev/null 2>&1
+    if [[ $1 == "ubuntu" ]]; then
+      ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
       fi
-    }
+      ctOstype="ubuntu"
+    elif [[ $1 == "ubuntu18" ]]; then
+      ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+        pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
+      fi
+      ctOstype="ubuntu"
+    elif [[ $1 == "debian" ]]; then
+      ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+      fi
+      ctOstype="debian"
+    elif [[ $1 == "debian9" ]]; then
+      ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+        pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
+      fi
+      ctOstype="debian"
+    fi
+  }
 
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
   # {
-    sleep 0.5
-    echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
-    createIDIP
-    echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
-    downloadTemplate $1
-    echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
-    if [[ ${8} == "" ]]; then
-      pct create ${nextCTID} \
-        rootfs="${downloadPath}":vztmpl/${ctTemplate} \
-        --ostype ${ctOstype} \
-        --hostname "${2}" \
-        --password "${3}" \
-        --rootfs ${rootfs}:${4} \
-        --cores ${5} \
-        --memory ${6} \
-        --swap $(( ${6} / 2 )) \
-        --net0 bridge=vmbr0,name=eth0,ip="${nextCTIP}"/${cidr},gw="${gatewayIP}",ip6=dhcp,firewall=1 \
-        --onboot 1 \
-        --force 1 \
-        --unprivileged "${7}" \
-        --start 1 > /dev/null 2>&1
-    else
-      pct create ${nextCTID} \
-        rootfs="${downloadPath}":vztmpl/${ctTemplate} \
-        --ostype ${ctOstype} \
-        --hostname "${2}" \
-        --password "${3}" \
-        --rootfs ${rootfs}:${4} \
-        --cores ${5} \
-        --memory ${6} \
-        --swap $(( ${6} / 2 )) \
-        --net0 bridge=vmbr0,name=eth0,ip="${nextCTIP}"/${cidr},gw="${gatewayIP}",ip6=dhcp,firewall=1 \
-        --onboot 1 \
-        --force 1 \
-        --unprivileged "${7}" \
-        --start 1 \
-        --features "${8}" > /dev/null 2>&1
-    fi
-    echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
-    if [[ ${ctOStype} == "debian" ]]; then
-      pct exec ${nextCTID} -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
-      pct exec ${nextCTI}D -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
-      pct exec ${nextCTID} -- bash -c "sed -i 's+# en_US.UTF-8 UTF-8+en_US.UTF-8 UTF-8+g'  /etc/locale.gen" # get en_US Language Support for the shell
-      pct exec ${nextCTID} -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
-    fi
-    pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
-    pct exec ${nextCTI}D -- bash -c "export LANGUAGE=en_US.UTF-8"
-    pct exec ${nextCTID} -- bash -c "export LANG=en_US.UTF-8"
-    pct exec ${nextCTID} -- bash -c "export LC_ALL=en_US.UTF-8"
-    pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
-    pct exec ${nextCTID} -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-    echo -e "XXX\n88\n$lng_lxc_setup_text_software_install\nXXX"
-    for package in ${ctStandardsoftware}; do
-      pct exec ${nextCTID} -- bash -c "apt-get install -y $package > /dev/null 2>&1"
-    done
-    #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-    echo -e "XXX\n98\n$lng_lxc_setup_text_finish\nXXX"
-    pct shutdown ${nextCTID} --timeout 5
-    sleep 10
-    return ${nextCTID}
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $2" --gauge "$lng_lxc_setup_text" 6 70 0
+  sleep 0.5
+  echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
+  createIDIP
+  echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
+  downloadTemplate $1
+  echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
+  if [[ ${8} == "" ]]; then
+    pct create ${nextCTID} \
+      rootfs="${downloadPath}":vztmpl/${ctTemplate} \
+      --ostype ${ctOstype} \
+      --hostname "${2}" \
+      --password "${3}" \
+      --rootfs ${rootfs}:${4} \
+      --cores ${5} \
+      --memory ${6} \
+      --swap $(( ${6} / 2 )) \
+      --net0 bridge=vmbr0,name=eth0,ip="${nextCTIP}"/${cidr},gw="${gatewayIP}",ip6=dhcp,firewall=1 \
+      --onboot 1 \
+      --force 1 \
+      --unprivileged "${7}" \
+      --start 1 > /dev/null 2>&1
+  else
+    pct create ${nextCTID} \
+      rootfs="${downloadPath}":vztmpl/${ctTemplate} \
+      --ostype ${ctOstype} \
+      --hostname "${2}" \
+      --password "${3}" \
+      --rootfs ${rootfs}:${4} \
+      --cores ${5} \
+      --memory ${6} \
+      --swap $(( ${6} / 2 )) \
+      --net0 bridge=vmbr0,name=eth0,ip="${nextCTIP}"/${cidr},gw="${gatewayIP}",ip6=dhcp,firewall=1 \
+      --onboot 1 \
+      --force 1 \
+      --unprivileged "${7}" \
+      --start 1 \
+      --features "${8}" > /dev/null 2>&1
+  fi
+  echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
+  if [[ ${ctOStype} == "debian" ]]; then
+    pct exec ${nextCTID} -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
+    pct exec ${nextCTI}D -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
+    pct exec ${nextCTID} -- bash -c "sed -i 's+# en_US.UTF-8 UTF-8+en_US.UTF-8 UTF-8+g'  /etc/locale.gen" # get en_US Language Support for the shell
+    pct exec ${nextCTID} -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
+  fi
+  pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
+  pct exec ${nextCTI}D -- bash -c "export LANGUAGE=en_US.UTF-8"
+  pct exec ${nextCTID} -- bash -c "export LANG=en_US.UTF-8"
+  pct exec ${nextCTID} -- bash -c "export LC_ALL=en_US.UTF-8"
+  pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
+  pct exec ${nextCTID} -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+  echo -e "XXX\n88\n$lng_lxc_setup_text_software_install\nXXX"
+  for package in ${ctStandardsoftware}; do
+    pct exec ${nextCTID} -- bash -c "apt-get install -y $package > /dev/null 2>&1"
+  done
+  #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
+  echo -e "XXX\n98\n$lng_lxc_setup_text_finish\nXXX"
+  pct shutdown ${nextCTID} --timeout 5
+  sleep 10
+  return ${nextCTID}
 }
 
 #if [ ! -f $configFile ]; then
@@ -538,12 +537,14 @@ lxcSetup
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
+  {
   ctName=$lxc
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     wget -qO /root/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
     source /root/inst_$ctName.sh
   fi
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
 done
 
 rm *
