@@ -35,7 +35,7 @@ ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 downloadPath="local-lvm"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
-configFile="/root/.SHIOT_config"
+configFile="/root/.shiot_config"
 fqdn=$(hostname -f)
 hostname=$(hostname)
 osname=buster
@@ -70,7 +70,7 @@ function selectLanguage() {
   lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO /root/lang $rawGitHubURL/lang/$lang
   source /root/lang
-  echo $lang >> $configFile
+  echo "lang=\"$lang\"" >> $configFile
   return 0
 }
 
@@ -84,32 +84,38 @@ function startupInfo() {
 }
 
 function pveConfig() {
-  # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
-  if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
-    rm /etc/apt/sources.list.d/pve-enterprise.list
-  fi
-  if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-    echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
-  fi
-  if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-    echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" > /etc/apt/sources.list.d/ceph.list
-  fi
+  {
+    # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
+    echo -e "XXX\n0\n$lng_pve_configuration_community\nXXX"
+    if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
+      rm /etc/apt/sources.list.d/pve-enterprise.list
+    fi
+    if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
+      echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
+    fi
+    if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
+      echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" > /etc/apt/sources.list.d/ceph.list
+    fi
 
-  # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
-  softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
-  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
-  for package in $softwaretoinstall; do
-    apt-get install -y "$package" > /dev/null 2>&1
-  done
+    # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
+    echo -e "XXX\n32\n$lng_pve_configuration_install\nXXX"
+    softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
+    apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+    for package in $softwaretoinstall; do
+      apt-get install -y "$package" > /dev/null 2>&1
+    done
 
-  # Aktiviere S.M.A.R.T. support auf Systemfestplatte
-  if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
-    smartctl -s on -a /dev/"$rootDisk"
-  fi
+    # Aktiviere S.M.A.R.T. support auf Systemfestplatte
+    echo -e "XXX\n68\n$lng_pve_configuration_smart\nXXX"
+    if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
+      smartctl -s on -a /dev/"$rootDisk"
+    fi
 
-  # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
-  sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
-  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
+    # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
+    echo -e "XXX\n99\n$lng_pve_configuration_forward\nXXX"
+    sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
+    sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_pve_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
   return 0
 }
 
@@ -146,12 +152,12 @@ function networkConfig() {
       vlanexists=n
     fi
   fi
-  echo $varrobotname >> $configFile
-  echo $vargwmanufacturer >> $configFile
-  echo $vlanexists >> $configFile
-  echo $varservervlan >> $configFile
-  echo $varsmarthomevlan >> $configFile
-  echo $varguestvlan >> $configFile
+  echo "varrobotname=\"$varrobotname\"" >> $configFile
+  echo "vargwmanufacturer=\"$vargwmanufacturer\"" >> $configFile
+  echo "vlanexists=\"$vlanexists\"" >> $configFile
+  echo "varservervlan=\"$varservervlan\"" >> $configFile
+  echo "varsmarthomevlan=\"$varsmarthomevlan\"" >> $configFile
+  echo "varguestvlan=\"$varguestvlan\"" >> $configFile
   return 0
 }
 
@@ -261,8 +267,8 @@ function emailConfig() {
   fi
   # Executes the notification configuration
   configEmail
-  echo $varrootmail >> $configFile
-  echo $varsenderaddress >> $configFile
+  echo "varrootmail=\"$varrootmail\"" >> $configFile
+  echo "varsenderaddress=\"$varsenderaddress\"" >> $configFile
   return 0
 }
 
@@ -346,10 +352,10 @@ function nasConfig() {
   fi
   # Executes the Storage configuration
   configStorage
-  echo $downloadPath >> $configFile
-  echo $varnasip >> $configFile
-  echo $varnasexists >> $configFile
-  echo $varsynologynas >> $configFile
+  echo "downloadPath=\"$downloadPath\"" >> $configFile
+  echo "varnasip=\"$varnasip\"" >> $configFile
+  echo "varnasexists=\"$varnasexists\"" >> $configFile
+  echo "varsynologynas=\"$varsynologynas\"" >> $configFile
   return 0
 }
 
@@ -364,8 +370,8 @@ function firewallConfig() {
   
   # Firewall auf Hostebene
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
-  echo $clusterfileFW >> $configFile
-  echo $hostfileFW >> $configFile
+  echo "clusterfileFW=\"$clusterfileFW\"" >> $configFile
+  echo "hostfileFW=\"$hostfileFW\"" >> $configFile
   return 0
 }
 
@@ -384,7 +390,7 @@ function lxcConfig() {
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     exit
   fi
-  echo $lxcchoice >> $configFile
+  echo "lxcchoice=\"$lxcchoice\"" >> $configFile
   return 0
 }
 
