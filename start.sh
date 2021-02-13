@@ -162,70 +162,56 @@ function networkConfig() {
 }
 
 function emailConfig() {
-    function configEmail() {
+  function configEmail() {
     if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
-      if grep "root:" /etc/aliases; then
-        sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
-      else
-        echo "root: $varrootmail" >> /etc/aliases
-      fi
-      echo "root $varsenderaddress" >> /etc/postfix/canonical
-      chmod 600 /etc/postfix/canonical
-
-      # Vorbereitung für Passworthash
-      echo [$varmailserver]:"$varmailport" "$varmailusername":"$varmailpassword" >> /etc/postfix/sasl_passwd
-      chmod 600 /etc/postfix/sasl_passwd 
-
-      # Mailserver in main.cf hinzufügen
-      sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$varmailserver]:"$varmailport""/"  /etc/postfix/main.cf
-
-      # TLS-Einstellungen prüfen
-      postconf smtp_use_tls=$vartls
-
-      # Prüfen auf Passwort-Hash-Eingabe
-      if ! grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
-        postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd > /dev/null 2>&1
-      fi
-
-      #Überprüfung auf Zertifikat
-      if ! grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
-        postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt > /dev/null 2>&1
-      fi
-
-      # Hinzufügen von sasl-Sicherheitsoptionen und beseitigt standardmäßige Sicherheitsoptionen, die nicht mit Google Mail kompatibel sind
-      if ! grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
-        postconf smtp_sasl_security_options=noanonymous > /dev/null 2>&1
-      fi
-      if ! grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
-        postconf smtp_sasl_auth_enable=yes > /dev/null 2>&1
-      fi 
-      if ! grep "sender_canonical_maps" /etc/postfix/main.cf; then
-        postconf sender_canonical_maps=hash:/etc/postfix/canonical > /dev/null 2>&1
-      fi 
-
-      postmap /etc/postfix/sasl_passwd > /dev/null 2>&1
-      postmap /etc/postfix/canonical > /dev/null 2>&1
-      systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/null
-      rm -rf "/etc/postfix/sasl_passwd"
-
-      # Testen der E-Mail Einstellungen
-      echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
-      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        NEWT_COLORS='
-          window=,red
-          border=white,red
-          textbox=white,red
-          button=black,white
-        ' \
-        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
-        if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
-          if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
-            postconf smtputf8_enable=no
-            postfix reload
-          fi
+      {
+        if grep "root:" /etc/aliases; then
+          sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
+        else
+          echo "root: $varrootmail" >> /etc/aliases
         fi
+        echo "root $varsenderaddress" >> /etc/postfix/canonical
+        chmod 600 /etc/postfix/canonical
+
+        # Vorbereitung für Passworthash
+        echo [$varmailserver]:"$varmailport" "$varmailusername":"$varmailpassword" >> /etc/postfix/sasl_passwd
+        chmod 600 /etc/postfix/sasl_passwd 
+
+        # Mailserver in main.cf hinzufügen
+        sed -i "/#/!s/\(relayhost[[:space:]]*=[[:space:]]*\)\(.*\)/\1"[$varmailserver]:"$varmailport""/"  /etc/postfix/main.cf
+
+        # TLS-Einstellungen prüfen
+        postconf smtp_use_tls=$vartls
+
+        # Prüfen auf Passwort-Hash-Eingabe
+        if ! grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
+          postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd > /dev/null 2>&1
+        fi
+
+        #Überprüfung auf Zertifikat
+        if ! grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
+          postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt > /dev/null 2>&1
+        fi
+
+        # Hinzufügen von sasl-Sicherheitsoptionen und beseitigt standardmäßige Sicherheitsoptionen, die nicht mit Google Mail kompatibel sind
+        if ! grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
+          postconf smtp_sasl_security_options=noanonymous > /dev/null 2>&1
+        fi
+        if ! grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
+          postconf smtp_sasl_auth_enable=yes > /dev/null 2>&1
+        fi 
+        if ! grep "sender_canonical_maps" /etc/postfix/main.cf; then
+          postconf sender_canonical_maps=hash:/etc/postfix/canonical > /dev/null 2>&1
+        fi 
+
+        postmap /etc/postfix/sasl_passwd > /dev/null 2>&1
+        postmap /etc/postfix/canonical > /dev/null 2>&1
+        systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/null
+        rm -rf "/etc/postfix/sasl_passwd"
+
+        echo -e "XXX\n99\n$lng_pve_configuration_text\nXXX"
+
+        # Testen der E-Mail Einstellungen
         echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
         whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
         yesno=$?
@@ -236,19 +222,37 @@ function emailConfig() {
             textbox=white,red
             button=black,white
           ' \
-          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
+          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
+          if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
+            if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
+              postconf smtputf8_enable=no
+              postfix reload
+            fi
+          fi
+          echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+          whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+          yesno=$?
+          if [[ $yesno == 1 ]]; then
+            NEWT_COLORS='
+              window=,red
+              border=white,red
+              textbox=white,red
+              button=black,white
+            ' \
+            whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
+          fi
         fi
-      fi
 
-      # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
-      sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
-      sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
-      echo "start_smartd=yes" > /etc/default/smartmontools
-      sed -i 's+DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+' /etc/smartd.conf
-      sed -i 's+# /dev/sda -a -d sat+/dev/'"$rootDisk"' -a -d sat+' /etc/smartd.conf
-      sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
-      systemctl start smartmontools
-    fi
+        # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
+        sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
+        sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
+        echo "start_smartd=yes" > /etc/default/smartmontools
+        sed -i 's+DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+' /etc/smartd.conf
+        sed -i 's+# /dev/sda -a -d sat+/dev/'"$rootDisk"' -a -d sat+' /etc/smartd.conf
+        sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
+        systemctl start smartmontools
+      fi
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
     return 0
   }
 
@@ -274,37 +278,41 @@ function emailConfig() {
 
 function nasConfig() {
   function configStorage() {
-    countDisks=$(echo "$otherDisks" | wc -l)
-    if [ "$countDisks" -eq 1 ]; then
-      if [ $(pvesm status | grep -c data) -eq 0 ]; then
-        if [ $(cat /sys/block/"$otherDisks"/queue/rotational) -eq 0 ]; then
-          if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
-            parted -s /dev/"$otherDisks" "mklabel gpt" > /dev/null 2>&1
-            parted -s -a opt /dev/"$otherDisks" mkpart primary ext4 0% 100% > /dev/null 2>&1
-            mkfs.ext4 -Fq -L data /dev/"$otherDisks"1 > /dev/null 2>&1
-            mkdir -p /mnt/data > /dev/null 2>&1
-            mount -o defaults /dev/"$otherDisks"1 /mnt/data > /dev/null 2>&1
-            UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
-            echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
-            pvesm add dir data --path /mnt/data
-            pvesm set data --content iso,vztmpl,rootdir,images
-            downloadPath="data"
+    {
+      echo -e "XXX\n14\n$lng_nas_configuration_hdd\nXXX"
+      countDisks=$(echo "$otherDisks" | wc -l)
+      if [ "$countDisks" -eq 1 ]; then
+        if [ $(pvesm status | grep -c data) -eq 0 ]; then
+          if [ $(cat /sys/block/"$otherDisks"/queue/rotational) -eq 0 ]; then
+            if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
+              parted -s /dev/"$otherDisks" "mklabel gpt" > /dev/null 2>&1
+              parted -s -a opt /dev/"$otherDisks" mkpart primary ext4 0% 100% > /dev/null 2>&1
+              mkfs.ext4 -Fq -L data /dev/"$otherDisks"1 > /dev/null 2>&1
+              mkdir -p /mnt/data > /dev/null 2>&1
+              mount -o defaults /dev/"$otherDisks"1 /mnt/data > /dev/null 2>&1
+              UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
+              echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
+              pvesm add dir data --path /mnt/data
+              pvesm set data --content iso,vztmpl,rootdir,images
+              downloadPath="data"
 
-            # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
-            sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$otherDisks"'"+' /etc/default/smartmontools
-            sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$otherDisks"' -a -d sat+' /etc/smartd.conf
-            sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$otherDisks"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
-            systemctl restart smartmontools
-            confignotemailcontent="${confignotemailcontent}Eingebundene Festplatten\nFestplatten Typ: SSD\nFestplatte: /dev/$otherDisks\nMountpfad: /mnt/data\nProxmox Name: data\n\n\n"
+              # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
+              sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$otherDisks"'"+' /etc/default/smartmontools
+              sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$otherDisks"' -a -d sat+' /etc/smartd.conf
+              sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$otherDisks"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
+              systemctl restart smartmontools
+              confignotemailcontent="${confignotemailcontent}Eingebundene Festplatten\nFestplatten Typ: SSD\nFestplatte: /dev/$otherDisks\nMountpfad: /mnt/data\nProxmox Name: data\n\n\n"
+            fi
           fi
+        else
+          downloadPath="data"
         fi
-      else
-        downloadPath="data"
       fi
-    fi
-    if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
-      pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
-    fi
+      if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
+        echo -e "XXX\n87\n$lng_nas_configuration_nas\nXXX"
+        pvesm add cifs backups --server "$varnasip" --share "backups" --username "$varrobotname" --password "$varrobotpw" --content backup
+      fi
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_pve_configuration_text" 6 60 0
     return 0
   }
 
