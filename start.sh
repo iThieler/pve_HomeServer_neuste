@@ -511,6 +511,7 @@ function lxcSetup() {
 
 #if [ ! -f $configFile ]; then
 
+clear
 selectLanguage
 startupInfo
 pveConfig
