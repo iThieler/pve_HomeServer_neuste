@@ -48,7 +48,6 @@ pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#$nextCTIP#g' /etc/pihole/
 pct exec $ctID -- bash -ci "sed -i 's#CIDRTOCHANGE#$cidr#g' /etc/pihole/setupVars.conf"
 pct exec $ctID -- bash -ci "curl -sSL https://install.pi-hole.net | bash /dev/stdin --unattended > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "/usr/local/bin/pihole -a -p changeme > /dev/null 2>&1"       # Change the piHole Webinterface Password to changeme
-pct exec $ctID -- bash -ci "systemctl stop lighttpd && systemctl disable lighttpd > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "curl -sSL $rawGitHubURL/container/$ctName/updateAdlistPihole.sh | bash"
 # Install and configure piVPN
 pct exec $ctID -- bash -ci "useradd -m -p $ctRootpw pivpn"
@@ -56,7 +55,7 @@ pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpn/"
 pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
 publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
 hostname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "Hostname - öffentliche IP" "Wie lautet der Hostname (FQDN) oder die öffentliche IP zu diesem Container?" ${r} ${c} $publicIP 3>&1 1>&2 2>&3)
-pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/pihole/setupVars.conf" #vpn.thielshome.de
+pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/pihole/setupVars.conf"
 pct exec $ctID -- bash -ci "curl -sSL https://install.pivpn.io | bash /dev/stdin --unattended /etc/pivpn/openvpn/setupVars.conf > /dev/null 2>&1"
 # Configure Samba
 pct exec $ctID -- bash -ci "rm /etc/samba/smb.conf"
