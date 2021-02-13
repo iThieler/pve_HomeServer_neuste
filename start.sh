@@ -80,6 +80,35 @@ function startupInfo() {
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" --scrolltext "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
 }
 
+function pveConfig() {
+  # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
+  if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
+    rm /etc/apt/sources.list.d/pve-enterprise.list
+  fi
+  if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
+    echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
+  fi
+  if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
+    echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" > /etc/apt/sources.list.d/ceph.list
+  fi
+
+  # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
+  softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
+  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+  for package in $softwaretoinstall; do
+    apt-get install -y "$package" > /dev/null 2>&1
+  done
+
+  # Aktiviere S.M.A.R.T. support auf Systemfestplatte
+  if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
+    smartctl -s on -a /dev/"$rootDisk"
+  fi
+
+  # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
+  sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
+  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
+}
+
 function networkConfig() {
   varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_pve_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
   exitstatus=$?
@@ -137,30 +166,28 @@ function emailConfig() {
       postconf smtp_use_tls=$vartls
 
       # Prüfen auf Passwort-Hash-Eingabe
-      if grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
-        echo -e "$info Passwort-Hash wurde gefunden"
-      else
-        postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd
+      if ! grep "smtp_sasl_password_maps" /etc/postfix/main.cf; then
+        postconf smtp_sasl_password_maps=hash:/etc/postfix/sasl_passwd > /dev/null 2>&1
       fi
 
       #Überprüfung auf Zertifikat
       if ! grep "smtp_tls_CAfile" /etc/postfix/main.cf; then
-        postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt
+        postconf smtp_tls_CAfile=/etc/ssl/certs/ca-certificates.crt > /dev/null 2>&1
       fi
 
       # Hinzufügen von sasl-Sicherheitsoptionen und beseitigt standardmäßige Sicherheitsoptionen, die nicht mit Google Mail kompatibel sind
       if ! grep "smtp_sasl_security_options" /etc/postfix/main.cf; then
-        postconf smtp_sasl_security_options=noanonymous
+        postconf smtp_sasl_security_options=noanonymous > /dev/null 2>&1
       fi
       if ! grep "smtp_sasl_auth_enable" /etc/postfix/main.cf; then
-        postconf smtp_sasl_auth_enable=yes
+        postconf smtp_sasl_auth_enable=yes > /dev/null 2>&1
       fi 
       if ! grep "sender_canonical_maps" /etc/postfix/main.cf; then
-        postconf sender_canonical_maps=hash:/etc/postfix/canonical
+        postconf sender_canonical_maps=hash:/etc/postfix/canonical > /dev/null 2>&1
       fi 
 
-      postmap /etc/postfix/sasl_passwd
-      postmap /etc/postfix/canonical
+      postmap /etc/postfix/sasl_passwd > /dev/null 2>&1
+      postmap /etc/postfix/canonical > /dev/null 2>&1
       systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/null
       rm -rf "/etc/postfix/sasl_passwd"
 
@@ -336,35 +363,6 @@ function lxcConfig() {
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     exit
   fi
-}
-
-function pveConfig() {
-  # Entfernt das Enterprise Repository und ersetzt es durch das Community Repository
-  if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
-    rm /etc/apt/sources.list.d/pve-enterprise.list
-  fi
-  if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-    echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
-  fi
-  if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-    echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" > /etc/apt/sources.list.d/ceph.list
-  fi
-
-  # Führt ein Systenupdate aus und installiert für dieses Script benötigte Software
-  softwaretoinstall="parted smartmontools libsasl2-modules lxc-pve"
-  apt-get update > /dev/null 2>&1 && apt-get upgrade -y 2>&1 >/dev/null && apt-get dist-upgrade -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
-  for package in $softwaretoinstall; do
-    apt-get install -y "$package" > /dev/null 2>&1
-  done
-
-  # Aktiviere S.M.A.R.T. support auf Systemfestplatte
-  if [ $(smartctl -a /dev/"$rootDisk" | grep -c "SMART support is: Enabled") -eq 0 ]; then
-    smartctl -s on -a /dev/"$rootDisk"
-  fi
-
-  # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
-  sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
-  sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
 }
 
 function lxcMountNAS() {
