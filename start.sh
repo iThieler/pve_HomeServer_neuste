@@ -150,10 +150,12 @@ function networkConfig() {
   fi
   echo "varrobotname=\"$varrobotname\"" >> $configFile
   echo "vargwmanufacturer=\"$vargwmanufacturer\"" >> $configFile
-  echo "vlanexists=\"$vlanexists\"" >> $configFile
-  echo "varservervlan=\"$varservervlan\"" >> $configFile
-  echo "varsmarthomevlan=\"$varsmarthomevlan\"" >> $configFile
-  echo "varguestvlan=\"$varguestvlan\"" >> $configFile
+  if [[  $vlanexists == "y" ]]; then
+    echo "vlanexists=\"$vlanexists\"" >> $configFile
+    echo "varservervlan=\"$varservervlan\"" >> $configFile
+    echo "varsmarthomevlan=\"$varsmarthomevlan\"" >> $configFile
+    echo "varguestvlan=\"$varguestvlan\"" >> $configFile
+  fi
   return 0
 }
 
@@ -542,3 +544,5 @@ for lxc in $lxcchoice; do
     source /root/inst_$ctName.sh
   fi
 done
+
+rm *
