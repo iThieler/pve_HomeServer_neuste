@@ -159,8 +159,8 @@ function networkConfig() {
 
 function emailConfig() {
   function configEmail() {
-    {
-      if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
+    if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
+      {
         if grep "root:" /etc/aliases; then
           sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
         else
@@ -207,7 +207,26 @@ function emailConfig() {
 
         echo -e "XXX\n99\n$lng_pve_configuration_text\nXXX"
 
-        # Testen der E-Mail Einstellungen
+      } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 70 0
+
+      # Testen der E-Mail Einstellungen
+      echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+      yesno=$?
+      if [[ $yesno == 1 ]]; then
+        NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
+        if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
+          if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
+            postconf smtputf8_enable=no
+            postfix reload
+          fi
+        fi
         echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
         whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
         yesno=$?
@@ -218,37 +237,19 @@ function emailConfig() {
             textbox=white,red
             button=black,white
           ' \
-          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
-          if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
-            if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
-              postconf smtputf8_enable=no
-              postfix reload
-            fi
-          fi
-          echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
-          whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$varrootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
-          yesno=$?
-          if [[ $yesno == 1 ]]; then
-            NEWT_COLORS='
-              window=,red
-              border=white,red
-              textbox=white,red
-              button=black,white
-            ' \
-            whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
-          fi
+          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
         fi
-
-        # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
-        sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
-        sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
-        echo "start_smartd=yes" > /etc/default/smartmontools
-        sed -i 's+DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+' /etc/smartd.conf
-        sed -i 's+# /dev/sda -a -d sat+/dev/'"$rootDisk"' -a -d sat+' /etc/smartd.conf
-        sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
-        systemctl start smartmontools
       fi
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 70 0
+
+      # E-Mailbenachrichtigung über Festplattenfehler, prüfung alle 12 Stunden
+      sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
+      sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
+      echo "start_smartd=yes" > /etc/default/smartmontools
+      sed -i 's+DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+' /etc/smartd.conf
+      sed -i 's+# /dev/sda -a -d sat+/dev/'"$rootDisk"' -a -d sat+' /etc/smartd.conf
+      sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
+      systemctl start smartmontools
+    fi
     return 0
   }
 
