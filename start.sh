@@ -35,7 +35,7 @@ ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 downloadPath="local-lvm"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
-workdir="/root/shiot"
+configFile="/root/.SHIOT_config"
 fqdn=$(hostname -f)
 hostname=$(hostname)
 osname=buster
@@ -70,6 +70,8 @@ function selectLanguage() {
   lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "Wähle / Choose" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   wget -qO /root/lang $rawGitHubURL/lang/$lang
   source /root/lang
+  echo $lang >> $configFile
+  return 0
 }
 
 function startupInfo() {
@@ -78,6 +80,7 @@ function startupInfo() {
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" --scrolltext "$lng_introduction_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" --scrolltext "$lng_netrobot_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" --scrolltext "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
+  return 0
 }
 
 function pveConfig() {
@@ -107,6 +110,7 @@ function pveConfig() {
   # Aktiviere Paketweiterleitung an Container (wird benötigt um Docker in Containern laufen zu lassen)
   sed -i 's+#net.ipv4.ip_forward=1+net.ipv4.ip_forward=1+' /etc/sysctl.conf
   sed -i 's+#net.ipv6.conf.all.forwarding=1+net.ipv6.conf.all.forwarding=1+' /etc/sysctl.conf
+  return 0
 }
 
 function networkConfig() {
@@ -142,6 +146,13 @@ function networkConfig() {
       vlanexists=n
     fi
   fi
+  echo $varrobotname >> $configFile
+  echo $vargwmanufacturer >> $configFile
+  echo $vlanexists >> $configFile
+  echo $varservervlan >> $configFile
+  echo $varsmarthomevlan >> $configFile
+  echo $varguestvlan >> $configFile
+  return 0
 }
 
 function emailConfig() {
@@ -250,6 +261,9 @@ function emailConfig() {
   fi
   # Executes the notification configuration
   configEmail
+  echo $varrootmail >> $configFile
+  echo $varsenderaddress >> $configFile
+  return 0
 }
 
 function nasConfig() {
@@ -332,6 +346,11 @@ function nasConfig() {
   fi
   # Executes the Storage configuration
   configStorage
+  echo $downloadPath >> $configFile
+  echo $varnasip >> $configFile
+  echo $varnasexists >> $configFile
+  echo $varsynologynas >> $configFile
+  return 0
 }
 
 function firewallConfig() {
@@ -345,15 +364,17 @@ function firewallConfig() {
   
   # Firewall auf Hostebene
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
+  echo $clusterfileFW >> $configFile
+  echo $hostfileFW >> $configFile
   return 0
 }
 
 function lxcConfig() {
   wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
   source /root/lxc.conf
-  whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration" "$lng_lxc_configuration_text" ${r} ${c} 10 "${lxc[@]}" 2>$workdir/lxcchoice
-  sed -i 's#\"##g' $workdir/lxcchoice
-  lxcchoice=$(cat $workdir/lxcchoice)
+  whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration" "$lng_lxc_configuration_text" ${r} ${c} 10 "${lxc[@]}" 2>/root/lxcchoice
+  sed -i 's#\"##g' /root/lxcchoice
+  lxcchoice=$(cat /root/lxcchoice)
   whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
   exitstatus=$?
   if [ $exitstatus = 0 ]; then
@@ -363,6 +384,8 @@ function lxcConfig() {
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     exit
   fi
+  echo $lxcchoice >> $configFile
+  return 0
 }
 
 function lxcMountNAS() {
@@ -486,8 +509,7 @@ function lxcSetup() {
   } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $2" --gauge "$lng_lxc_setup_text" 6 60 0
 }
 
-if [ ! -d $workdir ]; then mkdir -p $workdir; fi
-
+#if [ ! -f $configFile ]; then
 
 selectLanguage
 startupInfo
@@ -504,7 +526,7 @@ for lxc in $lxcchoice; do
   ctName=$lxc
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
-    wget -qO $workdir/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
-    source $workdir/inst_$ctName.sh
+    wget -qO /root/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
+    source /root/inst_$ctName.sh
   fi
 done
