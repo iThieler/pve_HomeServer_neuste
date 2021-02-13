@@ -163,8 +163,8 @@ function networkConfig() {
 
 function emailConfig() {
   function configEmail() {
-    if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
-      {
+    {
+      if [ $(grep -crnwi '/etc/default/smartmontools' -e '43200') -eq 0 ]; then
         if grep "root:" /etc/aliases; then
           sed -i "s/^root:.*$/root: $varrootmail/" /etc/aliases
         else
