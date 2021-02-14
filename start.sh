@@ -468,7 +468,7 @@ function lxcSetup() {
   echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
   downloadTemplate $1
   sleep 0.5
-  echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
+  echo -e "XXX\n28\n$lng_lxc_setup_text_container_install\nXXX"
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   if [[ $7 == "" ]]; then
     pct create $nextCTID \
@@ -503,7 +503,7 @@ function lxcSetup() {
       --features "$7" > /dev/null 2>&1
   fi
   sleep 0.5
-  echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
+  echo -e "XXX\n35\n$lng_lxc_setup_text_container_update\nXXX"
   if [[ $ctOStype == "debian" ]]; then
     pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
     pct exec $nextCTID -- bash -c "/etc/ssh/sshd_config > /dev/null 2>&1"
@@ -516,12 +516,12 @@ function lxcSetup() {
   pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
   pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-  echo -e "XXX\n88\n$lng_lxc_setup_text_software_install\nXXX"
+  echo -e "XXX\n42\n$lng_lxc_setup_text_software_install\nXXX"
   for package in $ctStandardsoftware; do
     pct exec $nextCTID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
   done
   #pct exec $nextCTID -- bash -c "apt-get dist-upgrade -y > /dev/null 2>&1"
-  echo -e "XXX\n98\n$lng_lxc_setup_text_finish\nXXX"
+  echo -e "XXX\n51\n$lng_lxc_setup_text_finish\nXXX"
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
@@ -531,10 +531,10 @@ function lxcSetup() {
 
 clear
 selectLanguage
-#startupInfo
-#pveConfig
+startupInfo
+pveConfig
 networkConfig
-#emailConfig
+emailConfig
 nasConfig
 firewallConfig
 lxcConfig
@@ -549,4 +549,6 @@ for lxc in $lxcchoice; do
   fi
 done
 
+# Cleanup
+clear
 rm *

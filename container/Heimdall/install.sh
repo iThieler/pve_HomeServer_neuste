@@ -16,7 +16,7 @@
   sleep 10
 
   # echo [INFO] The container "CONTAINERNAME" is prepared for configuration
-  echo -e "XXX\n0\n$lng_lxc_create_text_software_install\nXXX"
+  echo -e "XXX\n55\n$lng_lxc_create_text_software_install\nXXX"
 
   # Install the packages specified as containerSoftware
   for package in $containerSoftware; do
@@ -26,7 +26,7 @@
   done
 
   # Execute commands on containers
-  echo -e "XXX\n33\n$lng_lxc_create_text_package_install\nXXX"
+  echo -e "XXX\n59\n$lng_lxc_create_text_package_install\nXXX"
   pct exec ${ctID} -- bash -ci "systemctl start docker && systemctl enable docker > /dev/null 2>&1"
   pct exec ${ctID} -- bash -ci "mkdir -p /root/heimdall"
   pct exec ${ctID} -- bash -ci "wget -qO /root/heimdall/docker-compose.yml ${rawGitHubURL}/container/${ctName}/docker-compose.yml"
@@ -45,4 +45,4 @@
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo ${ctName}|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/${ctID}.fw
 
 # Graphical Feedback of Installation with gauge
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
+} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title - $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
