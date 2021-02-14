@@ -420,7 +420,7 @@ function lxcSetup() {
   hddsize="$3"
   cpucores="$4"
   ram="$5"
-  swap=$(( $5 / 2 ))
+  swap=$(( $ram / 2 ))
   unprivileged="$6"
   features="$7"
 
@@ -487,7 +487,7 @@ function lxcSetup() {
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
-      --unprivileged "$unprivileged" \
+      --unprivileged $unprivileged \
       --start 1 > /dev/null 2>&1
   else
     pct create $nextCTID \
@@ -502,7 +502,7 @@ function lxcSetup() {
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
-      --unprivileged "$unprivileged" \
+      --unprivileged $unprivileged \
       --start 1 \
       --features "$features" > /dev/null 2>&1
   fi
