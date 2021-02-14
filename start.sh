@@ -420,6 +420,7 @@ function lxcSetup() {
   hddsize="$3"
   cpucores="$4"
   ram="$5"
+  swap=$(( $5 / 2 ))
   unprivileged="$6"
   features="$7"
 
@@ -482,7 +483,7 @@ function lxcSetup() {
       --rootfs $rootfs:$hddsize \
       --cores $cpucores \
       --memory $ram \
-      --swap $(( $ram / 2 )) \
+      --swap $swap \
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
@@ -497,7 +498,7 @@ function lxcSetup() {
       --rootfs $rootfs:$hddsize \
       --cores $cpucores \
       --memory $ram \
-      --swap $(( $ram / 2 )) \
+      --swap $swap \
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
