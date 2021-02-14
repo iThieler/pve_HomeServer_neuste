@@ -414,15 +414,8 @@ function lxcMountNAS() {
 }
 
 function lxcSetup() {
+  # Create Rootpassword for Container
   ctRootpw=$(createPassword 12)
-  ctTemplate="$1" 
-  hostname="$2"
-  hddsize=$3
-  cpucores=$4
-  ram=$5
-  swap=$(( $ram / 2 ))
-  unprivileged=$6
-  features="$7"
 
   # Generates an ID and an IP address for the container to be created
   function createIDIP() {
@@ -431,7 +424,7 @@ function lxcSetup() {
       lastCTIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4)
       nextCTIP=$networkIP.$(( "$lastCTIP" + 5 ))
     else
-      lastCTID=$(pct list | tail -n1 | awk '{print $ctTemplate}')
+      lastCTID=$(pct list | tail -n1 | awk '{print $1}')
       nextCTID=$(( "$lastCTID" + 1 ))
       lastCTIP=$(lxc-info "$lastCTID" -iH | grep "$networkIP" | cut -d. -f4)
       nextCTIP=$networkIP.$(( "$lastCTIP" + 1 ))
@@ -441,27 +434,27 @@ function lxcSetup() {
   # Loads the container template from the Internet if not available and saves it for further use
   function downloadTemplate() {
     pveam update > /dev/null 2>&1
-    if [[ $ctTemplate == "ubuntu" ]]; then
-      ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $hostname}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+    if [[ $1 == "ubuntu" ]]; then
+      ctTemplate=$(pveam available | grep $osUbuntu | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$1") -eq 0 ]; then
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
       fi
       ctOstype="ubuntu"
-    elif [[ $ctTemplate == "ubuntu18" ]]; then
-      ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $hostname}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+    elif [[ $1 == "ubuntu18" ]]; then
+      ctTemplate=$(pveam available | grep $osUbuntu18 | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$1") -eq 0 ]; then
         pveam download $downloadPath "$ctTemplate" > /dev/null 2>&1
       fi
       ctOstype="ubuntu"
-    elif [[ $ctTemplate == "debian" ]]; then
-      ctTemplate=$(pveam available | grep $osDebian | awk '{print $hostname}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+    elif [[ $1 == "debian" ]]; then
+      ctTemplate=$(pveam available | grep $osDebian | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$1") -eq 0 ]; then
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
       fi
       ctOstype="debian"
-    elif [[ $ctTemplate == "debian9" ]]; then
-      ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $hostname}')
-      if [ $(pveam list "$downloadPath" | grep -c "$ctTemplate") -eq 0 ]; then
+    elif [[ $1 == "debian9" ]]; then
+      ctTemplate=$(pveam available | grep $osDebian9 | awk '{print $2}')
+      if [ $(pveam list "$downloadPath" | grep -c "$1") -eq 0 ]; then
         pveam download "$downloadPath" "$ctTemplate" > /dev/null 2>&1
       fi
       ctOstype="debian"
@@ -471,40 +464,40 @@ function lxcSetup() {
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
   createIDIP
   echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
-  downloadTemplate $ctTemplate
+  downloadTemplate $1
   echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
-  if [[ $features == "" ]]; then
+  if [[ $7 == "" ]]; then
     pct create $nextCTID \
       $downloadPath:vztmpl/$ctTemplate \
       --ostype $ctOstype \
-      --hostname "$hostname" \
+      --hostname "$2" \
       --password "$ctRootpw" \
-      --rootfs $rootfs:$hddsize \
-      --cores $cpucores \
-      --memory $ram \
-      --swap $swap \
+      --rootfs $rootfs:$3 \
+      --cores $4 \
+      --memory $5 \
+      --swap $(( $5 / 2 )) \
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
-      --unprivileged $unprivileged \
+      --unprivileged $6 \
       --start 1 > /dev/null 2>&1
   else
     pct create $nextCTID \
       $downloadPath:vztmpl/$ctTemplate \
       --ostype $ctOstype \
-      --hostname "$hostname" \
+      --hostname "$2" \
       --password "$ctRootpw" \
-      --rootfs $rootfs:$hddsize \
-      --cores $cpucores \
-      --memory $ram \
-      --swap $swap \
+      --rootfs $rootfs:$3 \
+      --cores $4 \
+      --memory $5 \
+      --swap $(( $5 / 2 )) \
       --net0 bridge=vmbr0,name=eth0,ip="$nextCTIP"/$cidr,gw="$gatewayIP",ip6=dhcp,firewall=1 \
       --onboot 1 \
       --force 1 \
-      --unprivileged $unprivileged \
+      --unprivileged $6 \
       --start 1 \
-      --features "$features" > /dev/null 2>&1
+      --features "$7" > /dev/null 2>&1
   fi
   echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
   if [[ $ctOStype == "debian" ]]; then
