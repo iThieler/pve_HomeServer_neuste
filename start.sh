@@ -506,7 +506,7 @@ function lxcSetup() {
     pct exec ${nextCTID} -- bash -c "localedef -i en_US -f UTF-8 en_US.UTF-8"
   fi
   pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
-  pct exec ${nextCTI}D -- bash -c "export LANGUAGE=en_US.UTF-8"
+  pct exec ${nextCTID} -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec ${nextCTID} -- bash -c "export LANG=en_US.UTF-8"
   pct exec ${nextCTID} -- bash -c "export LC_ALL=en_US.UTF-8"
   pct exec ${nextCTID} -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
@@ -537,14 +537,12 @@ lxcSetup
 
 # Start creating the selected containers
 for lxc in $lxcchoice; do
-  {
   ctName=$lxc
   ctRootpw=$(createPassword 12)
   if [ $(pct list | grep -c $ctName) -eq 0 ]; then
     wget -qO /root/inst_$ctName.sh $rawGitHubURL/container/$ctName/install.sh
     source /root/inst_$ctName.sh
   fi
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
 done
 
 rm *
