@@ -329,6 +329,7 @@ function nasConfig() {
         else
           downloadPath="data"
         fi
+        if [ $(pvesm status | grep -c data) -eq 1 ]; then downloadPath="data"; fi
       fi
       if [ $(pvesm status | grep 'backups' | grep -c 'active') -eq 0 ] && [[ $varnasexists == "y" ]]; then
         echo -e "XXX\n87\n$lng_nas_configuration_nas\nXXX"

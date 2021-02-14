@@ -1,3 +1,5 @@
+#!/bin/bash
+
 lng_yes="Ja"
 lng_no="Nein"
 lng_ok="OK"

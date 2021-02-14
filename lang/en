@@ -1,3 +1,5 @@
+#!/bin/bash
+
 lng_yes="Yes"
 lng_no="No"
 lng_ok="OK"
@@ -11,10 +13,10 @@ lng_pve_configuration="Proxmox Configuration"
 lng_password_error_text="Without root password this script cannot be executed properly. The script will be terminated"
 lng_pve_configuration_text="Preparation ..."
 lng_pve_configuration_community="Set \"non-subscription\" Repository"
-lng_pve_configuration_update="Updates needed for your server will be installed".
-lng_pve_configuration_install="Software packages needed for your server will be installed".
-lng_pve_configuration_smart="Enable S.M.A.R.T. on system disk".
-lng_pve_configuration_forward="Enable packet forwarding for LXC".
+lng_pve_configuration_update="Updates needed for your server will be installed"
+lng_pve_configuration_install="Software packages needed for your server will be installed"
+lng_pve_configuration_smart="Enable S.M.A.R.T. on system disk"
+lng_pve_configuration_forward="Enable packet forwarding for LXC"
 lng_start_info="I recommend installing Proxmox on an SSD If there is only one hard disk in your system, the hard disk size should be chosen according to the amount of containers and virtual machines you want to install. If you install Proxmox on a separate hard disk, 32GB is sufficient for this hard disk.\n\nOf course you can also set up a raid as a media/document hard disk in Proxmox, but I would not recommend this for private use. Use a NAS (QNap, Synology, or similar) instead.\n\nThe setup of a raid/ZFS pool is currently not supported by this script, if you want to configure this afterwards, you have to equip your server with enough RAM. As a rule of thumb, 1GB of RAM per 1TB of disk capacity."
 lng_introduction="Introduction"
 lng_introduction_text="Before we can start we need some information about your proxmox system and your network. Please make sure that all information is correct, otherwise this script will not run completely or only incorrectly, and the configuration of your Proxmox system, as well as the creation and configuration of containers and virtual machines will not work.\n\nThe use of this script requires a new unconfigured Proxmox installation."
@@ -41,12 +43,12 @@ lng_vlan_text_smarthome="What is the VLAN ID to be used for your smarthome netwo
 lng_vlan_text_guest="What is the VLAN ID to be used for your guest network?"
 lng_vlan_info="A Virtual Local Area Network '(VLAN)' is a logical network that sits on top of a physical LAN and can provide increased flexibility, performance and security. VLANs can be used to divide physical LANs into logical subnets that are isolated from each other. The subdivision of LANs is not an end in itself, but is also intended to optimize performance and security.\n\That's why you should think about using VLANs."
 lng_mail_configuration="Email configuration"
-lng_mail_configuration_ok="Email delivered successfully".
-lng_mail_configuration_test="Email test".
+lng_mail_configuration_ok="Email delivered successfully"
+lng_mail_configuration_test="Email test"
 lng_mail_configuration_test_message="If this email was received, you can continue in the script.\n\nPlease confirm the receipt of the email with \"Yes\" in the script."
 lng_mail_configuration_test_message_subject="Test message installation script"
 lng_mail_configuration_test_text="An email will be sent to the following address:"
-lng_mail_root="Recipient's email address".
+lng_mail_root="Recipient's email address"
 lng_mail_root_text="To which email address should notifications and system reports be sent?"
 lng_mail_server="Email server hostname"
 lng_mail_server_text="What is the hostname of the mail server \"incoming/outgoing server\"?"
@@ -78,7 +80,7 @@ lng_nas_folder_config_text="In this script, two shared folders are needed on the
 lng_nas_folder_config_text1="read/write permissions.\n\nbackups\nmedia\n\nHave you created these folders and assigned read/write permissions to your network robot"
 lng_nas_folder_config_text2="Read/Write permissions?"
 lng_nas_folder_error="If these folders do not exist, or the network robot does not have read/write permissions to the folders, this configuration script cannot run properly, sorry.\n\nNo changes will be made to the system. The script will be terminated."
-lng_nas_error="It is recommended to install a NAS in a private network. A NAS provides data security.lng_nas_error="If you don't have or don't want to specify a NAS, the installation of some servers is not available."
+lng_nas_error="It is recommended to install a NAS in a private network. A NAS provides data security. If you don't have or don't want to specify a NAS, the installation of some servers is not available."
 lng_lxc_configuration="Container Configuration"
 lng_lxc_configuration_text="Select the containers you want to install from the list."
 lng_end_info="Configuration completion"
