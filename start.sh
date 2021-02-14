@@ -461,11 +461,14 @@ function lxcSetup() {
     fi
   }
 
+  {
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
-  echo -e "XXX\n17\n$lng_lxc_setup_text_idip\nXXX"
+  echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
   createIDIP
+  sleep 0.5
   echo -e "XXX\n17\n$lng_lxc_setup_text_template_download\nXXX"
   downloadTemplate $1
+  sleep 0.5
   echo -e "XXX\n33\n$lng_lxc_setup_text_container_install\nXXX"
   if [[ $downloadPath == "local" ]]; then rootfs="local-lvm"; else rootfs=$downloadPath; fi
   if [[ $7 == "" ]]; then
@@ -500,6 +503,7 @@ function lxcSetup() {
       --start 1 \
       --features "$7" > /dev/null 2>&1
   fi
+  sleep 0.5
   echo -e "XXX\n65\n$lng_lxc_setup_text_container_update\nXXX"
   if [[ $ctOStype == "debian" ]]; then
     pct exec $nextCTID -- bash -c "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+g'  /etc/locale.gen"
@@ -522,6 +526,7 @@ function lxcSetup() {
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
+  } | 
 }
 
 #if [ ! -f $configFile ]; then
