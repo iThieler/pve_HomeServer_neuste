@@ -39,6 +39,8 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   function addVPNUser() {
     pw=$(createPassword 12)
     vpnuser=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "Um Verbindungsprobleme zu vermeiden, sollte pro Endgerät das sich\nverbindet ein eigener Benutzer erstellt werden.\n\nWelchen Namen soll der VPN-Benutzer erhalten?" 20 70 MaxHandy 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [[ "$exitstatus" = 1 ]]; then return 1; fi
     whiptail --msgbox --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "(${lang}_add_vpn_user_info) ${vpnuser} (${lang}_add_vpn_user_info1) ${pw} (${lang}_add_vpn_user_info2)" 20 70
     pct exec $ctID -- bash -ci "pivpn add -n $vpnuser -p $pw -d 1800"
     whiptail --yesno --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "${lang}_add_vpn_user_ask" 20 70
@@ -69,7 +71,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
   publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
   hostname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "Hostname - öffentliche IP" "Wie lautet der Hostname (FQDN) oder die öffentliche IP zu diesem Container?" ${r} ${c} $publicIP 3>&1 1>&2 2>&3)
-  pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/openvpn/setupVars.conf"
+  pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/pivpn/openvpn/setupVars.conf"
   pct exec $ctID -- bash -ci "curl -sSL https://install.pivpn.io | bash /dev/stdin --unattended /etc/pivpn/openvpn/setupVars.conf > /dev/null 2>&1"
   # Configure Samba
   echo -e "XXX\n82\n${lng_lxc_create_text_package_install} - \"Samba\"\nXXX"
