@@ -121,7 +121,7 @@ function pveConfig() {
 }
 
 function networkConfig() {
-  varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_pve_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   if [[ $varpverootpw = "" ]]; then
