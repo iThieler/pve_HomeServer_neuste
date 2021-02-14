@@ -551,4 +551,4 @@ for lxc in $lxcchoice; do
   fi
 done
 
-rm -dr *
+#rm -dr *

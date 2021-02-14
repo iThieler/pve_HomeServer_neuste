@@ -7,6 +7,7 @@ lxcSetup ubuntu ${ctName} 4 1 256 1 "keyctl=1,nesting=1"
 {
   # Comes from Mainscript - start.sh --> Function lxcSetup
   ctID=$(pct list | grep ${ctName} | awk $'{print $1}')
+  echo $ctID >> var
 
   # Software that must be installed on the container
   # example - containerSoftware="docker.io docker-compose"
