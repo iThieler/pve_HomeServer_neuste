@@ -526,10 +526,10 @@ function lxcSetup() {
 
 clear
 selectLanguage
-startupInfo
-pveConfig
+#startupInfo
+#pveConfig
 networkConfig
-emailConfig
+#emailConfig
 nasConfig
 firewallConfig
 lxcConfig
