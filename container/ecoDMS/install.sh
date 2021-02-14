@@ -1,3 +1,3 @@
 #!/bin/bash
 
-echo -e "$error Comming soon ..."
+Comming soon ...

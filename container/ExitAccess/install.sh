@@ -10,7 +10,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
 
   # Container Configuration
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-  lxcSetup ubuntu $ctName $ctRootpw 4 1 512 1 ""
+  lxcSetup ubuntu $ctName 4 1 512 1 ""
 
   # Comes from Mainscript - start.sh --> Function lxcSetup
   ctID=$(pct list | grep ${ctName} | awk $'{print $1}')
@@ -24,7 +24,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   sleep 10
 
   # echo [INFO] The container "CONTAINERNAME" is prepared for configuration
-  echo -e "XXX\n55\n$lng_lxc_create_text_software_install\nXXX"
+  echo -e "XXX\n55\n${lng_lxc_create_text_software_install}\nXXX"
 
   # Install the packages specified as containerSoftware
   for package in $containerSoftware; do
@@ -48,7 +48,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
 
   # Execute commands on containers
   # Install and configure piHole
-  echo -e "XXX\n59\n$lng_lxc_create_text_package_install - \"pi-Hole\"\nXXX"
+  echo -e "XXX\n59\n${lng_lxc_create_text_package_install} - \"pi-Hole\"\nXXX"
   pct exec $ctID -- bash -ci "mkdir -p /etc/pihole/"
   pct exec $ctID -- bash -ci "wget -qO /etc/pihole/setupVars.conf $rawGitHubURL/container/$ctName/piHole_setupVars.conf"
   pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#$nextCTIP#g' /etc/pihole/setupVars.conf"
@@ -57,7 +57,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   pct exec $ctID -- bash -ci "/usr/local/bin/pihole -a -p changeme > /dev/null 2>&1"       # Change the piHole Webinterface Password to changeme
   pct exec $ctID -- bash -ci "curl -sSL $rawGitHubURL/container/$ctName/updateAdlistPihole.sh | bash"
   # Install and configure piVPN
-  echo -e "XXX\n68\n$lng_lxc_create_text_package_install - \"piVPN\"\nXXX"
+  echo -e "XXX\n68\n${lng_lxc_create_text_package_install} - \"piVPN\"\nXXX"
   pct exec $ctID -- bash -ci "useradd -m -p $ctRootpw pivpn"
   pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpn/"
   pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
@@ -66,7 +66,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/pihole/setupVars.conf"
   pct exec $ctID -- bash -ci "curl -sSL https://install.pivpn.io | bash /dev/stdin --unattended /etc/pivpn/openvpn/setupVars.conf > /dev/null 2>&1"
   # Configure Samba
-  echo -e "XXX\n82\n$lng_lxc_create_text_package_install - \"Samba\"\nXXX"
+  echo -e "XXX\n82\n${lng_lxc_create_text_package_install} - \"Samba\"\nXXX"
   pct exec $ctID -- bash -ci "rm /etc/samba/smb.conf"
   pct exec $ctID -- bash -ci "wget -qO /etc/samba/smb.conf $rawGitHubURL/container/$ctName/samba.conf"
   pct exec $ctID -- bash -ci "chmod -R 775 /home/pivpn/ovpns"
@@ -77,7 +77,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   pct set $ctID --description $'Shell Login\nBenutzer: root\nPasswort: '"$ctRootpw"$'\n\nWebGUI\nAdresse: http://'"$nextCTIP"$'/admin\nPasswort: changeme'
 
   # echo [INFO] Create firewall rules for container "CONTAINERNAME"
-  echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
+  echo -e "XXX\n99\n${lng_lxc_create_text_firewall}\nXXX"
 
   # Creates firewall rules for the container
   # Create Firewallgroup - If a port should only be accessible from the local network - IN ACCEPT -source +network -p tcp -dport PORTNUMBER -log nolog
@@ -87,4 +87,4 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
 
   # Graphical installation progress display
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_create_title - $ctName" --gauge "$lng_lxc_setup_text" 6 60 0
+} | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_lxc_setup}" --title "${lng_lxc_create_title} - $ctName" --gauge "${lng_lxc_setup_text}" 6 60 0
