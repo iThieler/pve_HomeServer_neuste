@@ -417,11 +417,11 @@ function lxcSetup() {
   ctRootpw=$(createPassword 12)
   ctTemplate="$1" 
   hostname="$2"
-  hddsize="$3"
-  cpucores="$4"
-  ram="$5"
+  hddsize=$3
+  cpucores=$4
+  ram=$5
   swap=$(( $ram / 2 ))
-  unprivileged="$6"
+  unprivileged=$6
   features="$7"
 
   # Generates an ID and an IP address for the container to be created
