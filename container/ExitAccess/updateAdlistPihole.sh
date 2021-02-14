@@ -25,8 +25,8 @@ TMP_SQL="$(mktemp --tmpdir adlist.XXXXXX.sql)"
 # Create firebog tick and nocross list
 list="/root/list.txt"
 nlist="/root/nlist.txt"
-curl "https://v.firebog.net/hosts/lists.php?type=tick" >> $list
-curl "https://v.firebog.net/hosts/lists.php?type=nocross" >> $list
+curl -s "https://v.firebog.net/hosts/lists.php?type=tick" >> $list
+curl -s "https://v.firebog.net/hosts/lists.php?type=nocross" >> $list
 sort $list | uniq -u >> $nlist
 sort $list | uniq -d >> $nlist
 
