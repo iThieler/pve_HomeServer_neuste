@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Container Configuration
-# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=ContainerRootPasswort - $4=hdd size - $5=cpu cores - $6=RAM Swap/2 - $7=unprivileged 0/1 - $8=features (keyctl=1,nesting=1,mount=cifs)
-lxcSetup ubuntu $ctName $ctRootpw 8 1 512 1 "keyctl=1,nesting=1"
+# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
+lxcSetup ubuntu $ctName 8 1 512 1 "keyctl=1,nesting=1"
 
 # Comes from Mainscript - start.sh --> Function lxcSetup
 ctID=$?
