@@ -35,6 +35,8 @@ ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 downloadPath="local"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
+clusterfileFW="/etc/pve/firewall/cluster.fw"
+hostfileFW="/etc/pve/nodes/$hostname/host.fw"
 configFile="/root/.shiot_config"
 fqdn=$(hostname -f)
 hostname=$(hostname)
@@ -393,8 +395,6 @@ function nasConfig() {
 function firewallConfig() {
   mkdir -p /etc/pve/firewall
   mkdir -p /etc/pve/nodes/$hostname
-  clusterfileFW="/etc/pve/firewall/cluster.fw"
-  hostfileFW="/etc/pve/nodes/$hostname/host.fw"
 
   # Firewall auf Clusterebene
   echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # alle privaten Netzwerke, wichtig für VPN\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
