@@ -59,7 +59,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   # Install and configure piVPN
   echo -e "XXX\n68\n${lng_lxc_create_text_package_install} - \"piVPN\"\nXXX"
   pct exec $ctID -- bash -ci "useradd -m -p $ctRootpw pivpn"
-  pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpn/"
+  pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpns/"
   pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
   publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
   hostname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "Hostname - öffentliche IP" "Wie lautet der Hostname (FQDN) oder die öffentliche IP zu diesem Container?" ${r} ${c} $publicIP 3>&1 1>&2 2>&3)
