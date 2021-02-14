@@ -405,6 +405,32 @@ function firewallConfig() {
   return 0
 }
 
+function sqlSecure () {
+  SECURE_MYSQL=$(expect -c "
+  set timeout 3
+  spawn mysql_secure_installation
+  expect \"Press y|Y for Yes, any other key for No:\"
+  send \"n\r\"
+  expect \"New password:\"
+  send \"${ctRootpw}\r\"
+  expect \"Re-enter new password:\"
+  send \"${ctRootpw}\r\"
+  expect \"Remove anonymous users?\"
+  send \"y\r\"
+  expect \"Disallow root login remotely?\"
+  send \"y\r\"
+  expect \"Remove test database and access to it?\"
+  send \"y\r\"
+  expect \"Reload privilege tables now?\"
+  send \"y\r\"
+  expect eof
+  ")
+
+  pct exec $ctID -- bash -ci "apt-get install -y expect > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "echo \"${SECURE_MYSQL}\" > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "apt-get purge -y expect > /dev/null 2>&1"
+}
+
 function lxcConfig() {
   wget -qO /root/lxc.conf $rawGitHubURL/config/lxc.conf
   source /root/lxc.conf
