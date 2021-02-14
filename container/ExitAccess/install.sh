@@ -2,10 +2,14 @@
 {
 
 de_add_vpn_user_title="Benutzer"
-de_add_vpn_user_info="Es wird ein Benutzer mit folgenden Daten erstellt:\nBenutzer  ${vpnuser}\nPasswort  ${pw}\n\nDas Konto ist 1800 Tage gültig"
+de_add_vpn_user_info="Es wird ein Benutzer mit folgenden Daten erstellt:\nBenutzer"
+de_add_vpn_user_info1="\nPasswort"
+de_add_vpn_user_info2="\n\nDas Konto ist 1800 Tage gültig"
 de_add_vpn_user_ask="Möchtest du einen weiteren VPN Benutzer anlegen?"
 en_add_vpn_user_title="User"
-en_add_vpn_user_info="A user is created with the following data:\nUser ${vpnuser}\nPassword ${pw}\n\nThe account is valid for 1800 days"
+en_add_vpn_user_info="A user is created with the following data:\nUser"
+en_add_vpn_user_info1="\nPassword"
+en_add_vpn_user_info2="\n\nThe account is valid for 1800 days"
 en_add_vpn_user_ask="Do you want to create another VPN user?"
 
   # Container Configuration
@@ -35,7 +39,7 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   function addVPNUser() {
     pw=$(createPassword 12)
     vpnuser=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "Um Verbindungsprobleme zu vermeiden, sollte pro Endgerät das sich\nverbindet ein eigener Benutzer erstellt werden.\n\nWelchen Namen soll der VPN-Benutzer erhalten?" 20 70 MaxHandy 3>&1 1>&2 2>&3)
-    whiptail --msgbox --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "${lang}_add_vpn_user_info" 20 70
+    whiptail --msgbox --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "$(${lang}_add_vpn_user_info) ${vpnuser} $(${lang}_add_vpn_user_info1) ${pw} $(${lang}_add_vpn_user_info2)" 20 70
     pct exec $ctID -- bash -ci "pivpn add -n $vpnuser -p $pw -d 1800"
     whiptail --yesno --backtitle "SmartHome-IoT.net - piVPN" --title "${lang}_add_vpn_user_title" "${lang}_add_vpn_user_ask" 20 70
     yesno=$?
@@ -60,10 +64,12 @@ en_add_vpn_user_ask="Do you want to create another VPN user?"
   echo -e "XXX\n68\n${lng_lxc_create_text_package_install} - \"piVPN\"\nXXX"
   pct exec $ctID -- bash -ci "useradd -m -p $ctRootpw pivpn"
   pct exec $ctID -- bash -ci "mkdir -p /home/pivpn/openvpns/"
+  pct exec $ctID -- bash -ci "chown -R pivpn:pivpn /home/pivpn/openvpns/"
+  pct exec $ctID -- bash -ci "mkdir -p /etc/pivpn/openvpn/"
   pct exec $ctID -- bash -ci "wget -qO /etc/pivpn/openvpn/setupVars.conf $rawGitHubURL/container/$ctName/piVPN_setupVars.conf"
   publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
   hostname=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net - piVPN" --title "Hostname - öffentliche IP" "Wie lautet der Hostname (FQDN) oder die öffentliche IP zu diesem Container?" ${r} ${c} $publicIP 3>&1 1>&2 2>&3)
-  pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/pihole/setupVars.conf"
+  pct exec $ctID -- bash -ci "sed -i 's#HOSTTOCHANGE#$hostname#g' /etc/openvpn/setupVars.conf"
   pct exec $ctID -- bash -ci "curl -sSL https://install.pivpn.io | bash /dev/stdin --unattended /etc/pivpn/openvpn/setupVars.conf > /dev/null 2>&1"
   # Configure Samba
   echo -e "XXX\n82\n${lng_lxc_create_text_package_install} - \"Samba\"\nXXX"
