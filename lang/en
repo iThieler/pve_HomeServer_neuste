@@ -8,6 +8,7 @@ lng_abort="Abort"
 lng_finish="Completed"
 lng_mail_error="Error"
 lng_pve_configuration="Proxmox Configuration"
+lng_password_error_text="Without root password this script cannot be executed properly. The script will be terminated"
 lng_pve_configuration_text="Preparation ..."
 lng_pve_configuration_community="Set \"non-subscription\" Repository"
 lng_pve_configuration_update="Updates needed for your server will be installed".

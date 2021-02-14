@@ -121,21 +121,43 @@ function pveConfig() {
 }
 
 function networkConfig() {
-  varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_pve_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  varpverootpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c} 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
+  if [[ $varpverootpw = "" ]]; then
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c}
+    exit
+  fi
   varrobotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   varrobotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
+  if [[ $varrobotpw = "" ]]; then
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c}
+    exit
+  fi
   wget -qO /root/gw.conf $rawGitHubURL/config/gw.conf
   source /root/gw.conf
   vargwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
+  if [[ $vargwmanufacturer == "andere" ]]; then
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
+  fi
   if [[ $vargwmanufacturer == "unifi" ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_info" ${r} ${c}
     whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
