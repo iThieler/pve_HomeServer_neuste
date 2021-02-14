@@ -32,7 +32,7 @@ networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ 
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
 otherDisks=$(lsblk -nd --output NAME | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n# #' | sed 's# s#s#g' | sed 's# h#h#g' | sed ':M;N;$!bM;s#\n# #g')
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
-downloadPath="local-lvm"
+downloadPath="local"
 ctStandardsoftware="curl wget software-properties-common gnupg2 net-tools"
 rawGitHubURL="https://raw.githubusercontent.com/shiot/prepve/master"
 configFile="/root/.shiot_config"
