@@ -1,13 +1,11 @@
 #!/bin/bash
-
-# Container Configuration
-# $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
-lxcSetup ubuntu ${ctName} 4 1 256 1 "keyctl=1,nesting=1"
-
 {
+  # Container Configuration
+  # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
+  lxcSetup ubuntu ${ctName} 4 1 256 1 "keyctl=1,nesting=1"
+
   # Comes from Mainscript - start.sh --> Function lxcSetup
   ctID=$(pct list | grep ${ctName} | awk $'{print $1}')
-  echo $ctID >> var
 
   # Software that must be installed on the container
   # example - containerSoftware="docker.io docker-compose"

@@ -461,7 +461,6 @@ function lxcSetup() {
     fi
   }
 
-  {
   # $1=ctTemplate (ubuntu/debian/turnkey-openvpn) - $2=hostname - $3=hdd size - $4=cpu cores - $5=RAM Swap/2 - $6=unprivileged 0/1 - $7=features (keyctl=1,nesting=1,mount=cifs)
   echo -e "XXX\n0\n$lng_lxc_setup_text_idip\nXXX"
   createIDIP
@@ -526,7 +525,6 @@ function lxcSetup() {
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
 }
 
 #if [ ! -f $configFile ]; then
@@ -551,4 +549,4 @@ for lxc in $lxcchoice; do
   fi
 done
 
-#rm -dr *
+rm *
