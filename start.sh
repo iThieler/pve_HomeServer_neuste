@@ -526,7 +526,7 @@ function lxcSetup() {
   pct shutdown $nextCTID --timeout 5
   sleep 10
   return $nextCTID
-  } | 
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_lxc_setup_title $ctName" --gauge "$lng_lxc_setup_text" 6 70 0
 }
 
 #if [ ! -f $configFile ]; then
