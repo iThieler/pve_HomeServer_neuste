@@ -562,7 +562,9 @@ function lxcSetup() {
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # get en_US Language Support for the shell
   pct exec $nextCTID -- bash -c "export LANGUAGE=en_US.UTF-8"
   pct exec $nextCTID -- bash -c "export LANG=en_US.UTF-8"
-  pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
+  if [[ ! $ctOStype == "debian" ]]; then
+    pct exec $nextCTID -- bash -c "export LC_ALL=en_US.UTF-8"
+  fi
   pct exec $nextCTID -- bash -c "locale-gen en_US.UTF-8 > /dev/null 2>&1" # must do it for 2nd Time to set it right
   pct exec $nextCTID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
   echo -e "XXX\n42\n$lng_lxc_setup_text_software_install\nXXX"
