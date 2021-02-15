@@ -38,14 +38,14 @@
   echo -e "XXX\n68\n${lng_lxc_create_text_package_install} - \"ioBroker\"\nXXX"
   pct exec $ctID -- bash -ci "curl -sLf https://iobroker.net/install.sh | bash > /dev/null 2>&1"
   # Install Adapter ioBroker Adapter
-  echo -e "XXX\n68\n${lng_lxc_create_text_package_install} - \"ioBroker Adapter\"\nXXX"
+  echo -e "XXX\n79\n${lng_lxc_create_text_package_install} - \"ioBroker Adapter\"\nXXX"
   for adp in $adapter; do
     # echo [INFO] "PACKAGENAME" will be installed
     pct exec $ctID -- bash -ci "iobroker add iobroker.$adp --enabled > /dev/null 2>&1"
   done
 
   # Execute commands on containers
-  echo -e "XXX\n72\n${lng_lxc_create_text_software_configuration}\nXXX"
+  echo -e "XXX\n94\n${lng_lxc_create_text_software_configuration}\nXXX"
   pct exec $ctID -- bash -ci "iobroker set javascript.0 --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
   pct exec $ctID -- bash -ci "iobroker set influxdb.0 --host $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --user iobroker --password $ctRootpw > /dev/null 2>&1"
   pct exec $(pct list | grep iDBGrafana | awk '{print $1}') -- bash -ci 'echo -e "apiVersion: 1\n\ndatasources:\n  - name: ioBroker\n    type: influxdb\n    url: http://localhost:8086\n    access: proxy\n    database: iobroker\n    user: iobroker\n    password: $ctRootpw" > /etc/grafana/provisioning/datasources/iobroker.yaml'
