@@ -15,4 +15,5 @@ NZBAPIKEYTOCHANGE   ### bearbeiten
 systemctl start sabnzbdplus && systemctl enable sabnzbdplus
 apt-get install cifs-utils
                                           ### NAS einbinden
-echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -source +network -p tcp -dport 8080 -log nolog # Weboberfläche sabNZBd\n >> $clusterfileFW
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN HTTPS(ACCEPT) -source +pnetwork -log nolog\nIN HTTP(ACCEPT) -source +network -log nolog" >> ${clusterfileFW}
+echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw
