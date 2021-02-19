@@ -1,0 +1,16 @@
+<!-- ~/.config/NzbDrone/config.xml -->
+<Config>
+  <LogLevel>info</LogLevel>
+  <UpdateMechanism>BuiltIn</UpdateMechanism>
+  <BindAddress>IPADRESSTOCHANGE</BindAddress>
+  <EnableSsl>False</EnableSsl>
+  <Port>80</Port>
+  <UrlBase></UrlBase>
+  <ApiKey>APIKEYTOCHANGE</ApiKey>
+  <Branch>master</Branch>
+  <SslPort>443</SslPort>
+  <LaunchBrowser>True</LaunchBrowser>
+  <AnalyticsEnabled>False</AnalyticsEnabled>
+  <AuthenticationMethod>None</AuthenticationMethod>
+  <SslCertHash></SslCertHash>
+</Config>
