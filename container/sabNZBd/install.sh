@@ -8,5 +8,10 @@ apt-get update && sudo apt-get dist-upgrade
 apt-get install sabnzbdplus
 nano /etc/default/sabnzbdplus             ### Datei bearbeiten
                                           ### INI-Download
+IPADRESSTOCHANGE    ### bearbeiten
+APIKEYTOCHANGE      ### bearbeiten
+NZBAPIKEYTOCHANGE   ### bearbeiten
+
 systemctl start sabnzbdplus && systemctl enable sabnzbdplus
 apt-get install cifs-utils
+                                          ### NAS einbinden
