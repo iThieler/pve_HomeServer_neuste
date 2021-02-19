@@ -15,3 +15,4 @@ NZBAPIKEYTOCHANGE   ### bearbeiten
 systemctl start sabnzbdplus && systemctl enable sabnzbdplus
 apt-get install cifs-utils
                                           ### NAS einbinden
+echo -e "[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\nIN ACCEPT -source +network -p tcp -dport 8080 -log nolog # Weboberfläche sabNZBd\n >> $clusterfileFW
