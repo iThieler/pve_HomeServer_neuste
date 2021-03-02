@@ -546,7 +546,13 @@ function lxcCreate() {
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 }
 
-#if [ ! -f $configFile ]; then
+if [ -f $configFile ]; then
+  # Configfile exist
+
+else
+  # Configfile don't exist
+  
+fi
 
 for lxcName in $var_lxcchoice; do
   # Load Container Template from Internet
