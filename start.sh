@@ -93,6 +93,25 @@ function createAPIKey() {
   done 
 }
 
+function greateConfigFile() {
+  echo "var_language=\"$var_language\"" > $configFile
+  echo "var_robotname=\"$var_robotname\"" >> $configFile
+  echo "var_robotpw=\"$var_robotpw\"" >> $configFile
+  echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
+  echo "var_servervlan=\"$var_servervlan\"" >> $configFile
+  echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
+  echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
+  echo "var_rootmail=\"$var_rootmail\"" >> $configFile
+  echo "var_mailserver=\"$var_mailserver\"" >> $configFile
+  echo "var_mailport=\"$var_mailport\"" >> $configFile
+  echo "var_mailusername=\"$var_mailusername\"" >> $configFile
+  echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
+  echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
+  echo "var_mailtls=\"$var_mailtls\"" >> $configFile
+  echo "var_nasip=\"$var_nasip\"" >> $configFile
+  echo "var_lxcchoice=\"$var_lxcchoice\"" >> $configFile
+}
+
 function prepareProxmox() {
   # Function make the Proxmox Basic setup
   {
@@ -208,7 +227,7 @@ function configUserEmail() {
       } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 ${c} 0
 
       # Test email settings
-      echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+      echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$var_rootmail"
       whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
       yesno=$?
       if [[ $yesno == 1 ]]; then
@@ -225,7 +244,7 @@ function configUserEmail() {
             postfix reload
           fi
         fi
-        echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$varrootmail"
+        echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$var_rootmail"
         whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
         yesno=$?
         if [[ $yesno == 1 ]]; then
@@ -311,7 +330,7 @@ function configNAS () {
   if [[ $yesno == 0 ]]; then
     function pingNAS() {
       var_nasip=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_text" ${r} ${c} 3>&1 1>&2 2>&3)
-      if ping -c 1 "$varnasip" > /dev/null 2>&1; then
+      if ping -c 1 "$var_nasip" > /dev/null 2>&1; then
         export nasexists=true
         {
           for ((i = 98 ; i <= 100 ; i+=1)); do
@@ -544,11 +563,18 @@ function lxcCreate() {
     echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog\n" >> $clusterfileFW
   done
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+  return 0
 }
 
 if [ -f $configFile ]; then
   # Configfile exist
-
+  source $configFile
+  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+  if [ -z $1 ]; then
+    var_lxcchoice=$1
+  else
+    containerURL="http://lxc.config.shiot.de"
+  fi
 else
   # Configfile don't exist
   
@@ -556,7 +582,7 @@ fi
 
 for lxcName in $var_lxcchoice; do
   # Load Container Template from Internet
-  source <(curl -sSL https://raw.githubusercontent.com/shiot/HomeServer_Container/master/$lxcName/install.template)
+  source <(curl -sSL $containerURL/$lxcName/install.template)
   # Start Container creation
   lxcCreate
 done
