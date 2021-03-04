@@ -581,6 +581,14 @@ function lxcCreate() {
         pct exec $ctID -- bash -c "$commands"
       done
     fi
+    # Functions executed from the template file after the container installation
+    if [ ! -z $functions ]; then
+      pct reboot $ctID --timeout 5
+      sleep 15
+      for fnc in $functions; do
+        functions
+      done
+    fi
     # Create Container description, you can find it on Proxmox WebGUI
     echo -e "XXX\n84\nContainer wird in Proxmox eingebunden\nXXX"
     if [ ! -z $var_nasip ] && $nasneeded; then
