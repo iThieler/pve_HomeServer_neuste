@@ -561,10 +561,12 @@ function lxcCreate() {
       pct exec $ctID -- bash -c "mkdir -p $folder"
     done
     # Commands before the software installation starts from commandsFirst Variable
-    echo -e "XXX\n68\nContainer vorbereitung\nXXX"
-    for command in $commandsFirst; do
-      pct exec $ctID -- bash -c "$commands"
-    done
+    if [ ! -z $commandsFirst ]; then
+      echo -e "XXX\n68\nContainer vorbereitung\nXXX"
+      for command in $commandsFirst; do
+        pct exec $ctID -- bash -c "$commands"
+      done
+    fi
     # Install Software from containerSoftware Variable
     echo -e "XXX\n73\nContainersystem wird konfiguriert\nXXX"
     pct exec $ctID -- bash -c "apt-get update"
@@ -572,9 +574,11 @@ function lxcCreate() {
       pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
     done
     # Commands after the software installation starts from commandsSecond Variable
-    for command in $commandsSecond; do
-      pct exec $ctID -- bash -c "$commands"
-    done
+    if [ ! -z $commandsSecond ]; then
+      for command in $commandsSecond; do
+        pct exec $ctID -- bash -c "$commands"
+      done
+    fi
     # Create Container description, you can find it on Proxmox WebGUI
     echo -e "XXX\n84\nContainer wird in Proxmox eingebunden\nXXX"
     if [ ! -z $var_nasip ] && $nasneeded; then
@@ -589,7 +593,7 @@ function lxcCreate() {
     echo -e "XXX\n97\nBinde Container in Firewall ein\nXXX"
     echo -e "\n[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
     for i in "${!fw[@]}"; do
-      echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog\n" >> $clusterfileFW
+      echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
     done
     echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
   } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "$ctID - $cthostname" --gauge "Container wird configuriert ..." 6 ${c} 0
