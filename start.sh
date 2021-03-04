@@ -459,6 +459,8 @@ function lxcSQLSecure () {
 function lxcCreate() {
   # Function creates the LXC container
   {
+    # Load container language file
+    source <(curl -sSL $containerURL/$cthostname/lang/$lang.lang)
     # Generates an ID and an IP address for the container to be created
     echo -e "XXX\n7\nErstelle Container-ID und IP-Adresse\nXXX"
     if [ $(pct list | grep -c 100) -eq 0 ]; then
