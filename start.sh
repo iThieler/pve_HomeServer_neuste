@@ -35,6 +35,7 @@ gatewayIP=$(ip r | grep default | cut -d" " -f3)
 pveIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
 cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2)
 networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f1,2,3)
+publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
 fqdn=$(hostname -f)
 hostname=$(hostname)
 
