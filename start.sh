@@ -566,8 +566,8 @@ function lxcCreate() {
     # Commands before the software installation starts from commandsFirst Variable
     if [ ! -z $commandsFirst ]; then
       echo -e "XXX\n68\nContainer vorbereitung\nXXX"
-      for command in $commandsFirst; do
-        pct exec $ctID -- bash -c "$commands"
+      for f_command in $commandsFirst; do
+        pct exec $ctID -- bash -c "$f_command"
       done
     fi
     # Install Software from containerSoftware Variable
@@ -578,8 +578,8 @@ function lxcCreate() {
     done
     # Commands after the software installation starts from commandsSecond Variable
     if [ ! -z $commandsSecond ]; then
-      for command in $commandsSecond; do
-        pct exec $ctID -- bash -c "$commands"
+      for s_command in $commandsSecond; do
+        pct exec $ctID -- bash -c "$s_command"
       done
     fi
     # Functions executed from the template file after the container installation
@@ -596,6 +596,13 @@ function lxcCreate() {
       nasDescription=$(echo -e "\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
     else
       nasDescription=""
+    fi
+    # # Commands to be executes in the Host (Proxmox) shell after Container creation
+    if [ ! -z $pveCommands ]; then
+      echo -e "XXX\n92\nEinstellungen in Proxmox setzen\nXXX"
+      for command in $pveCommands; do
+        $command
+      done
     fi
     pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n'"$containerDescription$nasDescription"
     pct reboot $ctID --timeout 5
