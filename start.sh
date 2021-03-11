@@ -385,9 +385,11 @@ function configProxmoxFirewall() {
 
 function configLXC() {
   if [ ! -z $var_nasip ]; then
-    source <(curl -sSL $containerURL//naslxc.list)
-  else    
-    source <(curl -sSL $containerURL//nonaslxc.list)
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - Containerauswahl" --title "geladen" "URL: $containerURL/naslxc.list" ${r} ${c}
+    source <(curl -sSL $containerURL/naslxc.list)
+  else
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - Containerauswahl" --title "geladen" "URL: $containerURL/nonaslxc.list" ${r} ${c}
+    source <(curl -sSL $containerURL/nonaslxc.list)
   fi
   var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - Haupt" --title "Title" "Text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
   var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
