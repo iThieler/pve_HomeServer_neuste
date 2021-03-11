@@ -367,7 +367,7 @@ function configNAS () {
     fi
     # Set NAS as Backup Drive in Proxmox, create BackupJob and Backup Pool
     pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup
-    pvesh create /pools --poolid BackupPool --comment "Container in diesem Pool sind im täglichen Backup eingeschlossen"
+    pvesh create /pools --poolid BackupPool --comment "$lng_lxcpool_comment"
     echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
   else
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_error" ${r} ${c}
@@ -646,6 +646,8 @@ function lxcCreate() {
       echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
     done
     echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+    # Insert all VMs in Backup Pool
+    pvesh set /pools/BackupPool -vms "$ctID"
   } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "$ctID - $cthostname" --gauge "Container wird configuriert ..." 6 ${c} 0
   return 0
 }
