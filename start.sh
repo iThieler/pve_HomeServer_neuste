@@ -28,6 +28,9 @@ c=$(( columns / 2 ))
 r=$(( r < 20 ? 20 : r ))
 c=$(( c < 80 ? 80 : c ))
 
+# check if Variable is valid URL
+regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+
 ##################### Script Variables #####################
 
 # Network Variables
@@ -52,9 +55,9 @@ osname=buster
 # Github Variables
 configURL="http://pve.config.shiot.de"
 if [ -z $2 ]; then
-  containerURL=$2
-else
   containerURL="http://lxc.config.shiot.de"
+else
+  containerURL=$2
 fi
 
 # Container Variables
@@ -231,7 +234,7 @@ function configUserEmail() {
           textbox=white,red
           button=black,white
         ' \
-        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text" ${r} ${c}
+        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_error" "$lng_error_text" ${r} ${c}
         if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
           if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
             postconf smtputf8_enable=no
@@ -248,7 +251,7 @@ function configUserEmail() {
             textbox=white,red
             button=black,white
           ' \
-          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_error" "$lng_mail_error_text1" ${r} ${c}
+          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_error" "$lng_error_text1" ${r} ${c}
         fi
       fi
 
@@ -385,11 +388,31 @@ function configProxmoxFirewall() {
 
 function configLXC() {
   if [ ! -z $var_nasip ]; then
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - Containerauswahl" --title "geladen" "URL: $containerURL/naslxc.list" ${r} ${c}
-    source <(curl -sSL $containerURL/naslxc.list)
+    if [[ $2 =~ $regexURL ]]; then
+      source <(curl -sSL $containerURL/naslxc.list)
+    else
+      NEWT_COLORS='
+        window=,red
+        border=white,red
+        textbox=white,red
+        button=black,white
+      ' \
+      containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+      configLXC
+    fi
   else
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - Containerauswahl" --title "geladen" "URL: $containerURL/nonaslxc.list" ${r} ${c}
-    source <(curl -sSL $containerURL/nonaslxc.list)
+    if [[ $2 =~ $regexURL ]]; then
+      source <(curl -sSL $containerURL/nonaslxc.list)
+    else
+      NEWT_COLORS='
+        window=,red
+        border=white,red
+        textbox=white,red
+        button=black,white
+      ' \
+      containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+      configLXC
+    fi
   fi
   var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - Haupt" --title "Title" "Text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
   var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
