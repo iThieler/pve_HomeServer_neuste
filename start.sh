@@ -422,7 +422,7 @@ function configLXC() {
       fi
     fi
   fi
-  var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - Haupt" --title "Title" "Text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
+  var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
   var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
   whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
   exitstatus=$?
