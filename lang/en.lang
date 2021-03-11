@@ -69,6 +69,7 @@ lng_mail_tls="TLS/SSL configuration"
 lng_mail_tls_text="Is TLS/SSL used for the connection?"
 lng_mail_error_text="Check for known errors that can be found in logs"
 lng_mail_error_text1="The error log can be found in the file \"/var/log/mail.log\". This script cannot do anything more here. Further configuration will continue."
+lng_lxcpool_comment="Containers in this pool are included in the daily backup".
 lng_nas_configuration="Storage and NAS Configuration"
 lng_nas_configuration_hdd="Additional SSD will be bound to Proxmox"
 lng_nas_configuration_nas="NAS will be bound to Proxmox as backup storage"
