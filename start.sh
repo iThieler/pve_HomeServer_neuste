@@ -96,7 +96,7 @@ function createAPIKey() {
 
 function welcome() {
   # ask User for Script Language
-  lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   # bind the chosen language
   source <(curl -sSL $configURL/lang/$lang.lang)
   networkrobotpw=$(createPassword 20)
