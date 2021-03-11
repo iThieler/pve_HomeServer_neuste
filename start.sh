@@ -388,31 +388,37 @@ function configProxmoxFirewall() {
 
 function configLXC() {
   if [ ! -z $var_nasip ]; then
-    if [[ $2 =~ $regexURL ]]; then
+    if [ -z $2 ]; then
       source <(curl -sSL $containerURL/naslxc.list)
     else
-      NEWT_COLORS='
-        window=,red
-        border=white,red
-        textbox=white,red
-        button=black,white
-      ' \
-      containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-      configLXC
-    fi
+      if [[ $containerURL =~ $regexURL ]]; then
+        source <(curl -sSL $containerURL)
+      else
+        NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+        containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+        configLXC
+      fi
   else
-    if [[ $2 =~ $regexURL ]]; then
+    if [ -z $2 ]; then
       source <(curl -sSL $containerURL/nonaslxc.list)
     else
-      NEWT_COLORS='
-        window=,red
-        border=white,red
-        textbox=white,red
-        button=black,white
-      ' \
-      containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-      configLXC
-    fi
+      if [[ $containerURL =~ $regexURL ]]; then
+        source <(curl -sSL $containerURL)
+      else
+        NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+        containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+        configLXC
+      fi
   fi
   var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - Haupt" --title "Title" "Text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
   var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
