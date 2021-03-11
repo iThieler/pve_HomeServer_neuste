@@ -71,13 +71,6 @@ lng=(\
      "en" "English" \
 )
 
-# Gateway selector
-gw=( \
-  "unifi" "Ubiquiti/UniFi DreamMachine Pro ${lng_or} CloudKey" off \
-  "avm" "AVM FRITZ!Box" off \
-  "andere" "${lng_another_manufacturer}" off \
-)
-
 ##################### Functions #####################
 
 function createPassword() {
@@ -100,7 +93,7 @@ function welcome() {
   # bind the chosen language
   source <(curl -sSL $configURL/lang/$lang.lang)
   networkrobotpw=$(createPassword 20)
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" --scrolltext "$lng_start_info" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" "$lng_start_info" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" "$lng_introduction_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" "$lng_netrobot_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
@@ -145,6 +138,12 @@ function prepareProxmox() {
 }
 
 function configUserNetwork() {
+  # Gateway selector
+  gw=( \
+    "unifi" "Ubiquiti/UniFi DreamMachine Pro ${lng_or} CloudKey              " off \
+    "avm" "AVM FRITZ!Box" off \
+    "andere" "${lng_another_manufacturer}" off \
+  )
   # Function configures the network based on the user input.
   var_robotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
