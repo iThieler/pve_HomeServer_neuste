@@ -55,7 +55,8 @@ osname=buster
 # Github Variables
 configURL="http://pve.config.shiot.de"
 if [ -z $2 ]; then
-  containerURL="http://lxc.config.shiot.de"
+  containerURL="https://raw.githubusercontent.com/shiot/HomeServer_Container/master"
+  #containerURL="http://lxc.config.shiot.de"
 else
   containerURL=$2
 fi
