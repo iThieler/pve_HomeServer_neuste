@@ -90,6 +90,10 @@ function createAPIKey() {
   done 
 }
 
+function switchTo() {
+  $1
+}
+
 function welcome() {
   # ask User for Script Language
   var_language=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
@@ -401,7 +405,7 @@ function configLXC() {
           button=black,white
         ' \
         containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-        configLXC "$@"
+        switchTo "configLXC"
       fi
     fi
   else
@@ -418,7 +422,7 @@ function configLXC() {
           button=black,white
         ' \
         containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-        configLXC "$@"
+        switchTo "configLXC"
       fi
     fi
   fi
