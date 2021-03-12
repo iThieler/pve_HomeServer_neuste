@@ -401,7 +401,7 @@ function configLXC() {
           button=black,white
         ' \
         containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-        configLXC
+        configLXC "$@"
       fi
     fi
   else
@@ -418,7 +418,7 @@ function configLXC() {
           button=black,white
         ' \
         containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-        configLXC
+        configLXC "$@"
       fi
     fi
   fi
