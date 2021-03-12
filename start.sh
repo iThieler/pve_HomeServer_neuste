@@ -669,6 +669,11 @@ if [ -f $configFile ]; then
   fi
   for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
+    echo "$containerURL/$lxcName/install.template"
+    echo "$containerURL/$lxcName/install.template"
+    echo "$containerURL/$lxcName/install.template"
+    echo "$containerURL/$lxcName/install.template"
+    echo "$containerURL/$lxcName/install.template"
     source <(curl -sSL $containerURL/$lxcName/install.template)
     # Start Container creation
     lxcCreate
