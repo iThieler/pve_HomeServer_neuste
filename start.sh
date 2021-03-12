@@ -655,6 +655,7 @@ function lxcCreate() {
 if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
+  source <(curl -sSL $configURL/lang/$lang.lang)
   if [ -z $1 ]; then
     var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
     var_lxcchoice=$1
