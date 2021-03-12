@@ -92,9 +92,9 @@ function createAPIKey() {
 
 function welcome() {
   # ask User for Script Language
-  lang=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  var_language=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   # bind the chosen language
-  source <(curl -sSL $configURL/lang/$lang.lang)
+  source <(curl -sSL $configURL/lang/$var_language.lang)
   networkrobotpw=$(createPassword 20)
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" "$lng_start_info" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" "$lng_introduction_text" ${r} ${c}
@@ -493,7 +493,7 @@ function lxcCreate() {
   # Function creates the LXC container
   {
     # Load container language file
-    source <(curl -sSL $containerURL/$cthostname/lang/$lang.lang)
+    source <(curl -sSL $containerURL/$cthostname/lang/$var_language.lang)
     # Generates an ID and an IP address for the container to be created
     echo -e "XXX\n7\nErstelle Container-ID und IP-Adresse\nXXX"
     if [ $(pct list | grep -c 100) -eq 0 ]; then
@@ -655,8 +655,8 @@ function lxcCreate() {
 if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
-  source <(curl -sSL $configURL/lang/$lang.lang)
-  echo "$configURL/lang/$lang.lang"
+  source <(curl -sSL $configURL/lang/$var_language.lang)
+  echo "$configURL/lang/$var_language.lang"
   if [ -z $1 ]; then
     var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
     var_lxcchoice=$1
