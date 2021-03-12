@@ -9,12 +9,12 @@ osFedora="fedora-33-default"   # Container Template for Fedora v33
 osGentoo="gentoo-current-default"   # Container Template for current Gentoo
 osOpensuse="opensuse-15.2-default"   # Container Template for openSUSE v15.2
 osUbuntu="ubuntu-20.04-standard"   # Container Template for Ubuntu v20.04
-osAlpine3.11="alpine-3.11-default"   # Container Template for Alpine v3.11
+osAlpine3_11="alpine-3.11-default"   # Container Template for Alpine v3.11
 osCentos7="centos-7-default"   # Container Template for Centos v7
 osDebian9="debian-9.0-standard"   # Container Template for Debian v9
 osFedora32="fedora-32-default"   # Container Template for Fedora v32
 osUbuntu18="ubuntu-18.04-standard"   # Container Template for Ubuntu v18.04
-osUbuntu20.10="ubuntu-20.10-standard"   # Container Template for Ubuntu v20.10
+osUbuntu20_10="ubuntu-20.10-standard"   # Container Template for Ubuntu v20.10
 
 pve_Standardsoftware="parted smartmontools libsasl2-modules lxc-pve"  # Software that is installed afterwards on the server host
 lxc_Standardsoftware="curl wget software-properties-common apt-transport-https gnupg2 net-tools"  #Software that is installed first on each LXC
@@ -656,12 +656,12 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  echo "$configURL/lang/$var_language.lang"
   if [ -z $1 ]; then
     var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
     var_lxcchoice=$1
   else
     var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+    echo "configLXC"
     configLXC
   fi
   for lxcName in $var_lxcchoice; do
