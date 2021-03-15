@@ -494,6 +494,8 @@ function lxcSQLSecure () {
 }
 
 function lxcCreate() {
+  # check if HDD for Container Templates has been changed
+  if [ $(pvesm status | grep -c data) -eq 1 ]; then CTTemplateDisk="data"; fi
   # Function creates the LXC container
   {
     # Load container language file
