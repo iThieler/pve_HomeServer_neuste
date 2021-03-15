@@ -586,11 +586,11 @@ function createLXC() {
     sleep 15
     # Create Firewall Rules for Container
     echo -e "XXX\n97\n$lng_lxc_create_text_firewall\nXXX"
-    echo -e "\n[group $(echo $ctName|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+    echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
     for i in "${!fw[@]}"; do
       echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
     done
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
     # Insert all VMs in Backup Pool
     pvesh set /pools/BackupPool -vms "$ctID"
   } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$ctID - $lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
