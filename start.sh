@@ -54,18 +54,13 @@ osname=buster
 
 # Github Variables
 configURL="http://pve.config.shiot.de"
-if [ -z $2 ]; then
-  containerURL="https://raw.githubusercontent.com/shiot/HomeServer_Container/master"
-  #containerURL="http://lxc.config.shiot.de"
-else
-  containerURL=$2
-fi
+containerURL="http://lxc.config.shiot.de"
 
 # Container Variables
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 
 # SmartHome-IoT Variables
-configFile="/root/.shiot_config"
+configFile="/root/.cfg_shiot"
 
 ##################### Selection menus #####################
 
@@ -85,6 +80,7 @@ gw=( \
 ##################### Functions #####################
 
 function createPassword() {
+# Function generates a random secure password
   chars=({0..9} {a..z} {A..Z} "_" "%" "&" "+" "-")
   for i in $(eval echo "{1..$1}"); do
     echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
@@ -92,6 +88,7 @@ function createPassword() {
 }
 
 function createAPIKey() {
+# Function generates a random API key
   chars=({0..9} {a..f})
   for i in $(eval echo "{1..$1}"); do
     echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
@@ -99,22 +96,46 @@ function createAPIKey() {
 }
 
 function switchToFunction() {
+# Function calls a function
   $1
 }
 
 function getInformations() {
+# Function asks the user about configurations in his network and saves them in a configuration file
+  # Function saves variables to file
+  function cfg_save() {
+    echo "var_language=\"$var_language\"" > $configFile
+    echo "var_robotname=\"$var_robotname\"" >> $configFile
+    echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
+    echo "var_servervlan=\"$var_servervlan\"" >> $configFile
+    echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
+    echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
+    echo "var_rootmail=\"$var_rootmail\"" >> $configFile
+    echo "var_mailserver=\"$var_mailserver\"" >> $configFile
+    echo "var_mailport=\"$var_mailport\"" >> $configFile
+    echo "var_mailusername=\"$var_mailusername\"" >> $configFile
+    echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
+    echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
+    echo "var_mailtls=\"$var_mailtls\"" >> $configFile
+    echo "var_nasip=\"$var_nasip\"" >> $configFile
+    echo "var_synologynas=\"$var_synologynas\"" >> $configFile
+  }
   # ask User for Script Language
   var_language=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   # bind the chosen language
   source <(curl -sSL $configURL/lang/$var_language.lang)
+  # generate a random 20 digit password
   networkrobotpw=$(createPassword 20)
+  # give some Informations to the User
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" "$lng_start_info" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" "$lng_introduction_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" "$lng_netrobot_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
+  # ask for robot name
   var_robotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
+  # ask for robot password
   var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
@@ -128,6 +149,7 @@ function getInformations() {
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c}
     exit
   fi
+  # ask for Gateway Manufacturer
   var_gwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
@@ -139,17 +161,22 @@ function getInformations() {
     whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
     yesno=$?
     if [[ $yesno == 0 ]]; then
-      var_vlanexists=y
       var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_server" ${r} ${c} 100 3>&1 1>&2 2>&3)
       var_smarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_smarthome" ${r} ${c} 200 3>&1 1>&2 2>&3)
       var_guestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_guest" ${r} ${c} 300 3>&1 1>&2 2>&3)
     fi
   fi
+  # ask for root E-Mailadress
   var_rootmail=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_root" "$lng_mail_root_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  # ask for mailserver
   var_mailserver=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server" "$lng_mail_server_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  # ask for mailserverport
   var_mailport=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_port" "$lng_mail_server_port_text" ${r} ${c} 587 3>&1 1>&2 2>&3)
+  # ask for mailserverusername
   var_mailusername=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user" "$lng_mail_server_user_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  # ask for mailserveruserpassword
   var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\" $lng_mail_server_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+  # ask for sending adress
   var_senderaddress=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_sender" "$lng_mail_sender_text" ${r} ${c} "notify@$(echo "$var_rootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
   whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_tls" "$lng_mail_tls_text" ${r} ${c}
   yesno=$?
@@ -158,12 +185,56 @@ function getInformations() {
   else
     var_mailtls=no
   fi
+  whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_ask" ${r} ${c}
+  yesno=$?
+  if [[ $yesno == 0 ]]; then
+    function pingNAS() {
+      var_nasip=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_text" ${r} ${c} 3>&1 1>&2 2>&3)
+      if ping -c 1 "$var_nasip" > /dev/null 2>&1; then
+        export nasexists=true
+        {
+          for ((i = 98 ; i <= 100 ; i+=1)); do
+            sleep 0.5
+            echo $i
+          done
+        } | whiptail --gauge "$lng_nas_ip_check" 6 ${c} 0
+      else
+        {
+          for ((i = 98 ; i <= 100 ; i+=1)); do
+            sleep 0.5
+            echo $i
+          done
+        } | whiptail --gauge "$lng_nas_ip_check" 6 ${c} 0
+        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_error" ${r} ${c}
+        pingNAS
+      fi
+    }
+    pingNAS
+    var_nasip=$var_nasip
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
+    yesno=$?
+    if [[ $yesno == 1 ]]; then var_synologynas=true; fi
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$varrobotname\" $lng_nas_folder_config_text1 \"$varrobotname\" $lng_nas_folder_config_text2" ${r} ${c}
+    yesno=$?
+    if [[ $yesno == 1 ]]; then
+      NEWT_COLORS='
+        window=,red
+        border=white,red
+        textbox=white,red
+        button=black,white
+      ' \
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_error" ${r} ${c}
+      exit
+    fi
+  fi
+  cfg_save
   return 0
 }
 
 function configPVE() {
 # Function configures Proxmox based on User Inputs, if this Script runs the First Time
   function cfg_email() {
+  #Function configures the e-mail notification in Proxmox
     {
       if grep "root:" /etc/aliases; then
         sed -i "s/^root:.*$/root: $var_rootmail/" /etc/aliases
@@ -230,9 +301,11 @@ function configPVE() {
         whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_error" "$lng_error_text1" ${r} ${c}
       fi
     fi
+    return 0
   }
 
   function cfg_HDD() {
+  # Function configures e-mail notification for S.M.A.R.T. values of the system hard disk and configures a second hard disk, if available.
     # Set email notification about system hard disk errors, check every 12 hours
     sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
     sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
@@ -272,109 +345,36 @@ function configPVE() {
         fi
       fi
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_pve_configuration_text" 6 ${c} 0
+    return 0
   }
 
-  function configNAS () {
-    # Function if a NAS is specified by the user, it is mounted as a backup drive in Proxmox and is available to the containers as a backup and media drive
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_ask" ${r} ${c}
-    yesno=$?
-    if [[ $yesno == 0 ]]; then
-      function pingNAS() {
-        var_nasip=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_text" ${r} ${c} 3>&1 1>&2 2>&3)
-        if ping -c 1 "$var_nasip" > /dev/null 2>&1; then
-          export nasexists=true
-          {
-            for ((i = 98 ; i <= 100 ; i+=1)); do
-              sleep 0.5
-              echo $i
-            done
-          } | whiptail --gauge "$lng_nas_ip_check" 6 ${c} 0
-        else
-          {
-            for ((i = 98 ; i <= 100 ; i+=1)); do
-              sleep 0.5
-              echo $i
-            done
-          } | whiptail --gauge "$lng_nas_ip_check" 6 ${c} 0
-          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_ip" "$lng_nas_ip_error" ${r} ${c}
-          pingNAS
-        fi
-      }
-      pingNAS
-      var_nasip=$var_nasip
-      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        synologynas=true
-      fi
-      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$varrobotname\" $lng_nas_folder_config_text1 \"$varrobotname\" $lng_nas_folder_config_text2" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        NEWT_COLORS='
-          window=,red
-          border=white,red
-          textbox=white,red
-          button=black,white
-        ' \
-        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_error" ${r} ${c}
-        exit
-      fi
-      # Set NAS as Backup Drive in Proxmox, create BackupJob and Backup Pool
+  function cfg_NAS () {
+  # Function mounts, if specified, the NAS as backup drive in Proxmox and makes it available to the containers as backup and media drive
+    if [ ! -z $var_nasip ]; then
       pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup
       pvesh create /pools --poolid BackupPool --comment "$lng_lxcpool_comment"
       echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
-    else
-      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_error" ${r} ${c}
     fi
     return 0
   }
 
   function cfg_Firewall() {
-    # Function configures Proxmox Firewall
+  # Function configures and activates the Proxmox firewall
     mkdir -p /etc/pve/firewall
     mkdir -p /etc/pve/nodes/$hostname
     # Cluster level firewall
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # Heimnetzwerk\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # alle privaten Netzwerke, wichtig für VPN\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[IPSET network] # $lng_homenetwork\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # $lng_privatenetworks\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\n\nGROUP proxmox\n\n[group proxmox]\n\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
     # Host level Firewall
     echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
     return 0
   }
 
   function cfg_LXC() {
-    if [ ! -z $var_nasip ]; then
-      if [ -z $2 ]; then
-        source <(curl -sSL $containerURL/naslxc.list)
-      else
-        if [[ $containerURL =~ $regexURL ]]; then
-          source <(curl -sSL $containerURL)
-        else
-          NEWT_COLORS='
-            window=,red
-            border=white,red
-            textbox=white,red
-            button=black,white
-          ' \
-          containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-          switchTo "configLXC"
-        fi
-      fi
+  # Function asks the user which containers to install
+    if [ -z $var_nasip ]; then
+      source <(curl -sSL $containerURL/nonaslxc.list)
     else
-      if [ -z $2 ]; then
-        source <(curl -sSL $containerURL/nonaslxc.list)
-      else
-        if [[ $containerURL =~ $regexURL ]]; then
-          source <(curl -sSL $containerURL)
-        else
-          NEWT_COLORS='
-            window=,red
-            border=white,red
-            textbox=white,red
-            button=black,white
-          ' \
-          containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
-          switchTo "configLXC"
-        fi
-      fi
+      source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
     var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
@@ -395,25 +395,11 @@ function configPVE() {
     fi
     return 0
   }
-
-  function cfg_save() {
-    echo "var_language=\"$var_language\"" > $configFile
-    echo "var_robotname=\"$var_robotname\"" >> $configFile
-    echo "var_robotpw=\"$var_robotpw\"" >> $configFile
-    echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
-    echo "var_servervlan=\"$var_servervlan\"" >> $configFile
-    echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
-    echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
-    echo "var_rootmail=\"$var_rootmail\"" >> $configFile
-    echo "var_mailserver=\"$var_mailserver\"" >> $configFile
-    echo "var_mailport=\"$var_mailport\"" >> $configFile
-    echo "var_mailusername=\"$var_mailusername\"" >> $configFile
-    echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
-    echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
-    echo "var_mailtls=\"$var_mailtls\"" >> $configFile
-    echo "var_nasip=\"$var_nasip\"" >> $configFile
-    echo "var_lxcchoice=\"$var_lxcchoice\"" >> $configFile
-  }
+  cfg_email
+  cfg_HDD
+  cfg_NAS
+  cfg_Firewall
+  cfg_LXC
 }
 
 function createLXC() {
@@ -452,7 +438,7 @@ function createLXC() {
 
   {
     # Generates ID and IP-Address for the container to be created
-    echo -e "XXX\n7\nErstelle Container-ID und IP-Adresse\nXXX"
+    echo -e "XXX\n7\n$lng_lxc_setup_text_idip\nXXX"
     if [ $(pct list | grep -c 100) -eq 0 ]; then
       ctID=100
       ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
@@ -462,7 +448,7 @@ function createLXC() {
     fi
 
     # Loads the container template from the Internet if not available and saves it for further use
-    echo -e "XXX\n14\nPrüfe Container Template\nXXX"
+    echo -e "XXX\n14\n$lng_lxc_setup_text_template_download\nXXX"
     pveam update > /dev/null 2>&1
     if [[ $ctTemplate == "osDevuan" ]]; then
       ctOstype="unmanaged"
@@ -470,7 +456,7 @@ function createLXC() {
       ctOstype=$(pveam available | grep "${!ctTemplate}" | awk '{print $2}' | cut -d- -f1)
     fi
     if [ $(pveam list "$CTTemplateDisk" | grep -c "${!ctTemplate}") -eq 0 ]; then
-      echo -e "XXX\n17\nDownloade Container Template\nXXX"
+      echo -e "XXX\n17\n$lng_lxc_setup_text_template_download1\nXXX"
       pveam download $CTTemplateDisk $(pveam available | grep "${!ctTemplate}" | awk '{print $2}') > /dev/null 2>&1
     fi
 
@@ -478,7 +464,7 @@ function createLXC() {
     if [[ $CTTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$CTTemplateDisk; fi
 
     # Create Container from Template
-    echo -e "XXX\n25\nErstelle Container in Proxmox\nXXX"
+    echo -e "XXX\n25\n$lng_lxc_setup_text_container_install\nXXX"
     if [[ $features == "" ]]; then
       pct create $ctID \
         $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
@@ -605,7 +591,7 @@ function createLXC() {
     echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $ctName|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
     # Insert all VMs in Backup Pool
     pvesh set /pools/BackupPool -vms "$ctID"
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - Containerinstallation" --title "$ctID - $cthostname" --gauge "Container wird configuriert ..." 6 ${c} 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$ctID - $lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
   return 0
 }
 
@@ -613,39 +599,67 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  if [ -z $1 ]; then
-    var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
-    configLXC
-  else
-    var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  
+  if [ ! -z $1 ] && [ ! -z $2 ]; then
+    function checkURL() {
+      if [[ ! $containerURL =~ $regexURL ]]; then
+        NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+        containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+        checkURL
+      fi
+    }
+    containerURL=$2
+    checkURL
     var_lxcchoice=$1
+    for lxcName in $var_lxcchoice; do
+    # Load Container Template from Internet
+      source <(curl -sSL $containerURL/$lxcName/install.template)
+      # Start Container creation
+      createLXC
+    done
+  elif [ ! -z $1 ]; then
+    var_lxcchoice=$1
+    for lxcName in $var_lxcchoice; do
+    # Load Container Template from Internet
+      source <(curl -sSL $containerURL/$lxcName/install.template)
+      # Start Container creation
+      createLXC
+    done
+  else
+    if [ -z $var_nasip ]; then
+      source <(curl -sSL $containerURL/nonaslxc.list)
+    else
+      source <(curl -sSL $containerURL/naslxc.list)
+    fi
+    var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
+    var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
+    whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
+    exitstatus=$?
+    if [ $exitstatus = 1 ]; then
+      NEWT_COLORS='
+        window=,red
+        border=white,red
+        textbox=white,red
+        button=black,white
+      ' \
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+      exit
+    fi
+    for lxcName in $var_lxcchoice; do
+    # Load Container Template from Internet
+      source <(curl -sSL $containerURL/$lxcName/install.template)
+      # Start Container creation
+      createLXC
+    done
   fi
-  for lxcName in $var_lxcchoice; do
-    # Load Container Template from Internet
-    echo "$containerURL/$lxcName/install.template"
-    echo "$containerURL/$lxcName/install.template"
-    echo "$containerURL/$lxcName/install.template"
-    echo "$containerURL/$lxcName/install.template"
-    echo "$containerURL/$lxcName/install.template"
-    source <(curl -sSL $containerURL/$lxcName/install.template)
-    # Start Container creation
-    lxcCreate
-  done
-else
-  # Configfile don't exist
-  welcome
-  prepareProxmox
-  configUserNetwork
-  configUserEmail
-  configStorage
-  configNAS
-  configProxmoxFirewall
-  configLXC
-  createConfigFile
-  for lxcName in $var_lxcchoice; do
-    # Load Container Template from Internet
-    source <(curl -sSL $containerURL/$lxcName/install.template)
-    # Start Container creation
-    lxcCreate
-  done
+  exit
 fi
+
+getInformations
+configPVE
