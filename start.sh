@@ -121,7 +121,7 @@ function getInformations() {
     echo "var_synologynas=\"$var_synologynas\"" >> $configFile
   }
   # ask User for Script Language
-  var_language=$(whiptail --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   # bind the chosen language
   source <(curl -sSL $configURL/lang/$var_language.lang)
   # generate a random 20 digit password
