@@ -405,6 +405,17 @@ function configPVE() {
 function createLXC() {
 # Function creates the LXC container
   nasDescription=""
+  # Generates ID and IP-Address for the container to be created
+  function lxc_IDIP() {
+    #echo -e "XXX\n7\n$lng_lxc_setup_text_idip\nXXX"
+    if [ $(pct list | grep -c 100) -eq 0 ]; then
+      ctID=100
+      ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
+    else
+      ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
+      ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
+    fi
+  }
   # check if HDD for Container Templates has been changed
   if [ $(pvesm status | grep -c data) -eq 1 ]; then CTTemplateDisk="data"; fi
   # Load container language file
@@ -440,13 +451,7 @@ function createLXC() {
   {
     # Generates ID and IP-Address for the container to be created
     echo -e "XXX\n7\n$lng_lxc_setup_text_idip\nXXX"
-    if [ $(pct list | grep -c 100) -eq 0 ]; then
-      ctID=100
-      ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
-    else
-      ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
-      ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
-    fi
+    lxc_IDIP
 
     # Loads the container template from the Internet if not available and saves it for further use
     echo -e "XXX\n14\n$lng_lxc_setup_text_template_download\nXXX"
@@ -578,9 +583,9 @@ function createLXC() {
     # Create Container description, you can find it on Proxmox WebGUI
     echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
     if [ ! -z $var_nasip ] && $nasneeded; then
-      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
+      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
     else
-      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n$containerDescription")
+      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription")
     fi
     pct set $ctID --description $"$description"
     pct reboot $ctID --timeout 5
