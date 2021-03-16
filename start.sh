@@ -591,7 +591,7 @@ function createLXC() {
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
       echo -e "[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
       for ((i=0;i<=${#fwPort[@]};i++)); do
-        echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog" >> $clusterfileFW
+        echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog # ${fwDescription[i]}" >> $clusterfileFW
         sed -i 's/IN ACCEPT -source + -p  -dport  #  -log nolog//' $clusterfileFW         ### IMPORTANT! otherwise firewall configuration is incorrect
       done
       echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
