@@ -437,165 +437,174 @@ function createLXC() {
     return 0
   }
 
-  {
-    # Generates ID and IP-Address for the container to be created
-    echo -e "XXX\n7\n$lng_lxc_setup_text_idip\nXXX"
-    if [ $(pct list | grep -c 100) -eq 0 ]; then
-      ctID=100
-      ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
-    else
-      ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
-      ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
-    fi
+  if [ $(pct list | grep -c $lxchostname) -eq 0 ]; then
+    {
+      # Generates ID and IP-Address for the container to be created
+      echo -e "XXX\n7\n$lng_lxc_setup_text_idip\nXXX"
+      if [ $(pct list | grep -c 100) -eq 0 ]; then
+        ctID=100
+        ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
+      else
+        ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
+        ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
+      fi
 
-    # Loads the container template from the Internet if not available and saves it for further use
-    echo -e "XXX\n14\n$lng_lxc_setup_text_template_download\nXXX"
-    pveam update > /dev/null 2>&1
-    if [[ $ctTemplate == "osDevuan" ]]; then
-      ctOstype="unmanaged"
-    else
-      ctOstype=$(pveam available | grep "${!ctTemplate}" | awk '{print $2}' | cut -d- -f1)
-    fi
-    if [ $(pveam list "$CTTemplateDisk" | grep -c "${!ctTemplate}") -eq 0 ]; then
-      echo -e "XXX\n17\n$lng_lxc_setup_text_template_download1\nXXX"
-      pveam download $CTTemplateDisk $(pveam available | grep "${!ctTemplate}" | awk '{print $2}') > /dev/null 2>&1
-    fi
+      # Loads the container template from the Internet if not available and saves it for further use
+      echo -e "XXX\n14\n$lng_lxc_setup_text_template_download\nXXX"
+      pveam update > /dev/null 2>&1
+      if [[ $ctTemplate == "osDevuan" ]]; then
+        ctOstype="unmanaged"
+      else
+        ctOstype=$(pveam available | grep "${!ctTemplate}" | awk '{print $2}' | cut -d- -f1)
+      fi
+      if [ $(pveam list "$CTTemplateDisk" | grep -c "${!ctTemplate}") -eq 0 ]; then
+        echo -e "XXX\n17\n$lng_lxc_setup_text_template_download1\nXXX"
+        pveam download $CTTemplateDisk $(pveam available | grep "${!ctTemplate}" | awk '{print $2}') > /dev/null 2>&1
+      fi
 
-    # Checks if tenplatedisk has changed
-    if [[ $CTTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$CTTemplateDisk; fi
+      # Checks if tenplatedisk has changed
+      if [[ $CTTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$CTTemplateDisk; fi
 
-    # Create Container from Template
-    echo -e "XXX\n25\n$lng_lxc_setup_text_container_install\nXXX"
-    if [[ $features == "" ]]; then
-      pct create $ctID \
-        $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
-        --ostype $ctOstype \
-        --hostname "$lxchostname" \
-        --password "$ctRootpw" \
-        --rootfs $rootfs:$hddsize \
-        --cores $cpucores \
-        --memory $memory \
-        --swap $swap \
-        --net0 bridge=vmbr0,name=eth0,ip="$ctIP"/$cidr,gw="$gatewayIP",ip6=manual,firewall=1 \
-        --onboot 1 \
-        --force 1 \
-        --unprivileged $unprivileged \
-        --start 1 > /dev/null 2>&1
-    else
-      pct create $ctID \
-        $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
-        --ostype $ctOstype \
-        --hostname "$lxchostname" \
-        --password "$ctRootpw" \
-        --rootfs $rootfs:$hddsize \
-        --cores $cpucores \
-        --memory $memory \
-        --swap $swap \
-        --net0 bridge=vmbr0,name=eth0,ip="$ctIP"/$cidr,gw="$gatewayIP",ip6=manual,firewall=1 \
-        --onboot 1 \
-        --force 1 \
-        --unprivileged $unprivileged \
-        --start 1 \
-        --features "$features" > /dev/null 2>&1
-    fi
-    sleep 5
-    pct exec $ctID -- bash -c "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"    # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
-    # Mounted the NAS to container if exist and is needed
-    if [ ! -z $var_nasip ] && $nasneeded; then
-      echo -e "XXX\n32\n$lng_lxc_create_text_nas\nXXX"
-      pct exec $ctID -- bash -ci "mkdir -p /media"
-      pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
-      pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
-      pct exec $ctID -- bash -ci "echo \"//$var_nasip/backups  /mnt/backup  cifs  credentials=/home/.smbbackup,uid=1000,gid=1000  0  0\" >> /etc/fstab"
-      pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbmedia"
-      pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
-      pct exec $ctID -- bash -ci "mount -a"
-    fi
-    pct shutdown $ctID --timeout 5
-    sleep 15
-    # Mounted the DVB-Card to container if exist and is needed
-    if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
-      echo -e "XXX\n39\n$lng_lxc_create_text_dvb\nXXX"
-      echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dvb/adapter0 | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
-      echo "lxc.mount.entry: /dev/dvb dev/dvb none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
-    fi
-    # Mounted the VGA-Card to container if exist and is needed
-    if [ $(ls -la /dev/dri/card0 | grep -c video) -eq 1 ] && $vganeeded; then
-      echo -e "XXX\n45\n$lng_lxc_create_text_vga\nXXX"
-      echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dri | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
-      echo "lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
-      echo "lxc.mount.entry: /dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
-    fi
-    pct start $ctID
-    sleep 10
-    echo -e "XXX\n51\n$lng_lxc_setup_text_container_update\nXXX"
-    pct exec $ctID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-    echo -e "XXX\n58\n$lng_lxc_setup_text_software_install\nXXX"
-    for package in $lxc_Standardsoftware; do
-      pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
-    done
-    # Create specific folders in the file system    
-    echo -e "XXX\n64\n$lng_lxc_create_text_file_structure\nXXX"
-    for folder in $containerFolder; do
-      pct exec $ctID -- bash -c "mkdir -p $folder"
-    done
-    # Commands before the software installation starts from commandsFirst Variable
-    if [ ! -z $commandsFirst ]; then
-      echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
-      for f_command in $commandsFirst; do
-        pct exec $ctID -- bash -c "$f_command"
+      # Create Container from Template
+      echo -e "XXX\n25\n$lng_lxc_setup_text_container_install\nXXX"
+      if [[ $features == "" ]]; then
+        pct create $ctID \
+          $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
+          --ostype $ctOstype \
+          --hostname "$lxchostname" \
+          --password "$ctRootpw" \
+          --rootfs $rootfs:$hddsize \
+          --cores $cpucores \
+          --memory $memory \
+          --swap $swap \
+          --net0 bridge=vmbr0,name=eth0,ip="$ctIP"/$cidr,gw="$gatewayIP",ip6=manual,firewall=1 \
+          --onboot 1 \
+          --force 1 \
+          --unprivileged $unprivileged \
+          --start 1 > /dev/null 2>&1
+      else
+        pct create $ctID \
+          $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
+          --ostype $ctOstype \
+          --hostname "$lxchostname" \
+          --password "$ctRootpw" \
+          --rootfs $rootfs:$hddsize \
+          --cores $cpucores \
+          --memory $memory \
+          --swap $swap \
+          --net0 bridge=vmbr0,name=eth0,ip="$ctIP"/$cidr,gw="$gatewayIP",ip6=manual,firewall=1 \
+          --onboot 1 \
+          --force 1 \
+          --unprivileged $unprivileged \
+          --start 1 \
+          --features "$features" > /dev/null 2>&1
+      fi
+      sleep 5
+      pct exec $ctID -- bash -c "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"    # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
+      # Mounted the NAS to container if exist and is needed
+      if [ ! -z $var_nasip ] && $nasneeded; then
+        echo -e "XXX\n32\n$lng_lxc_create_text_nas\nXXX"
+        pct exec $ctID -- bash -ci "mkdir -p /media"
+        pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
+        pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
+        pct exec $ctID -- bash -ci "echo \"//$var_nasip/backups  /mnt/backup  cifs  credentials=/home/.smbbackup,uid=1000,gid=1000  0  0\" >> /etc/fstab"
+        pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbmedia"
+        pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
+        pct exec $ctID -- bash -ci "mount -a"
+      fi
+      pct shutdown $ctID --timeout 5
+      sleep 15
+      # Mounted the DVB-Card to container if exist and is needed
+      if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
+        echo -e "XXX\n39\n$lng_lxc_create_text_dvb\nXXX"
+        echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dvb/adapter0 | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
+        echo "lxc.mount.entry: /dev/dvb dev/dvb none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
+      fi
+      # Mounted the VGA-Card to container if exist and is needed
+      if [ $(ls -la /dev/dri/card0 | grep -c video) -eq 1 ] && $vganeeded; then
+        echo -e "XXX\n45\n$lng_lxc_create_text_vga\nXXX"
+        echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dri | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
+        echo "lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
+        echo "lxc.mount.entry: /dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
+      fi
+      pct start $ctID
+      sleep 10
+      echo -e "XXX\n51\n$lng_lxc_setup_text_container_update\nXXX"
+      pct exec $ctID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      echo -e "XXX\n58\n$lng_lxc_setup_text_software_install\nXXX"
+      for package in $lxc_Standardsoftware; do
+        pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
       done
-    fi
-    # Install Software from containerSoftware Variable
-    echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
-    pct exec $ctID -- bash -c "apt-get update"
-    for package in $containerSoftware; do
-      pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
-    done
-    # Commands after the software installation starts from commandsSecond Variable
-    if [ ! -z $commandsSecond ]; then
-      echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
-      for s_command in $commandsSecond; do
-        pct exec $ctID -- bash -c "$s_command"
+      # Create specific folders in the file system    
+      echo -e "XXX\n64\n$lng_lxc_create_text_file_structure\nXXX"
+      for folder in $containerFolder; do
+        pct exec $ctID -- bash -c "mkdir -p $folder"
       done
-    fi
-    # Functions executed from the template file after the container installation
-    if [ ! -z $functions ]; then
-      echo -e "XXX\n84\n$lng_lxc_create_text_final_tasks\nXXX"
+      # Commands before the software installation starts from commandsFirst Variable
+      if [ ! -z $commandsFirst ]; then
+        echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
+        for f_command in $commandsFirst; do
+          pct exec $ctID -- bash -c "$f_command"
+        done
+      fi
+      # Install Software from containerSoftware Variable
+      echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
+      pct exec $ctID -- bash -c "apt-get update"
+      for package in $containerSoftware; do
+        pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
+      done
+      # Commands after the software installation starts from commandsSecond Variable
+      if [ ! -z $commandsSecond ]; then
+        echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
+        for s_command in $commandsSecond; do
+          pct exec $ctID -- bash -c "$s_command"
+        done
+      fi
+      # Functions executed from the template file after the container installation
+      if [ ! -z $functions ]; then
+        echo -e "XXX\n84\n$lng_lxc_create_text_final_tasks\nXXX"
+        pct reboot $ctID --timeout 5
+        sleep 15
+        for fnc in $functions; do
+          functions
+        done
+      fi
+      # # Commands to be executes in the Host (Proxmox) shell after Container creation
+      if [ ! -z $pveCommands ]; then
+        echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
+        for command in $pveCommands; do
+          $command
+        done
+      fi
+      # Create Container description, you can find it on Proxmox WebGUI
+      echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
+      containerIP=$(lxc-info $(pct list | grep -w "$lxchostname" | awk '{print $1}') -iH)
+      if [ ! -z $var_nasip ] && $nasneeded; then
+        description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
+      else
+        description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription")
+      fi
+      pct set $ctID --description $"$description"
       pct reboot $ctID --timeout 5
       sleep 15
-      for fnc in $functions; do
-        functions
+      # Create Firewall Rules for Container
+      echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
+      echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+      for i in "${!fw[@]}"; do
+        echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
       done
-    fi
-    # # Commands to be executes in the Host (Proxmox) shell after Container creation
-    if [ ! -z $pveCommands ]; then
-      echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
-      for command in $pveCommands; do
-        $command
-      done
-    fi
-    # Create Container description, you can find it on Proxmox WebGUI
-    echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
-    containerIP=$(lxc-info $(pct list | grep -w "$lxchostname" | awk '{print $1}') -iH)
-    if [ ! -z $var_nasip ] && $nasneeded; then
-      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
-    else
-      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription")
-    fi
-    pct set $ctID --description $"$description"
-    pct reboot $ctID --timeout 5
-    sleep 15
-    # Create Firewall Rules for Container
-    echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
-    echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
-    for i in "${!fw[@]}"; do
-      echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
-    done
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
-    # Insert all VMs in Backup Pool
-    pvesh set /pools/BackupPool -vms "$ctID"
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
+      echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+      # Insert all VMs in Backup Pool
+      pvesh set /pools/BackupPool -vms "$ctID"
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
+  else
+    NEWT_COLORS='
+          window=,red
+          border=white,red
+          textbox=white,red
+          button=black,white
+        ' \
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_error - $lxchostname" "$lng_lxc_error_text" ${r} ${c}
   return 0
 }
 
