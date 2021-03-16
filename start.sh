@@ -590,7 +590,7 @@ function createLXC() {
     echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
     # Insert all VMs in Backup Pool
     pvesh set /pools/BackupPool -vms "$ctID"
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$ctID - $lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
   return 0
 }
 
