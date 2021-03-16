@@ -605,6 +605,7 @@ function createLXC() {
           button=black,white
         ' \
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_error - $lxchostname" "$lng_lxc_error_text" ${r} ${c}
+  fi
   return 0
 }
 
