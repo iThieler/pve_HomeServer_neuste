@@ -578,10 +578,11 @@ function createLXC() {
     # Create Container description, you can find it on Proxmox WebGUI
     echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
     if [ ! -z $var_nasip ] && $nasneeded; then
-      pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  '"$ctRootpw"'\n\n'"$containerDescription"'\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup'
+      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
     else
-      pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  '"$ctRootpw"'\n\n'"$containerDescription"
+      description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n$containerDescription")
     fi
+    pct set $ctID --description $"$description"
     pct reboot $ctID --timeout 5
     sleep 15
     # Create Firewall Rules for Container
