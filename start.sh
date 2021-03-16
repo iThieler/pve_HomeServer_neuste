@@ -554,14 +554,14 @@ function createLXC() {
     done
     # Commands after the software installation starts from commandsSecond Variable
     if [ ! -z $commandsSecond ]; then
-      echo -e "XXX\n73\n$lng_lxc_create_text_software_configuration\nXXX"
+      echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
       for s_command in $commandsSecond; do
         pct exec $ctID -- bash -c "$s_command"
       done
     fi
     # Functions executed from the template file after the container installation
     if [ ! -z $functions ]; then
-      echo -e "XXX\n78\n$lng_lxc_create_text_final_tasks\nXXX"
+      echo -e "XXX\n84\n$lng_lxc_create_text_final_tasks\nXXX"
       pct reboot $ctID --timeout 5
       sleep 15
       for fnc in $functions; do
@@ -570,19 +570,19 @@ function createLXC() {
     fi
     # # Commands to be executes in the Host (Proxmox) shell after Container creation
     if [ ! -z $pveCommands ]; then
-      echo -e "XXX\n84\n$lng_lxc_create_finish\nXXX"
+      echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
       for command in $pveCommands; do
         $command
       done
     fi
     # Create Container description, you can find it on Proxmox WebGUI
-    echo -e "XXX\n92\n$lng_lxc_create_text_description\nXXX"
+    echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
     if [ ! -z $var_nasip ] && $nasneeded; then nasDescription=$(echo -e "\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup"); fi
-    pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n'"$containerDescription $nasDescription"
+    pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  '"$ctRootpw"'\n\n'"$containerDescription $nasDescription"
     pct reboot $ctID --timeout 5
     sleep 15
     # Create Firewall Rules for Container
-    echo -e "XXX\n97\n$lng_lxc_create_text_firewall\nXXX"
+    echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
     echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]\n\n" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
     for i in "${!fw[@]}"; do
       echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} # ${fwDescription[i]} -log nolog\n" >> $clusterfileFW
