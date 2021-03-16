@@ -92,6 +92,7 @@ lng_nas_error="Es wird empfohlen eine NAS in einem privaten Netzwerk zu verbauen
 lng_lxc_configuration="Containerkonfiguration"
 lng_lxc_configuration_title="Containerauswahl"
 lng_lxc_configuration_text="Wähle aus der Liste die Container, die Du installieren möchtest."
+lng_lxc_error_text="Es ist bereits ein Container mit diesem Namen in Proxmox installiert. Dieser Container muss zuerst umbenannt oder entfernt werden. Die Installation dieses Containers wird übersprungen."
 lng_end_info="Konfigurationsabschluss"
 lng_end_info_text="Die Konfiguration ist beendet, das Skript wird nun mit deinen Vorgaben ausgeführt. Je nachdem welche Container du für die Installation gewählt hast, werden weiter Benutzereingaben benötigt.\n\nSoll Proxmox nach deinen Vorgaben konfiguriert werden?"
 lng_finish_text="Die Konfiguration deines Homeserver beginnt jetzt nach deinen vorgaben.\nLehne dich zurück, die Konfiguration läuft fast Vollautomatisch. Viel Spass mit deinem Homeserver."
