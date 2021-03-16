@@ -404,6 +404,7 @@ function configPVE() {
 
 function createLXC() {
 # Function creates the LXC container
+  nasDescription=""
   # check if HDD for Container Templates has been changed
   if [ $(pvesm status | grep -c data) -eq 1 ]; then CTTemplateDisk="data"; fi
   # Load container language file
@@ -567,20 +568,16 @@ function createLXC() {
         functions
       done
     fi
-    # Create Container description, you can find it on Proxmox WebGUI
-    echo -e "XXX\n84\n$lng_lxc_create_text_description\nXXX"
-    if [ ! -z $var_nasip ] && $nasneeded; then
-      nasDescription=$(echo -e "\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
-    else
-      nasDescription=""
-    fi
     # # Commands to be executes in the Host (Proxmox) shell after Container creation
     if [ ! -z $pveCommands ]; then
-      echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
+      echo -e "XXX\n84\n$lng_lxc_create_finish\nXXX"
       for command in $pveCommands; do
         $command
       done
     fi
+    # Create Container description, you can find it on Proxmox WebGUI
+    echo -e "XXX\n92\n$lng_lxc_create_text_description\nXXX"
+    if [ ! -z $var_nasip ] && $nasneeded; then nasDescription=$(echo -e "\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup"); fi
     pct set $ctID --description $'Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n'"$containerDescription $nasDescription"
     pct reboot $ctID --timeout 5
     sleep 15
