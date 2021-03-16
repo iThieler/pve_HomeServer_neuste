@@ -578,7 +578,7 @@ function createLXC() {
       fi
       # Create Container description, you can find it on Proxmox WebGUI
       echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
-      containerIP=$(lxc-info $(pct list | grep -w "Heimdall") -iH)
+      containerIP=$(lxc-info $(pct list | grep -w "$lxchostname") -iH)
       if [ ! -z $var_nasip ] && $nasneeded; then
         description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
       else
