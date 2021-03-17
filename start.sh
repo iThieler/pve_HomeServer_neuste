@@ -410,7 +410,7 @@ function createLXC() {
   # Load container language file
   source <(curl -sSL $containerURL/$lxchostname/lang/$var_language.lang)
   function lxc_SQLSecure () {
-    # Function configures SQL secure in LXC Containers
+  # Function configures SQL secure in LXC Containers
     SECURE_MYSQL=$(expect -c "
     set timeout 3
     spawn mysql_secure_installation
@@ -576,17 +576,40 @@ function createLXC() {
           $command
         done
       fi
+      pct shutdown $ctID --timeout 5
+      sleep 10
       # Create Container description, you can find it on Proxmox WebGUI
       echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
-      containerIP=$(lxc-info $(pct list | grep -w "$lxchostname") -iH)
-      if [ ! -z $var_nasip ] && $nasneeded; then
-        description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription\n\nNAS\nMediaFolder:  /media\nBackupFolder: /mnt/backup")
+      lxcConfigFile="/etc/pve/lxc/$ctID.conf"
+      lxcConfigOld=$(cat $lxcConfigFile)
+      if [[ $description == "" ]]; then
+        echo -e "#>> Shell <<\n#$lng_user:   root\n#$lng_password:   $ctRootpw" > $lxcConfigFile
       else
-        description=$(echo -e "Shell\nBenutzer:  root\nPasswort:  $ctRootpw\n\n$containerDescription")
+        echo -e "#${description}\n#\n#>> Shell <<\n#$lng_user:   root\n#$lng_password:   $ctRootpw" > $lxcConfigFile
       fi
-      pct set $ctID --description $"$description"
-      pct reboot $ctID --timeout 5
-      sleep 15
+      if $webgui; then
+        for ((i=0;i<=${#webguiPort[@]};i++)); do
+          if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProtocol[i]}://$ctIP"; else webguiAdress="${webguiProtocol[i]}://${ctIP}:${webguiPort[i]}"; fi
+          if [[ ! ${webguiName[i]} == "" ]]; then
+            if [ $i -lt 1 ]; then
+              echo -e "#\n#>> ${webguiName[i]} <<\n#$lng_webadress:   $webguiAdress" >> $lxcConfigFile
+            else
+              echo -e "#>> ${webguiName[i]} <<\n#$lng_webadress:   $webguiAdress" >> $lxcConfigFile
+            fi
+          fi
+          if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#$lng_user:   ${webguiUser[i]}" >> $lxcConfigFile; fi
+          if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$lng_password:   ${webguiPass[i]}" >> $lxcConfigFile; fi
+        done
+      fi
+      if $samba; then
+        echo -e "#\n#>> Samba (smb) <<\n#$lng_shared_folder:   \\\\\\$ctIP\\" >> $lxcConfigFile
+      fi
+      if [ ! -z "$var_nasip" ] && $nasneeded; then
+        echo -e "#\n#>> $lng_nas <<\n#$lng_nas_mediafolder:   /media\n#$lng_nas_backupfolder:   /mnt/backup" >> $lxcConfigFile
+      fi
+      echo -e "$lxcConfigOld" >> $lxcConfigFile
+      pct start $ctID
+      sleep 5
       # Create Firewall Rules for Container
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
       echo -e "[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
