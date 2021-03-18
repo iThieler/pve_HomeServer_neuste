@@ -670,7 +670,9 @@ function createLXC() {
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
       echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
       for ((i=0;i<=${#fwPort[@]};i++)); do
-        echo -e "IN ACCEPT -source +${fwNetwork[i]} -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog # ${fwDescription[i]}" >> $clusterfileFW
+        if [[ ${fwNetwork[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetwork[i]} "; fi
+        if [[ ${fwDescription[i]} == "" ]]; then fwdesc=""; else fwdesc=" # ${fwDescription[i]}"; fi
+        echo -e "IN ACCEPT$fwnw -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog$fwdesc" >> $clusterfileFW
       done
       echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
       # Insert all VMs in Backup Pool
