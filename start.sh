@@ -643,7 +643,7 @@ function createLXC() {
       if $webgui; then
         for ((i=0;i<=${#webguiPort[@]};i++)); do
           if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProtocol[i]}://$ctIP"; else webguiAdress="${webguiProtocol[i]}://${ctIP}:${webguiPort[i]}"; fi
-          if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}/${webguiPath[i]}"; fi
+          if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
           if [[ ! ${webguiName[i]} == "" ]]; then
             if [ $i -lt 1 ]; then
               echo -e "#\n#>> ${webguiName[i]} <<\n#$lng_webadress:   $webguiAdress" >> $lxcConfigFile
