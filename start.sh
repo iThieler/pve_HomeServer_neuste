@@ -670,8 +670,9 @@ function createLXC() {
       # Create Firewall Rules for Container
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
       echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+      if [ -n "$inst_samba" ]; then echo -e "IN ACCEPT -source +network -p tcp -dport 445 -log nolog # Samba (smb)" >> $clusterfileFW; fi
       for ((i=0;i<=${#fwPort[@]};i++)); do
-        if [[ ${fwNetwork[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetwork[i]} "; fi
+        if [[ ${fwNetwork[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetwork[i]}"; fi
         if [[ ${fwDescription[i]} == "" ]]; then fwdesc=""; else fwdesc=" # ${fwDescription[i]}"; fi
         echo -e "IN ACCEPT$fwnw -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog$fwdesc" >> $clusterfileFW
       done
