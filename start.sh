@@ -136,7 +136,7 @@ function getInformations() {
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   # ask for robot password
-  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} $networkrobotpw 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} "$networkrobotpw" 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [[ "$exitstatus" = 1 ]]; then exit; fi
   if [[ $var_robotpw = "" ]]; then
@@ -233,6 +233,42 @@ function getInformations() {
 
 function configPVE() {
 # Function configures Proxmox based on User Inputs, if this Script runs the First Time
+  function cfg_basic() {
+  # Removes the enterprise repository and replaces it with the community repository
+    {
+      if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
+        echo -e "XXX\n14\n$lng_pve_configuration_enterprise\nXXX"
+        rm /etc/apt/sources.list.d/pve-enterprise.list
+      fi
+      if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
+        echo -e "XXX\n19\n$lng_pve_configuration_community\nXXX"
+        echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" >> /etc/apt/sources.list.d/pve-community.list 2>&1 >/dev/null
+      fi
+      if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
+        echo -e "XXX\n26\n$lng_pve_configuration_ceph\nXXX"
+        echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" >> /etc/apt/sources.list.d/ceph.list 2>&1 >/dev/null
+      fi
+
+    # Performs a system update and installs software required for this script
+      echo -e "XXX\n29\n$lng_pve_configuration_install\nXXX"
+      apt-get update 2>&1 >/dev/null
+      for package in $pve_Standardsoftware; do
+        if [ $(dpkg-query -W -f='${Status}' "$package" | grep -c "ok installed") -eq 0 ]; then
+          apt-get install -y "$package" 2>&1 >/dev/null
+        fi
+      done
+      echo -e "XXX\n56\n$lng_pve_configuration_update\nXXX"
+      apt-get dist-upgrade -y 2>&1 >/dev/null && apt-get autoremove -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+
+    # Aktiviere S.M.A.R.T. support auf Systemfestplatte
+      if [ $(smartctl -a /dev/$rootDisk | grep -c "SMART support is: Enabled") -eq 0 ]; then
+        echo -e "XXX\n92\n$lng_pve_configuration_smart\nXXX"
+        smartctl -s on -a /dev/$rootDisk
+      fi
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_pve_configuration" --title "$lng_pve_configuration" --gauge "$lng_preparation" 6 ${c} 0
+    return 0
+  }
+
   function cfg_email() {
   #Function configures the e-mail notification in Proxmox
     {
@@ -267,8 +303,8 @@ function configPVE() {
       systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/null
       rm -rf "/etc/postfix/sasl_passwd"
 
-      echo -e "XXX\n99\n$lng_pve_configuration_text\nXXX"
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_pve_configuration_text" 6 ${c} 0
+      echo -e "XXX\n99\n$lng_preparation\nXXX"
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration" --gauge "$lng_preparation" 6 ${c} 0
 
     # Test email settings
     echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$var_rootmail"
@@ -344,13 +380,13 @@ function configPVE() {
           CTTemplateDisk="data"
         fi
       fi
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_pve_configuration_text" 6 ${c} 0
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_preparation" 6 ${c} 0
     return 0
   }
 
   function cfg_NAS () {
   # Function mounts, if specified, the NAS as backup drive in Proxmox and makes it available to the containers as backup and media drive
-    if [ ! -z $var_nasip ]; then
+    if [ -n "$var_nasip" ]; then
       pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup
       pvesh create /pools --poolid BackupPool --comment "$lng_lxcpool_comment"
       echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
@@ -395,6 +431,7 @@ function configPVE() {
     fi
     return 0
   }
+  cfg_basic
   cfg_email
   cfg_HDD
   cfg_NAS
@@ -502,9 +539,9 @@ function createLXC() {
       sleep 5
       pct exec $ctID -- bash -c "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"    # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
       # Loads the file "function.template" from web and includes it
-      if [ ! -z $fncneeded ]; then source <(curl -sSL $containerURL/$lxcName/functions.template); fi
+      if [ -n "$fncneeded" ]; then source <(curl -sSL $containerURL/$lxcName/functions.template); fi
       # Mounted the NAS to container if exist and is set in Container Configuration Template
-      if [ ! -z $var_nasip ] && $nasneeded; then
+      if [ -n "$var_nasip" ] && $nasneeded; then
         echo -e "XXX\n24\n$lng_lxc_create_text_nas\nXXX"
         pct exec $ctID -- bash -ci "mkdir -p /media"
         pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
@@ -538,7 +575,7 @@ function createLXC() {
         pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
       done
       # Install Samba to Container if inst_samba Variable is true
-      if [ ! -z $inst_samba ]; then
+      if [ -n "$inst_samba" ]; then
         echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
         pct exec $ctID -- bash -c "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
         for user in $sambaUser; do
@@ -563,14 +600,14 @@ function createLXC() {
         pct exec $ctID -- bash -c "mkdir -p $folder"
       done
       # Commands before the software installation starts from commandsFirst Variable
-      if [ ! -z $commandsFirst ]; then
+      if [ -n "$commandsFirst" ]; then
         echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
         for f_command in $commandsFirst; do
           pct exec $ctID -- bash -c "$f_command"
         done
       fi
       # Install Software from containerSoftware Variable
-      if [ ! -z $containerSoftware ]; then
+      if [ -n "$containerSoftware" ]; then
         echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
         pct exec $ctID -- bash -c "apt-get update"
         for package in $containerSoftware; do
@@ -578,14 +615,14 @@ function createLXC() {
         done
       fi
       # Commands after the software installation starts from commandsSecond Variable
-      if [ ! -z $commandsSecond ]; then
+      if [ -n "$commandsSecond" ]; then
         echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
         for s_command in $commandsSecond; do
           pct exec $ctID -- bash -c "$s_command"
         done
       fi
       # # Commands to be executes in the Host (Proxmox) shell after Container creation
-      if [ ! -z $pveCommands ]; then
+      if [ -n "$pveCommands" ]; then
         echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
         for command in $pveCommands; do
           $command
@@ -616,7 +653,7 @@ function createLXC() {
           if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$lng_password:   ${webguiPass[i]}" >> $lxcConfigFile; fi
         done
       fi
-      if [ ! -z "$var_nasip" ] && $nasneeded; then
+      if [ -n "$var_nasip" ] && $nasneeded; then
         echo -e "#\n#>> $lng_nas <<\n#$lng_nas_mediafolder:   /media\n#$lng_nas_backupfolder:   /mnt/backup" >> $lxcConfigFile
       fi
       if $inst_samba; then
@@ -656,7 +693,7 @@ if [ -f $configFile ]; then
   source <(curl -sSL $configURL/lang/$var_language.lang)
   var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
   
-  if [ ! -z $1 ] && [ ! -z $2 ]; then
+  if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
       if [[ ! $containerURL =~ $regexURL ]]; then
         NEWT_COLORS='
@@ -678,7 +715,7 @@ if [ -f $configFile ]; then
       # Start Container creation
       createLXC
     done
-  elif [ ! -z $1 ]; then
+  elif [ -n "$1" ]; then
     var_lxcchoice=$1
     for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
