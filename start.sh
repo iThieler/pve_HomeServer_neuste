@@ -50,6 +50,7 @@ CTTemplateDisk="local"
 # Proxmox Variables
 clusterfileFW="/etc/pve/firewall/cluster.fw"
 hostfileFW="/etc/pve/nodes/$hostname/host.fw"
+timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 osname=buster
 
 # Github Variables
