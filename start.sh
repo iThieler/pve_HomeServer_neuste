@@ -17,7 +17,7 @@ osUbuntu20_04="ubuntu-20.04-standard"   # Container Template for Ubuntu v20.04
 osUbuntu20_10="ubuntu-20.10-standard"   # Container Template for Ubuntu v20.10
 
 pve_Standardsoftware="parted smartmontools libsasl2-modules lxc-pve"  # Software that is installed afterwards on the server host
-lxc_Standardsoftware="curl wget software-properties-common apt-transport-https gnupg2 net-tools"  #Software that is installed first on each LXC
+lxc_Standardsoftware="curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools"  #Software that is installed first on each LXC
 
 ##################### Script Variables #####################
 
