@@ -101,6 +101,10 @@ function switchToFunction() {
   $1
 }
 
+function getLatestGit() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'
+}
+
 function getInformations() {
 # Function asks the user about configurations in his network and saves them in a configuration file
   # Function saves variables to file
