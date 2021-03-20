@@ -106,6 +106,14 @@ function getLatestGit() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'
 }
 
+function cleanupHistory() {
+  if [ -z $1 ]; then
+    pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+  else
+    cat /dev/null > ~/.bash_history && history -c && history -w
+  fi
+}
+
 function getInformations() {
 # Function asks the user about configurations in his network and saves them in a configuration file
   # Function saves variables to file
@@ -140,11 +148,11 @@ function getInformations() {
   # ask for robot name
   var_robotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
   # ask for robot password
   var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} "$networkrobotpw" 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
   if [[ $var_robotpw = "" ]]; then
     NEWT_COLORS='
       window=,red
@@ -153,12 +161,12 @@ function getInformations() {
       button=black,white
     ' \
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c}
-    exit
+    exit 1
   fi
   # ask for Gateway Manufacturer
   var_gwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit; fi
+  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
   if [[ $var_gwmanufacturer == "andere" ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
   fi
@@ -230,7 +238,7 @@ function getInformations() {
         button=black,white
       ' \
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_error" ${r} ${c}
-      exit
+      exit 1
     fi
   fi
   cfg_save
@@ -433,7 +441,7 @@ function configPVE() {
         button=black,white
       ' \
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
-      exit
+      exit 1
     fi
     return 0
   }
@@ -704,6 +712,7 @@ function createLXC() {
         ' \
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_error" "\"$lxchostname\"\n\n$lng_lxc_error_text" ${r} ${c}
   fi
+  cleanupHistory $ctID
   return 0
 }
 
@@ -761,7 +770,7 @@ if [ -f $configFile ]; then
         button=black,white
       ' \
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
-      exit
+      exit 1
     fi
     for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
@@ -770,9 +779,11 @@ if [ -f $configFile ]; then
       createLXC
     done
   fi
-  exit
+  exit 0
 fi
 
 getInformations
 configPVE
 createLXC
+cleanupHistory
+exit 0
