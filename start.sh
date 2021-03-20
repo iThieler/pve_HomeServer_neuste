@@ -102,6 +102,7 @@ function switchToFunction() {
 }
 
 function getLatestGit() {
+# Function returns the latest versiontag from the given github repository 
   curl --silent "https://api.github.com/repos/$1/releases/latest" | grep -Po '"tag_name": "\K.*?(?=")'
 }
 
@@ -558,6 +559,10 @@ function createLXC() {
       fi
       pct shutdown $ctID --timeout 5
       sleep 15
+      # Changes the App Armor profile for the container
+      if [ -z $apparmorProfile ]; then
+        sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
+      fi      
       # Mounted the DVB-TV-Card to container if exist and is needed
       if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
         echo -e "XXX\n29\n$lng_lxc_create_text_dvb\nXXX"
