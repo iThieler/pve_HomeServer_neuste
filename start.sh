@@ -514,7 +514,7 @@ function createLXC() {
     return 0
   }
 
-  if [ $(pct list | grep -cw $lxchostname) -eq 0 ]; then
+  if [ $(pct list | grep -cw "${lxchostname}") -eq 0 ]; then
     {
       # Generates ID and IP-Address for the container to be created
       echo -e "XXX\n2\n$lng_lxc_setup_text_idip\nXXX"
