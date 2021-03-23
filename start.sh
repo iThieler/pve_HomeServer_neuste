@@ -224,9 +224,9 @@ function getInformations() {
     fi
   fi
   if $var_synologynas; then mannas="Synology"; else mannas=$lng_other; fi
-  if [ -n $var_servervlan ]; then vlansrv=$var_servervlan; else vlansrv="-/-"; fi
-  if [ -n $var_smarthomevlan ]; then vlansh=$var_smarthomevlan; else vlansh="-/-"; fi
-  if [ -n $var_guestvlan ]; then vlanguest=$var_guestvlan; else vlanguest="-/-"; fi
+  if [ -n $var_servervlan ]; then vlansrv=$var_servervlan; else vlansrv="$lng_config_notspecified"; fi
+  if [ -n $var_smarthomevlan ]; then vlansh=$var_smarthomevlan; else vlansh="$lng_config_notspecified"; fi
+  if [ -n $var_guestvlan ]; then vlanguest=$var_guestvlan; else vlanguest="$lng_config_notspecified"; fi
   if [[ $var_mailtls == "yes" ]]; then mailssl=$lng_yes; else mailssl=$lng_no; fi
   config="
     $lng_language: $var_language
