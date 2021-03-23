@@ -130,25 +130,43 @@ function getInformations() {
   # ask for robot name
   var_robotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
-  # ask for robot password
-  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} "$networkrobotpw" 3>&1 1>&2 2>&3)
-  exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
-  if [[ $var_robotpw = "" ]]; then
+  if [ $exitstatus = 1 ]; then
     NEWT_COLORS='
       window=,red
       border=white,red
       textbox=white,red
       button=black,white
     ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_pve_password" "$lng_password_error_text" ${r} ${c}
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     exit 1
   fi
+  # ask for robot password
+  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [ $exitstatus = 1 ]; then
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+    exit 1
+  fi
+  if [[ $var_robotpw = "" ]]; then var_robotpw=$(createPassword 20); fi
   # ask for Gateway Manufacturer
   var_gwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
-  if [[ "$exitstatus" = 1 ]]; then exit 1; fi
+  if [ $exitstatus = 1 ]; then
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+    exit 1
+  fi
   if [[ $var_gwmanufacturer == "andere" ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
   fi
@@ -210,7 +228,7 @@ function getInformations() {
     whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then var_synologynas=true; fi
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"${varrobotname}\" $lng_nas_folder_config_text1 \"${varrobotname}\" $lng_nas_folder_config_text2" ${r} ${c}
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$var_robotname\" $lng_nas_folder_config_text1 \"$var_robotname\" $lng_nas_folder_config_text2" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       NEWT_COLORS='
