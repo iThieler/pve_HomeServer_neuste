@@ -593,7 +593,7 @@ function createLXC() {
         pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
       done
       # Install Samba to Container if inst_samba Variable is true
-      if [ -n "$inst_samba" ]; then
+      if [ -z "$inst_samba" ]; then
         echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
         pct exec $ctID -- bash -c "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
         for user in $sambaUser; do
