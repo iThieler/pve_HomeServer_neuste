@@ -116,24 +116,6 @@ function cleanupHistory() {
 
 function getInformations() {
 # Function asks the user about configurations in his network and saves them in a configuration file
-  # Function saves variables to file
-  function cfg_save() {
-    echo "var_language=\"$var_language\"" > $configFile
-    echo "var_robotname=\"$var_robotname\"" >> $configFile
-    echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
-    echo "var_servervlan=\"$var_servervlan\"" >> $configFile
-    echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
-    echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
-    echo "var_rootmail=\"$var_rootmail\"" >> $configFile
-    echo "var_mailserver=\"$var_mailserver\"" >> $configFile
-    echo "var_mailport=\"$var_mailport\"" >> $configFile
-    echo "var_mailusername=\"$var_mailusername\"" >> $configFile
-    echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
-    echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
-    echo "var_mailtls=\"$var_mailtls\"" >> $configFile
-    echo "var_nasip=\"$var_nasip\"" >> $configFile
-    echo "var_synologynas=\"$var_synologynas\"" >> $configFile
-  }
   # ask User for Script Language
   var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" ${r} ${c} 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   # bind the chosen language
@@ -241,7 +223,59 @@ function getInformations() {
       exit 1
     fi
   fi
-  cfg_save
+  config="
+    Sprache: $var_language
+    Name des Netzwerkroboter: $var_robotname
+    Passwort des Netzwerkroboter: $var_robotpw
+    Hersteller Gateway: $var_gwmanufacturer
+    VLAN für Server: $var_servervlan
+    VLAN für SmartHome Geräte: $var_smarthomevlan
+    VLAN für Gäste: $var_guestvlan
+    E-Mail-Adresse für den Empfang von Statusmails: $var_rootmail
+    E-Mail-Adresse für den Versand von Statusmails: $var_senderaddress
+    Adresse des Mailserver: $var_mailserver
+    Port des Mailserver: $var_mailport
+    Benutzername zum Login am Mailserver: $var_mailusername
+    Passwort zum Login am Mailserver: $var_mailpassword
+    Kommunikation zum Mailserver mit SSL/TLS verschlüsselt: $var_mailtls
+    IP-Adresse der NAS: $var_nasip
+    Synology NAS: $var_synologynas
+  "
+  if (whiptail --yesno --scrolltext --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}); then
+    yesno=$?
+    if [[ $yesno == 1 ]]; then
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
+      echo "var_language=\"$var_language\"" > $configFile
+      echo "var_robotname=\"$var_robotname\"" >> $configFile
+      echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
+      echo "var_servervlan=\"$var_servervlan\"" >> $configFile
+      echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
+      echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
+      echo "var_rootmail=\"$var_rootmail\"" >> $configFile
+      echo "var_mailserver=\"$var_mailserver\"" >> $configFile
+      echo "var_mailport=\"$var_mailport\"" >> $configFile
+      echo "var_mailusername=\"$var_mailusername\"" >> $configFile
+      echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
+      echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
+      echo "var_mailtls=\"$var_mailtls\"" >> $configFile
+      echo "var_nasip=\"$var_nasip\"" >> $configFile
+      echo "var_synologynas=\"$var_synologynas\"" >> $configFile
+    else
+      NEWT_COLORS='
+        window=,red
+        border=white,red
+        textbox=white,red
+        button=black,white
+      ' \
+      whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+      yesno=$?
+      if [[ $yesno == 1 ]]; then
+        getInformations
+      else
+        exit 1
+      fi
+    fi
+  fi  
   return 0
 }
 
@@ -432,7 +466,7 @@ function configPVE() {
     exitstatus=$?
     if [ $exitstatus = 0 ]; then
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
-      return
+      return 0
     else
       NEWT_COLORS='
         window=,red
@@ -551,7 +585,7 @@ function createLXC() {
           --features "$features" > /dev/null 2>&1
       fi
       sleep 5
-      pct exec $ctID -- bash -c "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"    # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
+      pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"    # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
       # Loads the file "function.template" from web and includes it
       if [ -n "$fncneeded" ]; then source <(curl -sSL $containerURL/$lxcName/functions.template); fi
       # Mounted the NAS to container if exist and is set in Container Configuration Template
@@ -587,56 +621,56 @@ function createLXC() {
       pct start $ctID
       sleep 10
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
-      pct exec $ctID -- bash -c "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
       for package in $lxc_Standardsoftware; do
-        pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
+        pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
       done
       # Install Samba to Container if inst_samba Variable is true
       if [ -z "$inst_samba" ]; then
         echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
-        pct exec $ctID -- bash -c "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
+        pct exec $ctID -- bash -ci "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
         for user in $sambaUser; do
           smbpasswd=$(createPassword 8)
-          pct exec $ctID -- bash -c "adduser --no-create-home --disabled-login --shell /bin/false $user"
-          pct exec $ctID -- bash -c "( echo \"$smbpasswd\"; sleep 1; echo \"$smbpasswd\" ) | sudo smbpasswd -s -a $user"
-          pct exec $ctID -- bash -c "mkdir -p /root/sambashare/$user"
-          pct exec $ctID -- bash -c "echo -e \"\n[$user]\ncomment = Sambashare\npath = /root/sambashare/$user\nwrite list = $user\nvalid users = $user\nforce user = smb\" >> /etc/samba/smb.conf"
+          pct exec $ctID -- bash -ci "adduser --no-create-home --disabled-login --shell /bin/false $user"
+          pct exec $ctID -- bash -ci "( echo \"$smbpasswd\"; sleep 1; echo \"$smbpasswd\" ) | sudo smbpasswd -s -a $user"
+          pct exec $ctID -- bash -ci "mkdir -p /root/sambashare/$user"
+          pct exec $ctID -- bash -ci "echo -e \"\n[$user]\ncomment = Sambashare\npath = /root/sambashare/$user\nwrite list = $user\nvalid users = $user\nforce user = smb\" >> /etc/samba/smb.conf"
           if [[ ${smbuserdesc} == "" ]]; then
             smbuserdesc="#$lng_user:   $user\n#$lng_password:   $smbpasswd"
           else
             smbuserdesc="${smbuserdesc}\n#$lng_user:   $user\n#$lng_password:   $smbpasswd"
           fi
         done
-        pct exec $ctID -- bash -c "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf"
-        pct exec $ctID -- bash -c "chown -R smb: /root/sambashare"
-        pct exec $ctID -- bash -c "systemctl restart smbd.service"
+        pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf"
+        pct exec $ctID -- bash -ci "chown -R smb: /root/sambashare"
+        pct exec $ctID -- bash -ci "systemctl restart smbd.service"
       fi
       # Create specific folders in the file system    
       echo -e "XXX\n64\n$lng_lxc_create_text_file_structure\nXXX"
       for folder in $containerFolder; do
-        pct exec $ctID -- bash -c "mkdir -p $folder"
+        pct exec $ctID -- bash -ci "mkdir -p $folder"
       done
       # Commands before the software installation starts from commandsFirst Variable
       if [ -n "$commandsFirst" ]; then
         echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
         for f_command in $commandsFirst; do
-          pct exec $ctID -- bash -c "$f_command"
+          pct exec $ctID -- bash -ci "$f_command"
         done
       fi
       # Install Software from containerSoftware Variable
       if [ -n "$containerSoftware" ]; then
         echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
-        pct exec $ctID -- bash -c "apt-get update"
+        pct exec $ctID -- bash -ci "apt-get update"
         for package in $containerSoftware; do
-          pct exec $ctID -- bash -c "apt-get install -y $package > /dev/null 2>&1"
+          pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
         done
       fi
       # Commands after the software installation starts from commandsSecond Variable
       if [ -n "$commandsSecond" ]; then
         echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
         for s_command in $commandsSecond; do
-          pct exec $ctID -- bash -c "$s_command"
+          pct exec $ctID -- bash -ci "$s_command"
         done
       fi
       # # Commands to be executes in the Host (Proxmox) shell after Container creation
@@ -721,7 +755,7 @@ if [ -f $configFile ]; then
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
   var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
-  
+  var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\" $lng_mail_server_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
   if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
       if [[ ! $containerURL =~ $regexURL ]]; then
