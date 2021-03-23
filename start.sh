@@ -260,6 +260,7 @@ function getInformations() {
       echo "var_mailtls=\"$var_mailtls\"" >> $configFile
       echo "var_nasip=\"$var_nasip\"" >> $configFile
       echo "var_synologynas=\"$var_synologynas\"" >> $configFile
+      configPVE
     else
       NEWT_COLORS='
         window=,red
@@ -267,7 +268,7 @@ function getInformations() {
         textbox=white,red
         button=black,white
       ' \
-      whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+      whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_close" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
       yesno=$?
       if [[ $yesno == 1 ]]; then
         getInformations
@@ -284,16 +285,16 @@ function configPVE() {
   function cfg_basic() {
   # Removes the enterprise repository and replaces it with the community repository
     {
+      echo -e "XXX\n14\n$lng_pve_configuration_enterprise\nXXX"
       if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
-        echo -e "XXX\n14\n$lng_pve_configuration_enterprise\nXXX"
         rm /etc/apt/sources.list.d/pve-enterprise.list
-      fi
+    fi
+      echo -e "XXX\n19\n$lng_pve_configuration_community\nXXX"
       if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-        echo -e "XXX\n19\n$lng_pve_configuration_community\nXXX"
         echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" >> /etc/apt/sources.list.d/pve-community.list 2>&1 >/dev/null
-      fi
+    fi
+      echo -e "XXX\n26\n$lng_pve_configuration_ceph\nXXX"
       if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-        echo -e "XXX\n26\n$lng_pve_configuration_ceph\nXXX"
         echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" >> /etc/apt/sources.list.d/ceph.list 2>&1 >/dev/null
       fi
 
@@ -309,8 +310,8 @@ function configPVE() {
       apt-get dist-upgrade -y 2>&1 >/dev/null && apt-get autoremove -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
 
     # Aktiviere S.M.A.R.T. support auf Systemfestplatte
+      echo -e "XXX\n92\n$lng_pve_configuration_smart\nXXX"
       if [ $(smartctl -a /dev/$rootDisk | grep -c "SMART support is: Enabled") -eq 0 ]; then
-        echo -e "XXX\n92\n$lng_pve_configuration_smart\nXXX"
         smartctl -s on -a /dev/$rootDisk
       fi
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_pve_configuration" --title "$lng_pve_configuration" --gauge "$lng_preparation" 6 ${c} 0
@@ -428,6 +429,7 @@ function configPVE() {
           CTTemplateDisk="data"
         fi
       fi
+      echo -e "XXX\n92\n$lng_nas_configuration_hdd\nXXX"
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" --gauge "$lng_preparation" 6 ${c} 0
     return 0
   }
@@ -461,7 +463,7 @@ function configPVE() {
       source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
-    var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
+    var_lxcchoice=$(echo "( $var_lxcchoice )")
     return 0
   }
   cfg_basic
@@ -783,7 +785,7 @@ if [ -f $configFile ]; then
       source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
-    var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
+    var_lxcchoice=$(echo "( $var_lxcchoice )")
     whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
     exitstatus=$?
     if [ $exitstatus = 1 ]; then
@@ -807,7 +809,6 @@ if [ -f $configFile ]; then
 fi
 
 getInformations
-configPVE
 createLXC
 cleanupHistory
 exit 0
