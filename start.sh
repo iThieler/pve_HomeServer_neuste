@@ -291,7 +291,7 @@ function getInformations() {
       textbox=white,red
       button=black,white
     ' \
-    whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button " $lng_close " --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+    whiptail --yesno --yes-button " $lng_retry " --nocancel --no-button " $lng_close " --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       getInformations
