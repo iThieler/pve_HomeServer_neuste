@@ -223,60 +223,64 @@ function getInformations() {
       exit 1
     fi
   fi
+  if $var_synologynas; then mannas="Synology"; else mannas=$lng_other; fi
+  if $var_servervlan; then vlansrv=$var_servervlan; else vlansrv="-/-"; fi
+  if $var_smarthomevlan; then vlansh=$var_smarthomevlan; else vlansh="-/-"; fi
+  if $var_guestvlan; then vlanguest=$var_guestvlan; else vlanguest="-/-"; fi
+  if [[ $var_mailtls == "yes" ]]; then mailssl=$lng_yes; else mailssl=$lng_no; fi
   config="
-    Sprache: $var_language
-    Name des Netzwerkroboter: $var_robotname
-    Passwort des Netzwerkroboter: $var_robotpw
-    Hersteller Gateway: $var_gwmanufacturer
-    VLAN für Server: $var_servervlan
-    VLAN für SmartHome Geräte: $var_smarthomevlan
-    VLAN für Gäste: $var_guestvlan
-    E-Mail-Adresse für den Empfang von Statusmails: $var_rootmail
-    E-Mail-Adresse für den Versand von Statusmails: $var_senderaddress
-    Adresse des Mailserver: $var_mailserver
-    Port des Mailserver: $var_mailport
-    Benutzername zum Login am Mailserver: $var_mailusername
-    Passwort zum Login am Mailserver: $var_mailpassword
-    Kommunikation zum Mailserver mit SSL/TLS verschlüsselt: $var_mailtls
-    IP-Adresse der NAS: $var_nasip
-    Synology NAS: $var_synologynas
+    $lng_language: $var_language
+    $lng_netrobot_name: $var_robotname
+    $lng_netrobot_password: $var_robotpw
+    $lng_gateway_manufacturer: $var_gwmanufacturer
+    VLAN-ID $lng_for $lng_server: $vlansrv
+    VLAN-ID $lng_for $lng_smarthome $lng_devices: $vlansh
+    VLAN-ID $lng_for $lng_guests: $vlanguest
+    $lng_mail_root: $var_rootmail
+    $lng_mail_sender: $var_senderaddress
+    $lng_mail_server: $var_mailserver
+    $lng_mail_server_port: $var_mailport
+    $lng_mail_server_user: $var_mailusername
+    $lng_mail_server_user_password: $var_mailpassword
+    $lng_config_mailserver_ssl: $mailssl
+    $lng_nas_ip: $var_nasip
+    $lng_nas_manufacturer: $mannas
   "
-  if (whiptail --yesno --scrolltext --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}); then
+  whiptail --yesno --scrolltext --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}
+  yesno=$?
+  if [[ $yesno == 1 ]]; then
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
+    echo "var_language=\"$var_language\"" > $configFile
+    echo "var_robotname=\"$var_robotname\"" >> $configFile
+    echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
+    echo "var_servervlan=\"$var_servervlan\"" >> $configFile
+    echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
+    echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
+    echo "var_rootmail=\"$var_rootmail\"" >> $configFile
+    echo "var_mailserver=\"$var_mailserver\"" >> $configFile
+    echo "var_mailport=\"$var_mailport\"" >> $configFile
+    echo "var_mailusername=\"$var_mailusername\"" >> $configFile
+    echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
+    echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
+    echo "var_mailtls=\"$var_mailtls\"" >> $configFile
+    echo "var_nasip=\"$var_nasip\"" >> $configFile
+    echo "var_synologynas=${var_synologynas}" >> $configFile
+    configPVE
+  else
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_close" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
-      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
-      echo "var_language=\"$var_language\"" > $configFile
-      echo "var_robotname=\"$var_robotname\"" >> $configFile
-      echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
-      echo "var_servervlan=\"$var_servervlan\"" >> $configFile
-      echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
-      echo "var_guestvlan=\"$var_guestvlan\"" >> $configFile
-      echo "var_rootmail=\"$var_rootmail\"" >> $configFile
-      echo "var_mailserver=\"$var_mailserver\"" >> $configFile
-      echo "var_mailport=\"$var_mailport\"" >> $configFile
-      echo "var_mailusername=\"$var_mailusername\"" >> $configFile
-      echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
-      echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
-      echo "var_mailtls=\"$var_mailtls\"" >> $configFile
-      echo "var_nasip=\"$var_nasip\"" >> $configFile
-      echo "var_synologynas=\"$var_synologynas\"" >> $configFile
-      configPVE
+      getInformations
     else
-      NEWT_COLORS='
-        window=,red
-        border=white,red
-        textbox=white,red
-        button=black,white
-      ' \
-      whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_close" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        getInformations
-      else
-        exit 1
-      fi
+      exit 1
     fi
-  fi  
+  fi
   return 0
 }
 
