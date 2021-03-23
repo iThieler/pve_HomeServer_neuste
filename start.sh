@@ -466,6 +466,7 @@ function configPVE() {
     var_lxcchoice=$(echo "( $var_lxcchoice )")
     return 0
   }
+
   cfg_basic
   cfg_email
   cfg_HDD
@@ -588,7 +589,7 @@ function createLXC() {
       fi
       echo -e "XXX\n29\n$lng_container_shutdown\nXXX"
       pct shutdown $ctID --timeout 5
-      sleep 15
+      sleep 10
       # Changes the App Armor profile for the container
       if [ -z $apparmorProfile ]; then
         sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
@@ -608,7 +609,7 @@ function createLXC() {
       fi
       echo -e "XXX\n39\n$lng_container_start\nXXX"
       pct start $ctID
-      sleep 10
+      sleep 5
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
@@ -709,7 +710,7 @@ function createLXC() {
       echo -e "$lxcConfigOld" >> $lxcConfigFile
       echo -e "XXX\n97\n$lng_container_start\nXXX"
       pct reboot $ctID --timeout 5
-      sleep 5
+      sleep 15
       # Create Firewall Rules for Container
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
       echo -e "\n[group $(echo $lxchostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
