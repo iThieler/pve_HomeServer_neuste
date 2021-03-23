@@ -589,8 +589,8 @@ function createLXC() {
       # Loads the file "function.template" from web and includes it
       if [ -n "$fncneeded" ]; then source <(curl -sSL $containerURL/$lxcName/functions.template); fi
       # Mounted the NAS to container if exist and is set in Container Configuration Template
+      echo -e "XXX\n24\n$lng_lxc_create_text_nas\nXXX"
       if [ -n "$var_nasip" ] && $nasneeded; then
-        echo -e "XXX\n24\n$lng_lxc_create_text_nas\nXXX"
         pct exec $ctID -- bash -ci "mkdir -p /media"
         pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
         pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
@@ -599,6 +599,7 @@ function createLXC() {
         pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
         pct exec $ctID -- bash -ci "mount -a"
       fi
+      echo -e "XXX\n29\n$lng_container_shutdown\nXXX"
       pct shutdown $ctID --timeout 5
       sleep 15
       # Changes the App Armor profile for the container
@@ -606,18 +607,19 @@ function createLXC() {
         sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
       fi      
       # Mounted the DVB-TV-Card to container if exist and is needed
+      echo -e "XXX\n31\n$lng_lxc_create_text_dvb\nXXX"
       if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
-        echo -e "XXX\n29\n$lng_lxc_create_text_dvb\nXXX"
         echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dvb/adapter0 | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
         echo "lxc.mount.entry: /dev/dvb dev/dvb none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
       fi
       # Mounted the VGA-Card to container if exist and is needed
+      echo -e "XXX\n36\n$lng_lxc_create_text_vga\nXXX"
       if [ $(ls -la /dev/dri/card0 | grep -c video) -eq 1 ] && $vganeeded; then
-        echo -e "XXX\n33\n$lng_lxc_create_text_vga\nXXX"
         echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dri | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
         echo "lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
         echo "lxc.mount.entry: /dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
       fi
+      echo -e "XXX\n39\n$lng_container_start\nXXX"
       pct start $ctID
       sleep 10
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
@@ -627,8 +629,8 @@ function createLXC() {
         pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
       done
       # Install Samba to Container if inst_samba Variable is true
+      echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
       if [ -z "$inst_samba" ]; then
-        echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
         pct exec $ctID -- bash -ci "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
         for user in $sambaUser; do
           smbpasswd=$(createPassword 8)
@@ -652,38 +654,39 @@ function createLXC() {
         pct exec $ctID -- bash -ci "mkdir -p $folder"
       done
       # Commands before the software installation starts from commandsFirst Variable
+      echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
       if [ -n "$commandsFirst" ]; then
-        echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
         for f_command in $commandsFirst; do
           pct exec $ctID -- bash -ci "$f_command"
         done
       fi
       # Install Software from containerSoftware Variable
+      echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
       if [ -n "$containerSoftware" ]; then
-        echo -e "XXX\n73\n$lng_lxc_create_text_software_install\nXXX"
         pct exec $ctID -- bash -ci "apt-get update"
         for package in $containerSoftware; do
           pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
         done
       fi
       # Commands after the software installation starts from commandsSecond Variable
+      echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
       if [ -n "$commandsSecond" ]; then
-        echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
         for s_command in $commandsSecond; do
           pct exec $ctID -- bash -ci "$s_command"
         done
       fi
       # # Commands to be executes in the Host (Proxmox) shell after Container creation
+      echo -e "XXX\n822\n$lng_lxc_create_finish\nXXX"
       if [ -n "$pveCommands" ]; then
-        echo -e "XXX\n92\n$lng_lxc_create_finish\nXXX"
         for command in $pveCommands; do
           $command
         done
       fi
+      echo -e "XXX\n89\n$lng_container_shutdown\nXXX"
       pct shutdown $ctID --timeout 5
       sleep 10
       # Create Container description, you can find it on Proxmox WebGUI
-      echo -e "XXX\n96\n$lng_lxc_create_text_description\nXXX"
+      echo -e "XXX\n94\n$lng_lxc_create_text_description\nXXX"
       lxcConfigFile="/etc/pve/lxc/$ctID.conf"
       lxcConfigOld=$(cat $lxcConfigFile)
       if [[ $description == "" ]]; then
@@ -716,6 +719,7 @@ function createLXC() {
         echo -e "$smbuserdesc" >> $lxcConfigFile
       fi
       echo -e "$lxcConfigOld" >> $lxcConfigFile
+      echo -e "XXX\n97\n$lng_container_start\nXXX"
       pct start $ctID
       sleep 5
       # Create Firewall Rules for Container
