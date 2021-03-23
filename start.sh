@@ -128,7 +128,7 @@ function getInformations() {
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" "$lng_netrobot_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
   # ask for robot name
-  var_robotname=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
+  var_robotname=$(whiptail --inputbox --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_name" "$lng_netrobot_name_text" ${r} ${c} netrobot 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [ $exitstatus = 1 ]; then
     NEWT_COLORS='
@@ -141,7 +141,7 @@ function getInformations() {
     exit 1
   fi
   # ask for robot password
-  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [ $exitstatus = 1 ]; then
     NEWT_COLORS='
@@ -155,7 +155,7 @@ function getInformations() {
   fi
   if [[ $var_robotpw = "" ]]; then var_robotpw=$(createPassword 20); fi
   # ask for Gateway Manufacturer
-  var_gwmanufacturer=$(whiptail --radiolist --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
+  var_gwmanufacturer=$(whiptail --radiolist --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_gateway_manufacturer" ${r} ${c} 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [ $exitstatus = 1 ]; then
     NEWT_COLORS='
@@ -172,7 +172,7 @@ function getInformations() {
   fi
   if [[ $var_gwmanufacturer == "unifi" ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_info" ${r} ${c}
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
+    whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
     yesno=$?
     if [[ $yesno == 0 ]]; then
       var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_server" ${r} ${c} 100 3>&1 1>&2 2>&3)
@@ -192,14 +192,14 @@ function getInformations() {
   var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
   # ask for sending adress
   var_senderaddress=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_sender" "$lng_mail_sender_text" ${r} ${c} "notify@$(echo "$var_rootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
-  whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_tls" "$lng_mail_tls_text" ${r} ${c}
+  whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_tls" "$lng_mail_tls_text" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     var_mailtls=yes
   else
     var_mailtls=no
   fi
-  whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_ask" ${r} ${c}
+  whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_configuration" "$lng_nas_ask" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     function pingNAS() {
@@ -225,10 +225,10 @@ function getInformations() {
     }
     pingNAS
     var_nasip=$var_nasip
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
+    whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then var_synologynas=true; fi
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$var_robotname\" $lng_nas_folder_config_text1 \"$var_robotname\" $lng_nas_folder_config_text2" ${r} ${c}
+    whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$var_robotname\" $lng_nas_folder_config_text1 \"$var_robotname\" $lng_nas_folder_config_text2" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       NEWT_COLORS='
@@ -264,7 +264,7 @@ function getInformations() {
     $lng_nas_ip: $var_nasip
     $lng_nas_manufacturer: $mannas
   "
-  whiptail --yesno --scrolltext --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}
+  whiptail --yesno --scrolltext --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}
   yesno=$?
   if [[ $yesno == 0 ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
@@ -291,7 +291,7 @@ function getInformations() {
       textbox=white,red
       button=black,white
     ' \
-    whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button "$lng_close" --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
+    whiptail --yesno --yes-button "$lng_retry" --nocancel --no-button " $lng_close " --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       getInformations
@@ -379,7 +379,7 @@ function configPVE() {
 
     # Test email settings
     echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$var_rootmail"
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+    whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       NEWT_COLORS='
@@ -396,7 +396,7 @@ function configPVE() {
         fi
       fi
       echo -e "$lng_mail_configuration_test_message" | mail -s "[pve] $lng_mail_configuration_test_message_subject" "$var_rootmail"
-      whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
+      whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_configuration_test" "$lng_mail_configuration_test_text\n\n$var_rootmail\n\nWurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?" ${r} ${c}
       yesno=$?
       if [[ $yesno == 1 ]]; then
         NEWT_COLORS='
@@ -769,7 +769,7 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  var_robotpw=$(whiptail --passwordbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
   var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
   if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
@@ -780,7 +780,7 @@ if [ -f $configFile ]; then
           textbox=white,red
           button=black,white
         ' \
-        containerURL=$(whiptail --inputbox --ok-button "$lng_ok" --cancel-button "$lng_cancel" --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
+        containerURL=$(whiptail --inputbox --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - Container URL" --title "$lng_error" "$lng_url_error_text" ${r} ${c} $containerURL 3>&1 1>&2 2>&3)
         checkURL
       fi
     }
