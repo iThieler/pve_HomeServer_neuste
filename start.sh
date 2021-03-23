@@ -16,8 +16,8 @@ osUbuntu18_04="ubuntu-18.04-standard"   # Container Template for Ubuntu v18.04
 osUbuntu20_04="ubuntu-20.04-standard"   # Container Template for Ubuntu v20.04
 osUbuntu20_10="ubuntu-20.10-standard"   # Container Template for Ubuntu v20.10
 
-pve_Standardsoftware="parted smartmontools libsasl2-modules lxc-pve"  # Software that is installed afterwards on the server host
-lxc_Standardsoftware="curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools"  #Software that is installed first on each LXC
+pve_Standardsoftware=("parted" "smartmontools" "libsasl2-modules" "lxc-pve")  # Software that is installed afterwards on the server host
+lxc_Standardsoftware=("curl" "wget" "software-properties-common" "apt-transport-https" "lsb-release" "gnupg2" "net-tools")  #Software that is installed first on each LXC
 
 ##################### Script Variables #####################
 
@@ -610,9 +610,11 @@ function createLXC() {
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
-      for package in $lxc_Standardsoftware; do
-        pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
-      done
+      if [ -n "$lxc_Standardsoftware" ]; then
+        for package in $lxc_Standardsoftware; do
+          pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
+        done
+      fi
       # Install Samba to Container if inst_samba Variable is true
       echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
       if [ -z "$inst_samba" ]; then
@@ -635,9 +637,11 @@ function createLXC() {
       fi
       # Create specific folders in the file system    
       echo -e "XXX\n64\n$lng_lxc_create_text_file_structure\nXXX"
-      for folder in $containerFolder; do
-        pct exec $ctID -- bash -ci "mkdir -p $folder"
-      done
+      if [ -n "$containerFolder" ]; then
+        for folder in $containerFolder; do
+          pct exec $ctID -- bash -ci "mkdir -p $folder"
+        done
+      fi
       # Commands before the software installation starts from commandsFirst Variable
       echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
       if [ -n "$commandsFirst" ]; then
@@ -661,15 +665,12 @@ function createLXC() {
         done
       fi
       # # Commands to be executes in the Host (Proxmox) shell after Container creation
-      echo -e "XXX\n822\n$lng_lxc_create_finish\nXXX"
+      echo -e "XXX\n82\n$lng_lxc_create_finish\nXXX"
       if [ -n "$pveCommands" ]; then
         for command in $pveCommands; do
           $command
         done
       fi
-      echo -e "XXX\n89\n$lng_container_shutdown\nXXX"
-      pct shutdown $ctID --timeout 5
-      sleep 10
       # Create Container description, you can find it on Proxmox WebGUI
       echo -e "XXX\n94\n$lng_lxc_create_text_description\nXXX"
       lxcConfigFile="/etc/pve/lxc/$ctID.conf"
