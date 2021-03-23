@@ -224,9 +224,9 @@ function getInformations() {
     fi
   fi
   if $var_synologynas; then mannas="Synology"; else mannas=$lng_other; fi
-  if $var_servervlan; then vlansrv=$var_servervlan; else vlansrv="-/-"; fi
-  if $var_smarthomevlan; then vlansh=$var_smarthomevlan; else vlansh="-/-"; fi
-  if $var_guestvlan; then vlanguest=$var_guestvlan; else vlanguest="-/-"; fi
+  if [ -n $var_servervlan ]; then vlansrv=$var_servervlan; else vlansrv="-/-"; fi
+  if [ -n $var_smarthomevlan ]; then vlansh=$var_smarthomevlan; else vlansh="-/-"; fi
+  if [ -n $var_guestvlan ]; then vlanguest=$var_guestvlan; else vlanguest="-/-"; fi
   if [[ $var_mailtls == "yes" ]]; then mailssl=$lng_yes; else mailssl=$lng_no; fi
   config="
     $lng_language: $var_language
@@ -248,7 +248,7 @@ function getInformations() {
   "
   whiptail --yesno --scrolltext --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - Server $lng_configuration" --title "$lng_summary" "$lng_pve_configuration_summary\n$config\n$lng_config_correct" ${r} ${c}
   yesno=$?
-  if [[ $yesno == 1 ]]; then
+  if [[ $yesno == 0 ]]; then
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
     echo "var_language=\"$var_language\"" > $configFile
     echo "var_robotname=\"$var_robotname\"" >> $configFile
