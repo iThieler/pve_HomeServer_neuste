@@ -611,8 +611,8 @@ function createLXC() {
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
       if [ -n "$lxc_Standardsoftware" ]; then
-        for package in $lxc_Standardsoftware; do
-          pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
+        for ct_package in $lxc_Standardsoftware; do
+          pct exec $ctID -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
         done
       fi
       # Install Samba to Container if inst_samba Variable is true
@@ -706,7 +706,7 @@ function createLXC() {
       fi
       echo -e "$lxcConfigOld" >> $lxcConfigFile
       echo -e "XXX\n97\n$lng_container_start\nXXX"
-      pct start $ctID
+      pct reboot $ctID --timeout 5
       sleep 5
       # Create Firewall Rules for Container
       echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
@@ -724,7 +724,7 @@ function createLXC() {
         echo -e "IN ACCEPT$fwnw -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog$fwdesc" >> $clusterfileFW
       done
       echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
-      # Insert all VMs in Backup Pool
+      # Insert createt VM in Backup Pool
       pvesh set /pools/BackupPool -vms "$ctID"
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lxchostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
   else
