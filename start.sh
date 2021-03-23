@@ -210,7 +210,7 @@ function getInformations() {
     whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_manufacturer" "$lng_nas_manufacturer_text" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then var_synologynas=true; fi
-    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"$varrobotname\" $lng_nas_folder_config_text1 \"$varrobotname\" $lng_nas_folder_config_text2" ${r} ${c}
+    whiptail --yesno --yes-button "$lng_yes" --no-button "$lng_no" --backtitle "© 2021 - SmartHome-IoT.net - $lng_nas_configuration" --title "$lng_nas_folder_config" "$lng_nas_folder_config_text \"${varrobotname}\" $lng_nas_folder_config_text1 \"${varrobotname}\" $lng_nas_folder_config_text2" ${r} ${c}
     yesno=$?
     if [[ $yesno == 1 ]]; then
       NEWT_COLORS='
@@ -224,9 +224,9 @@ function getInformations() {
     fi
   fi
   if $var_synologynas; then mannas="Synology"; else mannas=$lng_other; fi
-  if [ -n $var_servervlan ]; then vlansrv=$var_servervlan; else vlansrv="$lng_config_notspecified"; fi
-  if [ -n $var_smarthomevlan ]; then vlansh=$var_smarthomevlan; else vlansh="$lng_config_notspecified"; fi
-  if [ -n $var_guestvlan ]; then vlanguest=$var_guestvlan; else vlanguest="$lng_config_notspecified"; fi
+  if [[ $var_servervlan == "" ]]; then vlansrv=$lng_config_notspecified; else vlansrv="$var_servervlan"; fi
+  if [[ $var_smarthomevlan == "" ]]; then vlansh=$lng_config_notspecified; else vlansh="$var_smarthomevlan"; fi
+  if [[ $var_guestvlan == "" ]]; then vlanguest=$lng_config_notspecified; else vlanguest="$var_guestvlan"; fi
   if [[ $var_mailtls == "yes" ]]; then mailssl=$lng_yes; else mailssl=$lng_no; fi
   config="
     $lng_language: $var_language
