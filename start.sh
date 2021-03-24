@@ -502,8 +502,6 @@ function createLXC() {
   ctRootpw=$(createPassword 12)   # Create Rootpassword for Container
   # check if HDD for Container Templates has been changed
   if [ $(pvesm status | grep -c data) -eq 1 ]; then CTTemplateDisk="data"; fi
-  # Load container language file
-  source <(curl -sSL $containerURL/$lxchostname/lang/$var_language.lang)
   function lxc_SQLSecure () {
   # Function configures SQL secure in LXC Containers
     SECURE_MYSQL=$(expect -c "
@@ -790,6 +788,8 @@ if [ -f $configFile ]; then
     for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxcName/install.template)
+    # Load container language file
+      source <(curl -sSL $containerURL/$lxcName/lang/$var_language.lang)
       # Start Container creation
       createLXC
     done
@@ -798,6 +798,8 @@ if [ -f $configFile ]; then
     for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxcName/install.template)
+    # Load container language file
+      source <(curl -sSL $containerURL/$lxcName/lang/$var_language.lang)
       # Start Container creation
       createLXC
     done
@@ -824,14 +826,23 @@ if [ -f $configFile ]; then
     for lxcName in $var_lxcchoice; do
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxcName/install.template)
+    # Load container language file
+      source <(curl -sSL $containerURL/$lxcName/lang/$var_language.lang)
       # Start Container creation
       createLXC
     done
   fi
   exit 0
+else
+  getInformations
+  for lxcName in $var_lxcchoice; do
+  # Load Container Template from Internet
+    source <(curl -sSL $containerURL/$lxcName/install.template)
+  # Load container language file
+    source <(curl -sSL $containerURL/$lxcName/lang/$var_language.lang)
+  # Start Container creation
+    createLXC
+  done
+  cleanupHistory
+  exit 0
 fi
-
-getInformations
-createLXC
-cleanupHistory
-exit 0
