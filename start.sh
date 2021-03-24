@@ -825,7 +825,7 @@ if [ -f $configFile ]; then
       exit 1
     fi
     for lxcName in $var_lxcchoice; do
-      export lxchostname=$lxcName
+      export lxchostname=$( $lxcName | sed -i 's+"++g' )
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxchostname/install.template)
       echo $containerURL/$lxchostname/install.template
