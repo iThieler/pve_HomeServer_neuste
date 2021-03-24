@@ -535,11 +535,11 @@ function createLXC() {
       # Generates ID and IP-Address for the container to be created
       echo -e "XXX\n2\n$lng_lxc_setup_text_idip\nXXX"
       if [ $(pct list | grep -c 100) -eq 0 ]; then
-        ctID=100
-        ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
+        export ctID=100
+        export ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
       else
-        ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
-        ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
+        export ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
+        export ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
       fi
 
       # Loads the container template from the Internet if not available and saves it for further use
@@ -810,7 +810,7 @@ if [ -f $configFile ]; then
       source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
-    #var_lxcchoice=$(echo "( $var_lxcchoice )")
+    var_lxcchoice=$(echo "( $var_lxcchoice )")
     echo $var_lxcchoice
     whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
     exitstatus=$?
@@ -825,10 +825,11 @@ if [ -f $configFile ]; then
       exit 1
     fi
     for lxcName in $var_lxcchoice; do
+      export lxchostname=$lxcName
     # Load Container Template from Internet
-      source <(curl -sSL $containerURL/$lxcName/install.template)
+      source <(curl -sSL $containerURL/$lxchostname/install.template)
     # Load container language file
-      source <(curl -sSL $containerURL/$lxcName/lang/$var_language.lang)
+      source <(curl -sSL $containerURL/$lxchostname/lang/$var_language.lang)
       # Start Container creation
       createLXC
     done
