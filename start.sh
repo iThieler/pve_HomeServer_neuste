@@ -810,7 +810,7 @@ if [ -f $configFile ]; then
       source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
-    var_lxcchoice=$(echo "( $var_lxcchoice )")
+    #var_lxcchoice=( ${var_lxcchoice} )
     echo $var_lxcchoice
     whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
     exitstatus=$?
