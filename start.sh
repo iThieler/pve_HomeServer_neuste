@@ -767,8 +767,8 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --cancel-button " $lng_cancel " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
-  var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --nocancel--backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_mailpassword=$(whiptail --passwordbox --nocancel--backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
   if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
       if [[ ! $containerURL =~ $regexURL ]]; then
@@ -810,8 +810,8 @@ if [ -f $configFile ]; then
       source <(curl -sSL $containerURL/naslxc.list)
     fi
     var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_lxc_configuration_title" "$lng_lxc_configuration_text" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
-    #var_lxcchoice=( ${var_lxcchoice} )
-    echo $var_lxcchoice
+    #var_lxcchoice=( ${var_lxcchoice} )###############################################
+    #echo $var_lxcchoice##################################################
     whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_configuration" --title "$lng_end_info" "$lng_end_info_text" ${r} ${c}
     exitstatus=$?
     if [ $exitstatus = 1 ]; then
@@ -824,7 +824,7 @@ if [ -f $configFile ]; then
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
       exit 1
     fi
-    echo -e "\n\nv3\n\n"
+    #echo -e "\n\nv3\n\n"#############################################################
     for lxcName in $var_lxcchoice; do
       export lxchostname=$( echo $lxcName | sed -e 's+\"++g' )
     # Load Container Template from Internet
