@@ -828,10 +828,12 @@ if [ -f $configFile ]; then
       export lxchostname=$lxcName
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxchostname/install.template)
+      echo $containerURL/$lxchostname/install.template
     # Load container language file
       source <(curl -sSL $containerURL/$lxchostname/lang/$var_language.lang)
+      echo $containerURL/$lxchostname/lang/$var_language.lang
       # Start Container creation
-      createLXC
+      #createLXC
     done
   fi
   exit 0
