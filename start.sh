@@ -824,17 +824,15 @@ if [ -f $configFile ]; then
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
       exit 1
     fi
-    echo -e "\n\nv2\n\n"
+    echo -e "\n\nv3\n\n"
     for lxcName in $var_lxcchoice; do
       export lxchostname=$( echo $lxcName | sed -e 's+\"++g' )
     # Load Container Template from Internet
       source <(curl -sSL $containerURL/$lxchostname/install.template)
-      echo $containerURL/$lxchostname/install.template
     # Load container language file
       source <(curl -sSL $containerURL/$lxchostname/lang/$var_language.lang)
-      echo $containerURL/$lxchostname/lang/$var_language.lang
-      # Start Container creation
-      #createLXC
+    # Start Container creation
+      createLXC
     done
   fi
   exit 0
