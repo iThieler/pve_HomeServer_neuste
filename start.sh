@@ -16,8 +16,8 @@ osUbuntu18_04="ubuntu-18.04-standard"   # Container Template for Ubuntu v18.04
 osUbuntu20_04="ubuntu-20.04-standard"   # Container Template for Ubuntu v20.04
 osUbuntu20_10="ubuntu-20.10-standard"   # Container Template for Ubuntu v20.10
 
-pve_Standardsoftware=("parted" "smartmontools" "libsasl2-modules" "lxc-pve")  # Software that is installed afterwards on the server host
-lxc_Standardsoftware=("curl" "wget" "software-properties-common" "apt-transport-https" "lsb-release" "gnupg2" "net-tools")  #Software that is installed first on each LXC
+pve_Standardsoftware="parted smartmontools libsasl2-modules lxc-pve"  # Software that is installed afterwards on the server host
+lxc_Standardsoftware="curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools"  #Software that is installed first on each LXC
 
 ##################### Script Variables #####################
 
@@ -636,12 +636,12 @@ function createLXC() {
       fi
       
       # Restart container if App Armor Profile is changed, DVB-TV-Card or VGA-Card is created in LXC
-      if [ -z $apparmorProfile ] || $dvbneeded || $vganeeded; then
+      if [[ $apparmorProfile != "" ]] || $dvbneeded || $vganeeded; then
         echo -e "XXX\n39\n$lng_container_restart\nXXX"
         pct reboot $ctID
         sleep 15
       fi
-      
+
       # Update/Upgrade Container
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
@@ -727,7 +727,7 @@ function createLXC() {
       fi
       if $webgui; then
         for ((i=0;i<=${#webguiPort[@]};i++)); do
-          if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProtocol[i]}://$ctIP"; else webguiAdress="${webguiProtocol[i]}://${ctIP}:${webguiPort[i]}"; fi
+          if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$ctIP"; else webguiAdress="${webguiProt[i]}://${ctIP}:${webguiPort[i]}"; fi
           if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
           if [[ ! ${webguiName[i]} == "" ]]; then
             if [ $i -lt 1 ]; then
@@ -765,9 +765,9 @@ function createLXC() {
         echo -e "IN ACCEPT -source +network -p tcp -dport 139 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
       fi
       for ((i=0;i<=${#fwPort[@]};i++)); do
-        if [[ ${fwNetwork[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetwork[i]}"; fi
-        if [[ ${fwDescription[i]} == "" ]]; then fwdesc=""; else fwdesc=" # ${fwDescription[i]}"; fi
-        echo -e "IN ACCEPT$fwnw -p ${fwProtocol[i]} -dport ${fwPort[i]} -log nolog$fwdesc" >> $clusterfileFW
+        if [[ ${fwNetw[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetw[i]}"; fi
+        if [[ ${fwDesc[i]} == "" ]]; then fw_desc=""; else fw_desc=" # ${fwDesc[i]}"; fi
+        echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
       done
       echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $lxchostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
       
