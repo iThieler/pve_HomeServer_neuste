@@ -685,10 +685,12 @@ function createLXC() {
 
       # Commands before the software installation starts from commandsFirst Variable
       if [ -n "$commandsFirst" ]; then
-      echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
+        echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
+        IFS=$'\n'
         for f_command in $commandsFirst; do
           pct exec $ctID -- bash -ci "$f_command"
         done
+        unset IFS
       fi
       
       # Install Software from containerSoftware Variable
@@ -702,18 +704,22 @@ function createLXC() {
       
       # Commands after the software installation starts from commandsSecond Variable
       if [ -n "$commandsSecond" ]; then
-      echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
+        echo -e "XXX\n78\n$lng_lxc_create_text_software_configuration\nXXX"
+        IFS=$'\n'
         for s_command in $commandsSecond; do
           pct exec $ctID -- bash -ci "$s_command"
         done
+        unset IFS
       fi
       
       # Commands to be executes in the Host (Proxmox) shell after Container creation
       if [ -n "$pveCommands" ]; then
-      echo -e "XXX\n82\n$lng_lxc_create_finish\nXXX"
+        echo -e "XXX\n82\n$lng_lxc_create_finish\nXXX"
+        IFS=$'\n'
         for command in $pveCommands; do
           $command
         done
+        unset IFS
       fi
       
       # Create Container description, you can find it on Proxmox WebGUI
