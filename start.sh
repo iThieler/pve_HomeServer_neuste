@@ -550,8 +550,8 @@ function createLXC() {
       else
         ctOstype=$(pveam available | grep "${!ctTemplate}" | awk '{print $2}' | cut -d- -f1)
       fi
+      echo -e "XXX\n13\n$lng_lxc_setup_text_template_download1\nXXX"
       if [ $(pveam list "$CTTemplateDisk" | grep -c "${!ctTemplate}") -eq 0 ]; then
-        echo -e "XXX\n13\n$lng_lxc_setup_text_template_download1\nXXX"
         pveam download $CTTemplateDisk $(pveam available | grep "${!ctTemplate}" | awk '{print $2}') > /dev/null 2>&1
       fi
 
