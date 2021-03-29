@@ -270,6 +270,7 @@ function getInformations() {
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_finish" --title "$lng_finish" "$lng_finish_text" ${r} ${c}
     echo "var_language=\"$var_language\"" > $configFile
     echo "var_robotname=\"$var_robotname\"" >> $configFile
+    echo "var_robotpw=\"\"" >> $configFile
     echo "var_gwmanufacturer=\"$var_gwmanufacturer\"" >> $configFile
     echo "var_servervlan=\"$var_servervlan\"" >> $configFile
     echo "var_smarthomevlan=\"$var_smarthomevlan\"" >> $configFile
@@ -278,7 +279,7 @@ function getInformations() {
     echo "var_mailserver=\"$var_mailserver\"" >> $configFile
     echo "var_mailport=\"$var_mailport\"" >> $configFile
     echo "var_mailusername=\"$var_mailusername\"" >> $configFile
-    echo "var_mailpassword=\"$var_mailpassword\"" >> $configFile
+    echo "var_mailpassword=\"\"" >> $configFile
     echo "var_senderaddress=\"$var_senderaddress\"" >> $configFile
     echo "var_mailtls=\"$var_mailtls\"" >> $configFile
     echo "var_nasip=\"$var_nasip\"" >> $configFile
@@ -797,8 +798,8 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  var_robotpw=$(whiptail --passwordbox --nocancel--backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
-  var_mailpassword=$(whiptail --passwordbox --nocancel--backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_mailpassword=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
   if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
       if [[ ! $containerURL =~ $regexURL ]]; then
