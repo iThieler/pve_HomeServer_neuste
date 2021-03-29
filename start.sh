@@ -646,6 +646,7 @@ function createLXC() {
       # Update/Upgrade Container
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
+      echo -e "XXX\n43\n$lng_lxc_setup_text_container_update\nXXX"
       pct exec $ctID -- bash -ci "apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
