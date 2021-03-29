@@ -645,15 +645,14 @@ function createLXC() {
 
       # Update/Upgrade Container
       echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
-      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
       echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
-      if [ -n "$lxc_Standardsoftware" ]; then
-        for ct_package in $lxc_Standardsoftware; do
-          pct exec $ctID -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
-        done
-      fi
+      for ct_package in $lxc_Standardsoftware; do
+        pct exec $ctID -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
+      done
 
       # Install Samba to Container if inst_samba Variable is true
       if [ -z "$inst_samba" ]; then
@@ -798,8 +797,12 @@ if [ -f $configFile ]; then
   # Configfile exist
   source $configFile
   source <(curl -sSL $configURL/lang/$var_language.lang)
-  var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
-  var_mailpassword=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
+  if [ -n $var_robotpw ]; then
+    var_robotpw=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
+  fi
+  if [ -n $var_mailpassword ]; then
+    var_mailpassword=$(whiptail --passwordbox --ok-button " $lng_ok " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
+  fi
   if [ -n "$1" ] && [ -n "$2" ]; then
     function checkURL() {
       if [[ ! $containerURL =~ $regexURL ]]; then
