@@ -108,7 +108,7 @@ function getLatestGit() {
 
 function cleanupHistory() {
   if [ -z $1 ]; then
-    pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+    pct exec $1 -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
   else
     cat /dev/null > ~/.bash_history && history -c && history -w
   fi
