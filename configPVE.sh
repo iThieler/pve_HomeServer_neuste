@@ -148,7 +148,7 @@ function checkConfigFile() {
   else
     whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT" "HAST DU DIESES KONFIGURATIONSSKRIPT SCHONMAL BEI EINER ANDEREN PROXMOX KONFIGURATION VERWENDET UND MÖCHTEST DIE SELBE KONFIGURATION ERNEUT NUTZEN?" ${r} ${c}
     yesno=$?
-    if [[ $yesno == 0 ]]; then
+    if [ $yesno -eq 0 ]; then
       mkdir /mnt/cfg_temp
       cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} BENUTZERNAME 3>&1 1>&2 2>&3)
       cfg_mountPass=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - PASSWORT" "BITTE GIB DASPASSWORT AN" ${ri} ${c} PASSWORT 3>&1 1>&2 2>&3)
@@ -162,7 +162,7 @@ function checkConfigFile() {
         "
       whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "ZUSAMMENFASSUNG" "DU HAST FOLGENDE DATEN ANGEGEBEN\n$cfg_Summary\nSIND DIE DATEN KORREKT?" ${r} ${c}
       yesno=$?
-      if [[ $yesno == 0 ]]; then
+      if [ $yesno -eq 0 ]; then
         mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 $cfg_mountPath /mnt/cfg_temp
         cp /mnt/cfg_temp/$cfg_Filename $configFile
         umount /mnt/cfg_temp
@@ -253,7 +253,7 @@ function configGateway() {
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_info" ${r} ${c}
       whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_ask" ${r} ${c}
       yesno=$?
-      if [[ $yesno == 0 ]]; then
+      if [ $yesno -eq 0 ]; then
         var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_server" ${r} ${c} 100 3>&1 1>&2 2>&3)
         var_smarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_smarthome" ${r} ${c} 200 3>&1 1>&2 2>&3)
         var_guestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_vlan" "$lng_vlan_text_guest" ${r} ${c} 300 3>&1 1>&2 2>&3)
@@ -285,7 +285,7 @@ function configSMTPServer() {
   if [ -z "$var_mailtls" ]; then
     whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_tls" "$lng_mail_tls_text" ${r} ${c}
     yesno=$?
-    if [[ $yesno == 0 ]]; then
+    if [ $yesno -eq 0 ]; then
       var_mailtls=yes
     else
       var_mailtls=no
@@ -298,7 +298,7 @@ function configNAS() {
   if [ -z "$var_nasip" ]; then
     whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "SPEICHER- UND NAS KONFIGURATION" "BEFINDET SICH EINE NAS '(QNAP, SYNOLOGY, USW.)' IN DEINEM NETZWERK?" ${r} ${c}
     yesno=$?
-    if [[ $yesno == 0 ]]; then
+    if [ $yesno -eq 0 ]; then
       var_iptocheck=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "IP-ADRESSE" "WIE LAUTET DIE IP-ADRESSE UNTER DER DEINE NAS ERREICHBAR IST?" ${r} ${c} 3>&1 1>&2 2>&3)
       if pingDevice $var_iptocheck; then
         var_nasip=$var_iptocheck
@@ -311,7 +311,7 @@ function configNAS() {
         ' \
         whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "IP-ADRESSE" "DIE ANGEGEBENE IP-ADRESSE IST NICHT ERREICHBAR. IST DAS GERÄT EINGESCHALTET UND MIT DEM NETZWERK VERBUNDEN? IST DIE IP-ADRESSE KORREKT?" ${r} ${c}
         yesno=$?
-        if [[ $yesno == 0 ]]; then
+        if [ $yesno -eq 0 ]; then
           var_nasip=""
           configNAS
         fi
@@ -343,7 +343,7 @@ function configOctopi() {
   if [ -z $var_octoip ]; then
     whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "OctoPi KONFIGURATION" "BEFINDET SICH EIN 3D-DRUCKER DERVON EINEM OCTOPI GESTEUERT WIRD IN DEINEM NETZWERK?" ${r} ${c}
     yesno=$?
-    if [[ $yesno == 0 ]]; then
+    if [ $yesno -eq 0 ]; then
       var_iptocheck=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "IP-ADRESSE" "WIE LAUTET DIE IP-ADRESSE UNTER DER DEIN OCTOPI ERREICHBAR IST?" ${r} ${c} 3>&1 1>&2 2>&3)
       if pingDevice $var_iptocheck; then
         var_octoip=$var_iptocheck
@@ -356,31 +356,22 @@ function configOctopi() {
         ' \
         whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "IP-ADRESSE" "DIE ANGEGEBENE IP-ADRESSE IST NICHT ERREICHBAR. IST DAS GERÄT EINGESCHALTET UND MIT DEM NETZWERK VERBUNDEN? IST DIE IP-ADRESSE KORREKT?" ${r} ${c}
         yesno=$?
-        if [[ $yesno == 0 ]]; then
+        if [ $yesno -eq 0 ]; then
           var_octoip=""
           configOctopi
         fi
       fi
       whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "SOLL EIN BACKUPSKRIPT ERSTELLT WERDEN, WELCHES DU AUF DEINEN OCTOPI LADEN KANNST? BACKUPS WERDEN IM BACKUPVERZEICHNIS DEINER NAS ERSTELLT." ${r} ${c}
       yesno=$?
-      if [[ $yesno == 0 ]]; then
-        whiptail --yesno --yes-button " ROOT BENUTZER " --no-button " EIGENER BENUTZER " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "LÄUFT DER OCTOPI-DIENST UNTER DEM ROOTBENUTZER ODER EINEM EIGENEN?" ${r} ${c}
-          yesno=$?
-          if [[ $yesno == 0 ]]; then
-            ############### FRAGE NACH LOGINDATEN
-          fi
-        whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "SOLL EIN CRONJOB ERSTELLT WERDEN, DER DAS BACKUPSKRIPT REGELMÄßIG AUSFÜHRT?" ${r} ${c}
-          yesno=$?
-          if [[ $yesno == 0 ]]; then
-            ############### FRAGE NACH CRONJOBDATEN
-          fi
-        whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
-          yesno=$?
-          if [[ $yesno == 0 ]]; then
-            ############### FRAGE NACH REST-API DATEN
-          fi
-        ############### ERSTELLE BACKUPSKRIPT auf dem OctoPi
-      fi
+      if [ $yesno -eq 0 ]; then
+      var_octoUser=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "WIE LAUTET DER BENUTZERNAME UNTER DEM DER OCTOPI-DIENST AUSGEFÜHRT WIRD?" ${r} ${c} 3>&1 1>&2 2>&3)
+      var_octoCron=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "ZU WELCHEM ZEITPUNKT SOLL DASBACKUPSKRIPT AUSGEFÜHRT WERDEN?" ${r} ${c} 3>&1 1>&2 2>&3)
+      whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
+        yesno=$?
+        if [ $yesno -eq 0 ]; then
+          var_octoIOBroker=true
+        fi
+      ############### ERSTELLE BACKUPSKRIPT auf dem OctoPi
     fi
   fi
 }
