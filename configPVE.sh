@@ -362,16 +362,16 @@ function configOctopi() {
         fi
       fi
       whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "SOLL EIN BACKUPSKRIPT ERSTELLT WERDEN, WELCHES DU AUF DEINEN OCTOPI LADEN KANNST? BACKUPS WERDEN IM BACKUPVERZEICHNIS DEINER NAS ERSTELLT." ${r} ${c}
+      yesno=$?
+      if [ $yesno -eq 0 ]; then
+        var_octoUser=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "WIE LAUTET DER BENUTZERNAME UNTER DEM DER OCTOPI-DIENST AUSGEFÜHRT WIRD?" ${r} ${c} 3>&1 1>&2 2>&3)
+        var_octoCron=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "ZU WELCHEM ZEITPUNKT SOLL DASBACKUPSKRIPT AUSGEFÜHRT WERDEN?" ${r} ${c} 3>&1 1>&2 2>&3)
+        whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
         yesno=$?
         if [ $yesno -eq 0 ]; then
-          var_octoUser=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "WIE LAUTET DER BENUTZERNAME UNTER DEM DER OCTOPI-DIENST AUSGEFÜHRT WIRD?" ${r} ${c} 3>&1 1>&2 2>&3)
-          var_octoCron=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "ZU WELCHEM ZEITPUNKT SOLL DASBACKUPSKRIPT AUSGEFÜHRT WERDEN?" ${r} ${c} 3>&1 1>&2 2>&3)
-          whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
-            yesno=$?
-            if [ $yesno -eq 0 ]; then
-              var_octoIOBroker=true
-            fi
+          var_octoIOBroker=true
         fi
+      fi
       ############### ERSTELLE BACKUPSKRIPT auf dem OctoPi
     fi
   fi
