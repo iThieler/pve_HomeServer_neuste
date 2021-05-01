@@ -75,12 +75,12 @@ configFile="/root/.cfg_shiot"
 
 # Language selctor
 lng=(\
-     "de" "Deutsch" \
-     "en" "English" \
+  "de" "Deutsch" \
+  "en" "English" \
 )
 
 # Gateway selector
-gw=( \
+gw=(\
   "unifi" "Ubiquiti/UniFi DreamMachine Pro ${lng_or} CloudKey              " off \
   "avm" "AVM FRITZ!Box" off \
   "andere" "${lng_another_manufacturer}" off \
