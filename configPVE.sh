@@ -62,8 +62,8 @@ timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 osname=buster
 
 # SmartHome-IoT.net Github scripts in Variables
-configURL="http://pve.config.shiot.de"
-containerURL="http://lxc.config.shiot.de"
+configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
+containerURL="https://raw.githubusercontent.com/shiot/HomeServer_container/master"
 
 # Container Variables
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
