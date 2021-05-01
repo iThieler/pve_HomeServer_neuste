@@ -75,14 +75,14 @@ configFile="/root/.cfg_shiot"
 
 # Language selctor
 lng=(\
-  "de" "      Deutsch                                                " \
+  "de" "      Deutsch                                                          " \
   "en" "      English" \
 )
 
 # Gateway selector
 gw=(\
-  "unifi" "   Ubiquiti/UniFi DreamMachine Pro ${lng_or} CloudKey     " off \
-  "avm" "     AVM FRITZ!Box" off \
+  "unifi " "  Ubiquiti/UniFi DreamMachine Pro ${lng_or} CloudKey               " off \
+  "avm   " "  AVM FRITZ!Box" off \
   "andere" "  ${lng_another_manufacturer}" off \
 )
 
@@ -194,7 +194,7 @@ function informUser() {
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_welcome" "$lng_start_info" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_introduction" "$lng_introduction_text" ${r} ${c}
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_netrobot" "$lng_netrobot_text" ${r} ${c}
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text $networkrobotpw $lng_secure_password_text1" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_welcome" --title "$lng_secure_password" "$lng_secure_password_text $(generatePassword 20) $lng_secure_password_text1" ${r} ${c}
 }
 
 function configNetrobot() {
@@ -226,9 +226,9 @@ function configNetrobot() {
     exit 1
   fi
   if [[ $var_robotpw = "" ]]; then
-    var_robotpw=$(createPassword 26)
+    var_robotpw=$(generatePassword 26)
   fi
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "BITTE ERSTELLE EINEN BENUTZER MIT FOLGENDEN DATEN\n\nBENUTZERNAME: $var_robotname\nPASSWORT: $var_robotpw\n\nUND ERTEILE DEM BENUTZER ADMINRECHTE" ${r} ${c}
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "BITTE ERSTELLE AUF ALL DEINEN GERÄTEN EINEN BENUTZER MIT FOLGENDEN DATEN\n\nBENUTZERNAME: $var_robotname\nPASSWORT: $var_robotpw\n\nUND ERTEILE DIESEM BENUTZER ADMINRECHTE." ${r} ${c}
 }
 
 function configGateway() {
@@ -555,53 +555,53 @@ function startServerConfiguration() {
 function createConfigFile() {
 # Function creates the config File, if you run this Script again or use it after Proxmox reinstallation
   if [ -n "$var_nasip" ]; then rm /mnt/pve/backups/.cfg_shiot; fi
-  rm $configFile
+  if [ -f "${configFile}" ]; then rm $configFile; fi
   echo -e "\0043\0041/bin/bash" > $configFile
   echo -e "\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
   echo -e "\0043\0043         Variables starting with var_ were created by you           \0043\0043" >> $configFile
   echo -e "\n\0043 Proxmox-/System configuration" >> $configFile
-  echo "basicConfiguration=$basicConfiguration" >> $configFile
-  echo "pveIP=$pveIP" >> $configFile
-  echo "fqdn=$fqdn" >> $configFile
-  echo "hostname=$hostname" >> $configFile
-  echo "osname=$osname" >> $configFile
-  echo "timezone=$timezone" >> $configFile
+  echo -e "basicConfiguration=$basicConfiguration" >> $configFile
+  echo -e "pveIP=$pveIP" >> $configFile
+  echo -e "fqdn=$fqdn" >> $configFile
+  echo -e "hostname=$hostname" >> $configFile
+  echo -e "osname=$osname" >> $configFile
+  echo -e "timezone=$timezone" >> $configFile
   echo -e "\n\0043 Gateway configuration" >> $configFile
-  echo "var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
-  echo "gatewayIP=$gatewayIP" >> $configFile
-  echo "networkIP=$networkIP" >> $configFile
-  echo "cidr=$cidr" >> $configFile
-  echo "var_servervlan=$var_servervlan" >> $configFile
-  echo "var_smarthomevlan=$var_smarthomevlan" >> $configFile
-  echo "var_guestvlan=$var_guestvlan" >> $configFile
+  echo -e "var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
+  echo -e "gatewayIP=$gatewayIP" >> $configFile
+  echo -e "networkIP=$networkIP" >> $configFile
+  echo -e "cidr=$cidr" >> $configFile
+  echo -e "var_servervlan=$var_servervlan" >> $configFile
+  echo -e "var_smarthomevlan=$var_smarthomevlan" >> $configFile
+  echo -e "var_guestvlan=$var_guestvlan" >> $configFile
   echo -e "\n\0043 Firewall configuration" >> $configFile
-  echo "firewallConfiguration=$firewallConfiguration" >> $configFile
-  echo "clusterfileFW=$clusterfileFW" >> $configFile
-  echo "hostfileFW=$hostfileFW" >> $configFile
+  echo -e "firewallConfiguration=$firewallConfiguration" >> $configFile
+  echo -e "clusterfileFW=$clusterfileFW" >> $configFile
+  echo -e "hostfileFW=$hostfileFW" >> $configFile
   echo -e "\n\0043 SMTP-Server configuration" >> $configFile
-  echo "emailConfiguration=$emailConfiguration" >> $configFile
-  echo "var_rootmail=$var_rootmail" >> $configFile
-  echo "var_mailservervar_mailserver" >> $configFile
-  echo "var_mailport=$var_mailport" >> $configFile
-  echo "var_mailusername=$var_mailusername" >> $configFile
-  echo "var_mailpassword=\"\"" >> $configFile
-  echo "var_senderaddress=$var_senderaddress" >> $configFile
-  echo "var_mailtls=$var_mailtls" >> $configFile
+  echo -e "emailConfiguration=$emailConfiguration" >> $configFile
+  echo -e "var_rootmail=$var_rootmail" >> $configFile
+  echo -e "var_mailservervar_mailserver" >> $configFile
+  echo -e "var_mailport=$var_mailport" >> $configFile
+  echo -e "var_mailusername=$var_mailusername" >> $configFile
+  echo -e "var_mailpassword=\"\"" >> $configFile
+  echo -e "var_senderaddress=$var_senderaddress" >> $configFile
+  echo -e "var_mailtls=$var_mailtls" >> $configFile
   echo -e "\n\0043 HDD-/Storage configuration" >> $configFile
-  echo "sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
-  echo "rootDisk=$rootDisk" >> $configFile
-  echo "secHDDConfiguration=$secHDDConfiguration" >> $configFile
-  echo "secondDisk=$secondDisk" >> $configFile
-  echo "ctTemplateDisk=$ctTemplateDisk" >> $configFile
+  echo -e "sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
+  echo -e "rootDisk=$rootDisk" >> $configFile
+  echo -e "secHDDConfiguration=$secHDDConfiguration" >> $configFile
+  echo -e "secondDisk=$secondDisk" >> $configFile
+  echo -e "ctTemplateDisk=$ctTemplateDisk" >> $configFile
   echo -e "\n\0043 Netrobot configuration" >> $configFile
-  echo "var_robotname=$var_robotname" >> $configFile
-  echo "var_robotpw=\"\"" >> $configFile
+  echo -e "var_robotname=$var_robotname" >> $configFile
+  echo -e "var_robotpw=\"\"" >> $configFile
   echo -e "\n\0043 NAS configuration" >> $configFile
-  echo "nasConfiguration=$nasConfiguration" >> $configFile
-  echo "var_nasip=$var_nasip" >> $configFile
-  echo "var_synologynas=$var_synologynas" >> $configFile
+  echo -e "nasConfiguration=$nasConfiguration" >> $configFile
+  echo -e "var_nasip=$var_nasip" >> $configFile
+  echo -e "var_synologynas=$var_synologynas" >> $configFile
   echo -e "\n\0043 OctoPi configuration" >> $configFile
-  echo "var_octoip=$var_octoip" >> $configFile
+  echo -e "var_octoip=$var_octoip" >> $configFile
   if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration; fi
 }
 
