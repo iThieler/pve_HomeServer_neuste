@@ -606,6 +606,7 @@ function createConfigFile() {
 }
 
 ####################### start Script ######################
+chooseLanguage
 if checkConfigFile; then source $configFile; fi
 
 informUser
