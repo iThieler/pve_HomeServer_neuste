@@ -139,11 +139,11 @@ function pingDevice() {
   return 1
 }
 
-function checkFirstRun() {
+function checkConfigFile() {
 # Function Check if this script run the first time
-  if [ -f "$configFile" ]; then
+  if [ -f "${configFile}" ]; then
     clear
-    echo -e "\n\nDIE ERSTKONFIGURATION VON PROXMOX, WURDE DURCH DIESES SKRIPT SCHON AUSGEFÜHRT. WENN DU DIESES SKRIPT ERNEUT AUSFÜHRST, KANN DEIN SYSTEM INSTABIL WERDEN. BITTE INSTALLIERE PROXMOX NEU UND FÜHRE ANSCHLIEßEND DIESES SKRIPT ERNEUT AUS. DEINE CONTAINER KANNST DU ANSCHLIEßEND AUS VORHANDENEN BACKUPS WIEDERHERSTELLEN."; fi
+    echo -e "\n\nDIE ERSTKONFIGURATION VON PROXMOX, WURDE DURCH DIESES SKRIPT SCHON AUSGEFÜHRT. WENN DU DIESES SKRIPT ERNEUT AUSFÜHRST, KANN DEIN SYSTEM INSTABIL WERDEN. BITTE INSTALLIERE PROXMOX NEU UND FÜHRE ANSCHLIEßEND DIESES SKRIPT ERNEUT AUS. DEINE CONTAINER KANNST DU ANSCHLIEßEND AUS VORHANDENEN BACKUPS WIEDERHERSTELLEN."
     exit
   else
     whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT" "HAST DU DIESES KONFIGURATIONSSKRIPT SCHONMAL BEI EINER ANDEREN PROXMOX KONFIGURATION VERWENDET UND MÖCHTEST DIE SELBE KONFIGURATION ERNEUT NUTZEN?" ${r} ${c}
@@ -153,7 +153,7 @@ function checkFirstRun() {
       cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} BENUTZERNAME 3>&1 1>&2 2>&3)
       cfg_mountPass=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - PASSWORT" "BITTE GIB DASPASSWORT AN" ${ri} ${c} PASSWORT 3>&1 1>&2 2>&3)
       cfg_mountPath=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - FREIGABEPFAD" "BITTE GIB DEN FREIGABEPFAD AN" ${ri} ${c} \\\\IP-ADRESSE\\PFAD 3>&1 1>&2 2>&3)
-      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} cfg_shiot 3>&1 1>&2 2>&3)
+      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} .cfg_shiot 3>&1 1>&2 2>&3)
       cfg_Summary="
         FREIGABEPFAD: $cfg_mountPath
         DATEINAME: $cfg_Filename
@@ -614,7 +614,7 @@ function createConfigFile() {
 }
 
 ####################### start Script ######################
-if checkFirstRun; then source $configFile; fi
+if checkConfigFile; then source $configFile; fi
 
 informUser
 configNetrobot
