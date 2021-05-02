@@ -226,7 +226,6 @@ function configGateway() {
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
       exit 1
     fi
-    var_gwmanufacturer=$($var_gwmanufacturer | sed -i 's# ##g')
     if [[ $var_gwmanufacturer == "andere" ]]; then
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
     fi
@@ -535,7 +534,7 @@ function startServerConfiguration() {
 
 function createConfigFile() {
 # Function creates the config File, if you run this Script again or use it after Proxmox reinstallation
-  if [ -n "$var_nasip" ]; then rm /mnt/pve/backups/.cfg_shiot; fi
+  if [ -n "$var_nasip" ] && [ -f /mnt/pve/backups/Proxmox_Configuration.txt ]; then rm /mnt/pve/backups/Proxmox_Configuration.txt; fi
   if [ -f "${configFile}" ]; then rm $configFile; fi
   echo -e "\0043\0041/bin/bash" > $configFile
   echo -e "\n\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
@@ -583,7 +582,8 @@ function createConfigFile() {
   echo -e "var_synologynas=$var_synologynas" >> $configFile
   echo -e "\n\0043 OctoPi configuration" >> $configFile
   echo -e "var_octoip=$var_octoip" >> $configFile
-  if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration; fi
+  sed s/ //g $configFile
+  if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration.txt; fi
 }
 
 ####################### start Script ######################
