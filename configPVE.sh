@@ -119,26 +119,6 @@ function cleanupHistory() {
   fi
 }
 
-function pingDevice() {
-# Function checks if the given IP-Adress is reachable
-  {
-    sleep 0.5
-    ping -c 1 $1
-    rc=$?
-    if [[ $rc -eq 0 ]]; then
-      echo 99
-      sleep 2
-      echo 100
-      return 0
-    else
-      echo 99
-      sleep 2
-      echo 100
-    fi
-  } | whiptail --gauge "DAS GERÄT WIRD IM NETZWERK GESUCHT..." 10 80 0
-  return 1
-}
-
 function checkConfigFile() {
 # Function Check if this script run the first time
   if [ -f "${configFile}" ]; then
@@ -300,8 +280,26 @@ function configNAS() {
     yesno=$?
     if [ $yesno -eq 0 ]; then
       var_iptocheck=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "IP-ADRESSE" "WIE LAUTET DIE IP-ADRESSE UNTER DER DEINE NAS ERREICHBAR IST?" ${r} ${c} 3>&1 1>&2 2>&3)
-      if pingDevice $var_iptocheck; then
+      if ping -c 1 $var_iptocheck &> /dev/null; then
         var_nasip=$var_iptocheck
+        whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "NAS HERSTELLER" "HANDELT ES SICH BEI DEINER NAS UM EINE SYNOLOGY DISKSTATION?" ${r} ${c}
+        yesno=$?
+        if [[ $yesno == 1 ]]; then
+          var_synologynas=true
+        else
+          var_synologynas=false
+        fi
+        whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "FREIGEGEBENE ORDNER" "IN DIESEM SKRIPT WERDEN AUF DER NAS ZWEI FREIGEGEBENE ORDNER BENÖTIGT. ERSTELLE DIE ORDNER\n\nbackups\nmedia\n\nUND WEISE DEM NETZWERKROBOTER \"$var_robotname\" LESE-/SCHREIBRECHTE ZU.\n\nFERTIG?" ${r} ${c}
+        yesno=$?
+        if [[ $yesno == 1 ]]; then
+          NEWT_COLORS='
+            window=,red
+            border=white,red
+            textbox=white,red
+            button=black,white
+          ' \
+          whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "FREIGEGEBENE ORDNER" "WENN DIESE ORDNER NICHT EXISTIEREN, ODER DEIN NETZWERKROBOTER KEINE LESE-/SCHREIBRECHTE BESITZT, KANN DIESES SKRIPT DEINE NAS NICHT ORDENTLICH EINBINDEN.\n\nES WIRD OHNE NASEINBINDUNG FORTGEFAHREN." ${r} ${c}
+        fi
       else
         NEWT_COLORS='
           window=,red
@@ -316,24 +314,6 @@ function configNAS() {
           configNAS
         fi
       fi
-      whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "NAS HERSTELLER" "HANDELT ES SICH BEI DEINER NAS UM EINE SYNOLOGY DISKSTATION?" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        var_synologynas=true
-      else
-        var_synologynas=false
-      fi
-      whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "FREIGEGEBENE ORDNER" "IN DIESEM SKRIPT WERDEN AUF DER NAS ZWEI FREIGEGEBENE ORDNER BENÖTIGT. ERSTELLE DIE ORDNER\n\nbackups\nmedia\n\nUND WEISE DEM NETZWERKROBOTER \"$var_robotname\" LESE-/SCHREIBRECHTE ZU.\n\nFERTIG?" ${r} ${c}
-      yesno=$?
-      if [[ $yesno == 1 ]]; then
-        NEWT_COLORS='
-          window=,red
-          border=white,red
-          textbox=white,red
-          button=black,white
-        ' \
-        whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - SPEICHER- UND NAS KONFIGURATION" --title "FREIGEGEBENE ORDNER" "WENN DIESE ORDNER NICHT EXISTIEREN, ODER DEIN NETZWERKROBOTER KEINE LESE-/SCHREIBRECHTE BESITZT, KANN DIESES SKRIPT DEINE NAS NICHT ORDENTLICH EINBINDEN.\n\nES WIRD OHNE NASEINBINDUNG FORTGEFAHREN." ${r} ${c}
-      fi
     fi
   fi
 }
@@ -345,8 +325,20 @@ function configOctopi() {
     yesno=$?
     if [ $yesno -eq 0 ]; then
       var_iptocheck=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "IP-ADRESSE" "WIE LAUTET DIE IP-ADRESSE UNTER DER DEIN OCTOPI ERREICHBAR IST?" ${r} ${c} 3>&1 1>&2 2>&3)
-      if pingDevice $var_iptocheck; then
+      if ping -c 1 $var_iptocheck &> /dev/null; then
         var_octoip=$var_iptocheck
+        whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "SOLL EIN BACKUPSKRIPT ERSTELLT WERDEN, WELCHES DU AUF DEINEN OCTOPI LADEN KANNST? BACKUPS WERDEN IM BACKUPVERZEICHNIS DEINER NAS ERSTELLT." ${r} ${c}
+        yesno=$?
+        if [ $yesno -eq 0 ]; then
+          var_octoUser=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "WIE LAUTET DER BENUTZERNAME UNTER DEM DER OCTOPI-DIENST AUSGEFÜHRT WIRD?" ${r} ${c} 3>&1 1>&2 2>&3)
+          var_octoCron=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "ZU WELCHEM ZEITPUNKT SOLL DASBACKUPSKRIPT AUSGEFÜHRT WERDEN?" ${r} ${c} 3>&1 1>&2 2>&3)
+          whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
+          yesno=$?
+          if [ $yesno -eq 0 ]; then
+            var_octoIOBroker=true
+          fi
+        fi
+        ############### ERSTELLE BACKUPSKRIPT auf dem OctoPi
       else
         NEWT_COLORS='
           window=,red
@@ -361,18 +353,6 @@ function configOctopi() {
           configOctopi
         fi
       fi
-      whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "SOLL EIN BACKUPSKRIPT ERSTELLT WERDEN, WELCHES DU AUF DEINEN OCTOPI LADEN KANNST? BACKUPS WERDEN IM BACKUPVERZEICHNIS DEINER NAS ERSTELLT." ${r} ${c}
-      yesno=$?
-      if [ $yesno -eq 0 ]; then
-        var_octoUser=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "WIE LAUTET DER BENUTZERNAME UNTER DEM DER OCTOPI-DIENST AUSGEFÜHRT WIRD?" ${r} ${c} 3>&1 1>&2 2>&3)
-        var_octoCron=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "ZU WELCHEM ZEITPUNKT SOLL DASBACKUPSKRIPT AUSGEFÜHRT WERDEN?" ${r} ${c} 3>&1 1>&2 2>&3)
-        whiptail --yesno --yes-button " $lng_yes " --no-button " $lng_no " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi KONFIGURATION" --title "BACKUPSCRIPT" "HAST DU EINEN IOBROKER IN DEINEM NETZWERK UND SOLL DAS SKRIPT DEN BACKUPSTATUS AN DIESEN MELDEN?" ${r} ${c}
-        yesno=$?
-        if [ $yesno -eq 0 ]; then
-          var_octoIOBroker=true
-        fi
-      fi
-      ############### ERSTELLE BACKUPSKRIPT auf dem OctoPi
     fi
   fi
 }
@@ -606,6 +586,7 @@ function createConfigFile() {
 }
 
 ####################### start Script ######################
+clear
 chooseLanguage
 if checkConfigFile; then source $configFile; fi
 
@@ -614,6 +595,8 @@ configNetrobot
 configGateway
 configSMTPServer
 configNAS
+configOctopi
 startServerConfiguration
 createConfigFile
+
 exit
