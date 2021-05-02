@@ -481,27 +481,24 @@ function startServerConfiguration() {
   # Function configures the second hard disk if it is present and is an SSD
     {
       echo -e "XXX\n14\n$lng_nas_configuration_hdd\nXXX"
-      countDisks=$(echo "$secondDisk" | wc -l)
-      if [ "$countDisks" -eq 1 ]; then
-        if [ $(pvesm status | grep -c data) -eq 0 ]; then
-          if [ $(cat /sys/block/"$secondDisk"/queue/rotational) -eq 0 ]; then
-            if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
-              parted -s /dev/"$secondDisk" "mklabel gpt" > /dev/null 2>&1
-              parted -s -a opt /dev/"$secondDisk" mkpart primary ext4 0% 100% > /dev/null 2>&1
-              mkfs.ext4 -Fq -L data /dev/"$secondDisk"1 > /dev/null 2>&1
-              mkdir -p /mnt/data > /dev/null 2>&1
-              mount -o defaults /dev/"$secondDisk"1 /mnt/data > /dev/null 2>&1
-              UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
-              echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
-              pvesm add dir data --path /mnt/data
-              pvesm set data --content iso,vztmpl,rootdir,images
+      if [ $(pvesm status | grep -c data) -eq 0 ]; then
+        if [ $(cat /sys/block/"$secondDisk"/queue/rotational) -eq 0 ]; then
+          if [ $(pvesm status | grep 'data' | grep -c 'active') -eq 0 ]; then
+            parted -s /dev/"$secondDisk" "mklabel gpt" > /dev/null 2>&1
+            parted -s -a opt /dev/"$secondDisk" mkpart primary ext4 0% 100% > /dev/null 2>&1
+            mkfs.ext4 -Fq -L data /dev/"$secondDisk"1 > /dev/null 2>&1
+            mkdir -p /mnt/data > /dev/null 2>&1
+            mount -o defaults /dev/"$secondDisk"1 /mnt/data > /dev/null 2>&1
+            UUID=$(lsblk -o LABEL,UUID | grep 'data' | awk '{print $2}')
+            echo "UUID=$UUID /mnt/data ext4 defaults 0 2" >> /etc/fstab
+            pvesm add dir data --path /mnt/data
+            pvesm set data --content iso,vztmpl,rootdir,images
 
-              # Set email notification about hard disk errors, check every 12 hours
-              sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$secondDisk"'"+' /etc/default/smartmontools
-              sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$secondDisk"' -a -d sat+' /etc/smartd.conf
-              sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$secondDisk"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
-              systemctl restart smartmontools
-            fi
+            # Set email notification about hard disk errors, check every 12 hours
+            sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$secondDisk"'"+' /etc/default/smartmontools
+            sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$secondDisk"' -a -d sat+' /etc/smartd.conf
+            sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$secondDisk"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
+            systemctl restart smartmontools
           fi
         fi
       fi
