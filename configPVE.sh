@@ -70,6 +70,7 @@ ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 
 # check if Script runs FirstTime
 configFile="/root/.cfg_shiot"
+recoverConfig=false
 
 ##################### Selection menus #####################
 
@@ -159,10 +160,7 @@ function checkConfigFile() {
         cp /mnt/cfg_temp/$cfg_Filename $configFile
         umount /mnt/cfg_temp
         rm -d /mnt/cfg_temp
-        source $configFile
-        startServerConfiguration
-        createConfigFile
-        exit
+        recoverConfig=true
       else
         NEWT_COLORS='
           window=,red
@@ -601,15 +599,21 @@ function createConfigFile() {
 ####################### start Script ######################
 clear
 chooseLanguage
-if checkConfigFile; then source $configFile; fi
+checkConfigFile
 
-informUser
-configNetrobot
-configGateway
-configSMTPServer
-configNAS
-configOctopi
-startServerConfiguration
-createConfigFile
+if $recoverConfig; then
+  source $configFile
+  startServerConfiguration
+  createConfigFile
+else
+  informUser
+  configNetrobot
+  configGateway
+  configSMTPServer
+  configNAS
+  configOctopi
+  startServerConfiguration
+  createConfigFile
+fi
 
 exit
