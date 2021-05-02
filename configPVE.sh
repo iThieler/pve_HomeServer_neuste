@@ -122,9 +122,20 @@ function cleanupHistory() {
 function checkConfigFile() {
 # Function Check if this script run the first time
   if [ -f "${configFile}" ]; then
-    clear
-    echo -e "\n\nDIE ERSTKONFIGURATION VON PROXMOX, WURDE DURCH DIESES SKRIPT SCHON AUSGEFÜHRT. WENN DU DIESES SKRIPT ERNEUT AUSFÜHRST, KANN DEIN SYSTEM INSTABIL WERDEN. BITTE INSTALLIERE PROXMOX NEU UND FÜHRE ANSCHLIEßEND DIESES SKRIPT ERNEUT AUS. DEINE CONTAINER KANNST DU ANSCHLIEßEND AUS VORHANDENEN BACKUPS WIEDERHERSTELLEN."
-    exit
+    NEWT_COLORS='
+      window=,red
+      border=white,red
+      textbox=white,red
+      button=black,white
+    ' \
+    whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "PROXMOX KONFIGURATION" "\n  DIE ERSTKONFIGURATION VON PROXMOX, WURDE DURCH DIESES SKRIPT SCHON AUSGEFÜHRT. EINE ERNEUTE AUSFÜHRUNG IST NICHT MÖGLICH. BITTE INSTALLIERE PROXMOX NEU UND FÜHRE ANSCHLIEßEND DIESES SKRIPT ERNEUT AUS.\n\nMÖCHTEST STATTDESSEN EINEN CONTAINER HINZUFÜGEN?" ${r} ${c}
+      yesno=$?
+      if [ $yesno -eq 0 ]; then
+        curl -sSL https://lxc.config.shiot.de | bash
+        exit
+      else
+        exit
+      fi
   else
     whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT" "HAST DU DIESES KONFIGURATIONSSKRIPT SCHONMAL BEI EINER ANDEREN PROXMOX KONFIGURATION VERWENDET UND MÖCHTEST DIE SELBE KONFIGURATION ERNEUT NUTZEN?" ${r} ${c}
     yesno=$?
