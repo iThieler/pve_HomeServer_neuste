@@ -147,7 +147,10 @@ function checkConfigFile() {
         cp /mnt/cfg_temp/$cfg_Filename $configFile
         umount /mnt/cfg_temp
         rm -d /mnt/cfg_temp
-        return 0
+        source $configFile
+        startServerConfiguration
+        createConfigFile
+        exit
       else
         NEWT_COLORS='
           window=,red
