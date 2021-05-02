@@ -372,7 +372,7 @@ function configOctopi() {
 
 function startServerConfiguration() {
 # Function configures Proxmox based on User Inputs, if this Script runs the First Time
-  if [ -z $basicConfiguration ] || ! $basicConfiguration; then
+  if [ -z $basicConfiguration ] || ! $basicConfiguration || $recoverConfig; then
   # Removes the enterprise repository and replaces it with the community repository
     {
       echo -e "XXX\n14\n$lng_pve_configuration_enterprise\nXXX"
@@ -408,7 +408,7 @@ function startServerConfiguration() {
     basicConfiguration=true
   fi
 
-  if [ -z $emailConfiguration ] || ! $emailConfiguration; then
+  if [ -z $emailConfiguration ] || ! $emailConfiguration || $recoverConfig; then
   #Function configures the e-mail notification in Proxmox
     {
       if grep "root:" /etc/aliases; then
@@ -479,7 +479,7 @@ function startServerConfiguration() {
     emailConfiguration=true
   fi
 
-  if [ -z $sysHDDConfiguration ] || ! $sysHDDConfiguration; then
+  if [ -z $sysHDDConfiguration ] || ! $sysHDDConfiguration || $recoverConfig; then
   # Set email notification about system hard disk errors, check every 12 hours
     sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
     sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
@@ -490,7 +490,7 @@ function startServerConfiguration() {
     systemctl start smartmontools
     sysHDDConfiguration=true
   fi
-  if [ -z $secHDDConfiguration ] || ! $secHDDConfiguration; then
+  if [ -z $secHDDConfiguration ] || ! $secHDDConfiguration || $recoverConfig; then
   # Function configures the second hard disk if it is present and is an SSD
     {
       echo -e "XXX\n14\n$lng_nas_configuration_hdd\nXXX"
@@ -520,7 +520,7 @@ function startServerConfiguration() {
     secHDDConfiguration=true
   fi
 
-  if [ -z $nasConfiguration ] || ! $nasConfiguration; then
+  if [ -z $nasConfiguration ] || ! $nasConfiguration || $recoverConfig; then
   # Function mounts, if specified, the NAS as backup drive in Proxmox and makes it available to the containers as backup and media drive
     if [ -n "$var_nasip" ]; then
       pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup
@@ -530,7 +530,7 @@ function startServerConfiguration() {
     nasConfiguration=true
   fi
 
-  if [ -z $firewallConfiguration ] || ! $firewallConfiguration; then
+  if [ -z $firewallConfiguration ] || ! $firewallConfiguration || $recoverConfig; then
   # Function configures and activates the Proxmox firewall
     mkdir -p /etc/pve/firewall
     mkdir -p /etc/pve/nodes/$hostname
@@ -604,7 +604,6 @@ checkConfigFile
 if $recoverConfig; then
   source $configFile
   startServerConfiguration
-  createConfigFile
 else
   informUser
   configNetrobot
@@ -613,7 +612,8 @@ else
   configNAS
   configOctopi
   startServerConfiguration
-  createConfigFile
 fi
+
+createConfigFile
 
 exit
