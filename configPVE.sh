@@ -226,6 +226,7 @@ function configGateway() {
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_abort" --title "$lng_abort" "$lng_abort_text" ${r} ${c}
       exit 1
     fi
+    var_gwmanufacturer=$($var_gwmanufacturer | sed -i 's# ##g')
     if [[ $var_gwmanufacturer == "andere" ]]; then
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_gateway_manufacturer" "$lng_another_manufacturer_text" ${r} ${c}
     fi
@@ -537,7 +538,7 @@ function createConfigFile() {
   if [ -n "$var_nasip" ]; then rm /mnt/pve/backups/.cfg_shiot; fi
   if [ -f "${configFile}" ]; then rm $configFile; fi
   echo -e "\0043\0041/bin/bash" > $configFile
-  echo -e "\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
+  echo -e "\n\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
   echo -e "\0043\0043         Variables starting with var_ were created by you           \0043\0043" >> $configFile
   echo -e "\n\0043 Proxmox-/System configuration" >> $configFile
   echo -e "basicConfiguration=$basicConfiguration" >> $configFile
