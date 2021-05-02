@@ -130,9 +130,9 @@ function checkConfigFile() {
     yesno=$?
     if [ $yesno -eq 0 ]; then
       mkdir /mnt/cfg_temp
-      cfg_mountPath=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - FREIGABEPFAD" "BITTE GIB DEN FREIGABEPFAD AN" ${ri} ${c} //IP-ADRESSE/PFAD 3>&1 1>&2 2>&3)
-      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} .cfg_shiot 3>&1 1>&2 2>&3)
-      cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} BENUTZERNAME 3>&1 1>&2 2>&3)
+      cfg_mountPath=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - FREIGABEPFAD" "BITTE GIB DEN FREIGABEPFAD AN" ${ri} ${c} //IP-ADRESSE/backups 3>&1 1>&2 2>&3)
+      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+      cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} netrobot 3>&1 1>&2 2>&3)
       cfg_mountPass=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - PASSWORT" "BITTE GIB DASPASSWORT AN" ${ri} ${c} PASSWORT 3>&1 1>&2 2>&3)
       cfg_Summary="
         FREIGABEPFAD: $cfg_mountPath
@@ -143,6 +143,7 @@ function checkConfigFile() {
       whiptail --yesno --yes-button " JA " --no-button " NEIN " --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "ZUSAMMENFASSUNG" "DU HAST FOLGENDE DATEN ANGEGEBEN\n$cfg_Summary\nSIND DIE DATEN KORREKT?" ${r} ${c}
       yesno=$?
       if [ $yesno -eq 0 ]; then
+        mkdir -p /mnt/cfg_temp
         mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 $cfg_mountPath /mnt/cfg_temp
         cp /mnt/cfg_temp/$cfg_Filename $configFile
         umount /mnt/cfg_temp
