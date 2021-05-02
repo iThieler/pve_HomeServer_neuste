@@ -130,10 +130,10 @@ function checkConfigFile() {
     yesno=$?
     if [ $yesno -eq 0 ]; then
       mkdir /mnt/cfg_temp
-      cfg_mountPath=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - FREIGABEPFAD" "BITTE GIB DEN FREIGABEPFAD AN" ${ri} ${c} //IP-ADRESSE/backups 3>&1 1>&2 2>&3)
-      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
-      cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} netrobot 3>&1 1>&2 2>&3)
-      cfg_mountPass=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - PASSWORT" "BITTE GIB DASPASSWORT AN" ${ri} ${c} PASSWORT 3>&1 1>&2 2>&3)
+      cfg_mountPath=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - FREIGABEPFAD" "\n  BITTE GIB DEN FREIGABEPFAD AN" ${ri} ${c} //IP-ADRESSE/backups 3>&1 1>&2 2>&3)
+      cfg_Filename=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - DATEINAME" "\n  BITTE GIB DEN DATEINAMEN AN" ${ri} ${c} Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+      cfg_mountUser=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - BENUTZERNAME" "\n  BITTE GIB DEN BENUTZERNAMEN AN" ${ri} ${c} netrobot 3>&1 1>&2 2>&3)
+      cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - KONFIGURATION WIEDERHERSTELLEN" --title "SPEICHERORT - PASSWORT" "\n  BITTE GIB DAS PASSWORT AN" ${ri} ${c} 3>&1 1>&2 2>&3)
       cfg_Summary="
         FREIGABEPFAD: $cfg_mountPath
         DATEINAME: $cfg_Filename
@@ -562,7 +562,7 @@ function createConfigFile() {
   echo -e "\n\0043 SMTP-Server configuration" >> $configFile
   echo -e "emailConfiguration=$emailConfiguration" >> $configFile
   echo -e "var_rootmail=$var_rootmail" >> $configFile
-  echo -e "var_mailservervar_mailserver" >> $configFile
+  echo -e "var_mailserver=$var_mailserver" >> $configFile
   echo -e "var_mailport=$var_mailport" >> $configFile
   echo -e "var_mailusername=$var_mailusername" >> $configFile
   echo -e "var_mailpassword=\"\"" >> $configFile
