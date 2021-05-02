@@ -592,7 +592,7 @@ function createConfigFile() {
   echo -e "var_synologynas=$var_synologynas" >> $configFile
   echo -e "\n\0043 OctoPi configuration" >> $configFile
   echo -e "var_octoip=$var_octoip" >> $configFile
-  sed s/ //g $configFile
+  sed -i 's/ //g' $configFile
   if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration.txt; fi
 }
 
@@ -603,7 +603,7 @@ checkConfigFile
 
 if $recoverConfig; then
   source $configFile
-  var_robotpw=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text\n\n$lng_netrobot_password_text1" ${r} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_network_infrastructure" --title "$lng_netrobot_password" "$lng_netrobot_password_text" ${r} ${c} 3>&1 1>&2 2>&3)
   var_mailpassword=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - $lng_mail_configuration" --title "$lng_mail_server_user_password" "$lng_mail_server_user_password_text \"$var_mailusername\"" ${r} ${c} 3>&1 1>&2 2>&3)
   startServerConfiguration
 else
