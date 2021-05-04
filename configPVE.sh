@@ -48,10 +48,6 @@ osname=buster
 
 # SmartHome-IoT.net Github scripts in Variables
 configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
-containerURL="https://raw.githubusercontent.com/shiot/HomeServer_container/master"
-
-# Container Variables
-ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 
 # check if Script runs FirstTime
 configFile="/root/.cfg_shiot"
@@ -98,11 +94,7 @@ function generateAPIKey() {
 
 function cleanupHistory() {
 # Function clean the Shell History
-  if [ -z $1 ]; then
-    pct exec $1 -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
-  else
-    cat /dev/null > ~/.bash_history && history -c && history -w
-  fi
+  cat /dev/null > ~/.bash_history && history -c && history -w
 }
 
 function checkConfigFile() {
