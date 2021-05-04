@@ -21,3 +21,44 @@ osUbuntu20_10="ubuntu-20.10-standard"    # Container Template for Ubuntu v20.10
 #################### Required software ####################
 
 lxc_Standardsoftware="curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools"  #Software that is installed first on each LXC
+
+##################### Script Variables ####################
+
+# Divide by two so the dialogs take up half of the screen, which looks nice.
+r=$(( rows / 2 ))
+ri=$(( rows / 2 ))
+c=$(( columns / 2 ))
+# Unless the screen is tiny
+r=$(( r < 20 ? 20 : r ))
+ri=$(( r < 10 ? 10 : r ))
+c=$(( c < 80 ? 80 : c ))
+
+# check if Variable is valid URL
+regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
+containerURL="https://raw.githubusercontent.com/shiot/HomeServer_container/master"
+
+# Container Variables
+ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
+
+######################## Functions ########################
+
+function generatePassword() {
+# Function generates a random secure password
+  chars=({0..9} {a..z} {A..Z} "_" "%" "&" "+" "-")
+  for i in $(eval echo "{1..$1}"); do
+    echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
+  done 
+}
+
+function generateAPIKey() {
+# Function generates a random API-Key
+  chars=({0..9} {a..f})
+  for i in $(eval echo "{1..$1}"); do
+    echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
+  done 
+}
+
+function cleanupHistory() {
+# Function clean the Shell History
+  pct exec $1 -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+}
