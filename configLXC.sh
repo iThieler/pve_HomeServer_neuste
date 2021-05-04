@@ -37,6 +37,10 @@ c=$(( c < 80 ? 80 : c ))
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
 containerURL="https://raw.githubusercontent.com/shiot/HomeServer_container/master"
 
+# check if Script runs FirstTime
+configFile="/root/.cfg_shiot"
+recoverConfig=false
+
 # Container Variables
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 
@@ -62,3 +66,7 @@ function cleanupHistory() {
 # Function clean the Shell History
   pct exec $1 -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
 }
+
+####################### start Script ######################
+
+source $configFile
