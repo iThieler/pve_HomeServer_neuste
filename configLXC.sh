@@ -35,7 +35,7 @@ c=$(( c < 80 ? 80 : c ))
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
-if [[ $2 == "shiot" ]]; then
+if [[ -z $2 ]]; then
   rawContainerURL="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
 else
   rawContainerURL="${2}"
