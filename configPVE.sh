@@ -101,7 +101,7 @@ function checkConfigFile() {
 # Function Check if this script run the first time
   if [ -f "${configFile}" ]; then
     NEWT_COLORS='
-      window=,red
+      window=black,red
       border=white,red
       textbox=white,red
       button=black,yellow
