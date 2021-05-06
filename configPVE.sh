@@ -316,6 +316,7 @@ function configNAS() {
             var_nasip=""
           fi
         fi
+      fi
     fi
   fi
 }
