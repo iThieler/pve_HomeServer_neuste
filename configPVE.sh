@@ -57,8 +57,8 @@ recoverConfig=false
 
 # Language selctor
 lng=(\
-  "de" "      Deutsch" \
-  "en" "      English" \
+  "${lng_wrd_de_short}" "      ${lng_wrd_de_long}" \
+  "${lng_wrd_en_short}" "      ${lng_wrd_en_long}" \
 )
 
 # Gateway selector
