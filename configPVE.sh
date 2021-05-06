@@ -563,6 +563,7 @@ function createConfigFile() {
   echo -e "hostname=$hostname" >> $configFile
   echo -e "osname=$osname" >> $configFile
   echo -e "timezone=$timezone" >> $configFile
+  echo -e "\nvar_language=$var_language" >> $configFile
   echo -e "\n\0043 Gateway configuration" >> $configFile
   echo -e "var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
   echo -e "gatewayIP=$gatewayIP" >> $configFile
