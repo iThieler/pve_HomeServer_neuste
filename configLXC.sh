@@ -35,7 +35,11 @@ c=$(( c < 80 ? 80 : c ))
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
-containerURL="https://raw.githubusercontent.com/shiot/HomeServer_container/master"
+if [[ $2 == "shiot" ]]; then
+  rawContainerURL="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
+else
+  rawContainerURL="${2}"
+fi
 
 # check if Script runs FirstTime
 configFile="/root/.cfg_shiot"
@@ -43,6 +47,7 @@ recoverConfig=false
 
 # Container Variables
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
+ctHostname="${1}"
 
 ######################## Functions ########################
 
@@ -67,6 +72,13 @@ function cleanupHistory() {
   pct exec $1 -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
 }
 
+
+
 ####################### start Script ######################
 
 source $configFile
+
+echo "ctHostname=${1}"
+echo "rawContainerURL=${2}"
+
+exit
