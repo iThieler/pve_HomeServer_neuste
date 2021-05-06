@@ -640,4 +640,11 @@ fi
 
 createConfigFile
 
+whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_txt_recover_config}" --title "${lng_wrd_config_file}" "\n${lng_txt_config_done}\n\n${lng_ask_add_lxc}" ${r} ${c}
+yesno=$?
+if [ $yesno -eq 0 ]; then
+  curl -sSL https://lxc.config.shiot.de | bash
+  exit
+fi
+
 exit
