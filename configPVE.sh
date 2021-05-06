@@ -104,7 +104,7 @@ function checkConfigFile() {
       window=,red
       border=white,red
       textbox=white,red
-      button=white,red
+      button=white,yellow
     ' \
     whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_txt_recover_config}" --title "${lng_wrd_config_file}" "\n${lng_txt_config_done}\n\n${lng_ask_add_lxc}" ${r} ${c}
       yesno=$?
