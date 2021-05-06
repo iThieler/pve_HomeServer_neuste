@@ -35,11 +35,8 @@ c=$(( c < 80 ? 80 : c ))
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
-if [[ -z $2 ]]; then
-  rawContainerURL="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
-else
-  rawContainerURL="${2}"
-fi
+if [[ -z $2 ]]; then rawContainerURL="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"; fi
+if [[ -n $2 ]]; then rawContainerURL="${2}"; fi
 
 # check if Script runs FirstTime
 configFile="/root/.cfg_shiot"
