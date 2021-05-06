@@ -143,7 +143,7 @@ function checkConfigFile() {
           window=,red
           border=white,red
           textbox=white,red
-          button=black,white
+          button=black,yellow
         ' \
         whiptail --yesno --yes-button " ${lng_btn_retry} " --nocancel --no-button " ${lng_btn_exit} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_txt_recover_config}" --title "${lng_wrd_config_file}" "\n${lng_txt_no_changes_to_server} ${lng_txt_perform_server_config_again}" ${r} ${c}
         yesno=$?
@@ -177,7 +177,7 @@ function configNetrobot() {
         window=,red
         border=white,red
         textbox=white,red
-        button=black,white
+        button=black,yellow
       ' \
       whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_abort}" "\n${lng_txt_no_changes_to_server} ${lng_txt_perform_server_config_again}" ${r} ${c}
       exit 1
@@ -190,7 +190,7 @@ function configNetrobot() {
       window=,red
       border=white,red
       textbox=white,red
-      button=black,white
+      button=black,yellow
     ' \
     whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_abort}" "\n${lng_txt_no_changes_to_server} ${lng_txt_perform_server_config_again}" ${r} ${c}
     exit 1
@@ -211,7 +211,7 @@ function configGateway() {
         window=,red
         border=white,red
         textbox=white,red
-        button=black,white
+        button=black,yellow
       ' \
       whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_abort}" "\n${lng_txt_no_changes_to_server} ${lng_txt_perform_server_config_again}" ${r} ${c}
       exit 1
@@ -285,7 +285,7 @@ function configNAS() {
                 window=,red
                 border=white,red
                 textbox=white,red
-                button=black,white
+                button=black,yellow
               ' \
               whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_nas} ${lng_wrd_configuration}" --title "${lng_wrd_nas}" "${lng_txt_no_nas_folder_found}\n\n${lng_txt_no_nas_mount}" ${r} ${c}
               var_nasip=""
@@ -295,7 +295,7 @@ function configNAS() {
               window=,red
               border=white,red
               textbox=white,red
-              button=black,white
+              button=black,yellow
             ' \
             whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_nas} ${lng_wrd_configuration}" --title "${lng_wrd_nas}" "${lng_txt_no_nas_folder}\n\n${lng_txt_no_nas_mount}" ${r} ${c}
             var_nasip=""
@@ -305,7 +305,7 @@ function configNAS() {
             window=,red
             border=white,red
             textbox=white,red
-            button=black,white
+            button=black,yellow
           ' \
           whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_nas} ${lng_wrd_configuration}" --title "${lng_wrd_nas}" "${lng_txt_ip_unreachable} ${lng_ask_device_connected} ${lng_ask_ip_correct}" ${r} ${c}
           yesno=$?
@@ -361,7 +361,7 @@ function configOctopi() {
           window=,red
           border=white,red
           textbox=white,red
-          button=black,white
+          button=black,yellow
         ' \
         whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - OctoPi ${lng_wrd_configuration}" --title "${lng_wrd_octopi}" "${lng_txt_ip_unreachable} ${lng_ask_device_connected} ${lng_ask_ip_correct}" ${r} ${c}
         yesno=$?
@@ -458,7 +458,7 @@ function startServerConfiguration() {
         window=,red
         border=white,red
         textbox=white,red
-        button=black,white
+        button=black,yellow
       ' \
       whiptail --msgbox --ok-button " ${lng_btn_ok} " --backtitle "© 2021 - SmartHome-IoT.net - Proxmox ${lng_wrd_configuration}" --title "${lng_wrd_email} ${lng_wrd_configuration}" "${lng_txt_mail_error_check}" ${r} ${c}
       if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
@@ -475,7 +475,7 @@ function startServerConfiguration() {
           window=,red
           border=white,red
           textbox=white,red
-          button=black,white
+          button=black,yellow
         ' \
         whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - Proxmox ${lng_wrd_configuration}" --title "${lng_wrd_email} ${lng_wrd_configuration}" "${lng_txt_mail_config_error}" ${r} ${c}
       fi
