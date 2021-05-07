@@ -236,7 +236,7 @@ function installSamba() {
   if [ -z "$inst_samba" ]; then
     pct exec $ctID -- bash -ci "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
     for user in $sambaUser; do
-      smbpasswd=$(createPassword 8)
+      smbpasswd=$(generatePassword 8)
       pct exec $ctID -- bash -ci "adduser --no-create-home --disabled-login --shell /bin/false $user"
       pct exec $ctID -- bash -ci "( echo \"$smbpasswd\"; sleep 1; echo \"$smbpasswd\" ) | sudo smbpasswd -s -a $user"
       pct exec $ctID -- bash -ci "mkdir -p /root/sambashare/$user"
@@ -255,7 +255,7 @@ function installSamba() {
 
 function createLXC() {
 # Function creates the LXC container
-  ctRootpw=$(createPassword 12)   # Create Rootpassword for Container
+  ctRootpw=$(generatePassword 12)   # Create Rootpassword for Container
   if $smtpneeded; then
     if [ -z "$var_mailpassword" ]; then
       var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
@@ -350,7 +350,7 @@ function createLXC() {
 
 pveam update > /dev/null 2>&1
 source $configFile
-source <(curl -sSL $configURL/lang/$var_language.lang)
+source <(curl -sSL ${configURL}/lang/${var_language}.lang)
 
 if [ -z "$var_robotpw" ]; then
   var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
@@ -360,34 +360,34 @@ IFS=$'\n'
 whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
 yesno=$?
 if [ $yesno -eq 0 ]; then
-  lxcConfigURL=${rawSHIOTRepo}
+  lxcConfigURL="${rawSHIOTRepo}"
 else
   lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
 fi
 unset IFS
 
 if $nasConfiguration; then
-  source <(curl -sSL $lxcConfigURL/nas.list)
+  source <(curl -sSL ${lxcConfigURL}/nas.list)
 else
-  source <(curl -sSL $lxcConfigURL/nonas.list)
+  source <(curl -sSL ${lxcConfigURL}/nonas.list)
 fi
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} ${ri} "${lxclist[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
 var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 
 for hostname in $var_lxcchoice; do
   hostname=$( echo $hostname | sed -e 's+\"++g' )
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$containerURL/$hostname/lang/$var_language.lang"; then
-    source <(curl -sSL $containerURL/$hostname/lang/$var_language.lang)
+    source <(curl -sSL ${containerURL}/$hostname/lang/$var_language.lang)
   else
-    source <(curl -sSL $containerURL/$hostname/lang/en.lang)
+    source <(curl -sSL ${containerURL}/$hostname/lang/en.lang)
   fi
   if $fncneeded; then
 # Load the function.template File fromRepository if fncneeded
-    source <(curl -sSL $containerURL/$hostname/functions.template)
+    source <(curl -sSL ${containerURL}/$hostname/functions.template)
   fi
-  source <(curl -sSL $containerURL/$hostname/install.template)
+  source <(curl -sSL ${containerURL}/$hostname/install.template)
   createLXC
 done
 
