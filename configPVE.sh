@@ -57,8 +57,8 @@ recoverConfig=false
 
 # Language selctor
 lng=(\
-  "en" "      English" \
   "de" "      Deutsch" \
+  "en" "      English" \
 )
 
 # Gateway selector
