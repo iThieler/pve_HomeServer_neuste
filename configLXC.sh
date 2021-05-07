@@ -264,7 +264,7 @@ function installSamba() {
 function createLXC() {
 # Function creates the LXC container
   ctRootpw=$(generatePassword 12)   # Create Rootpassword for Container
-  if $smtpneeded; then
+  if [[ $smtpneeded == true ]]; then
     if [ -z "$var_mailpassword" ]; then
       var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
       exitstatus=$?
