@@ -45,6 +45,7 @@ recoverConfig=false
 # Container Variables
 ctID=100
 ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
+ctTemplateDisk="local"
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 ctHostname="${1}"
 
@@ -377,16 +378,16 @@ var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 for hostname in $var_lxcchoice; do
   hostname=$( echo $hostname | sed -e 's+\"++g' )
 # Load container language file if not exist load english language
-  if curl --output /dev/null --silent --head --fail "$containerURL/$hostname/lang/$var_language.lang"; then
-    source <(curl -sSL ${containerURL}/$hostname/lang/$var_language.lang)
+  if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
+    source <(curl -sSL ${lxcConfigURL}/$hostname/lang/$var_language.lang)
   else
-    source <(curl -sSL ${containerURL}/$hostname/lang/en.lang)
+    source <(curl -sSL ${lxcConfigURL}/$hostname/lang/en.lang)
   fi
   if $fncneeded; then
 # Load the function.template File fromRepository if fncneeded
-    source <(curl -sSL ${containerURL}/$hostname/functions.template)
+    source <(curl -sSL ${lxcConfigURL}/$hostname/functions.template)
   fi
-  source <(curl -sSL ${containerURL}/$hostname/install.template)
+  source <(curl -sSL ${lxcConfigURL}/$hostname/install.template)
   createLXC
 done
 
