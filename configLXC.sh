@@ -106,19 +106,19 @@ function downloadTemplate() {
   if [[ $template == "osDevuan" ]]; then
     OSstype="unmanaged"
   else
-    OSstype=$(pveam available | grep "${!template}" | awk '{print $2}' | cut -d- -f1)
+    OSstype=$(pveam available | grep "${template}" | awk '{print $2}' | cut -d- -f1)
   fi
-  if [ $(pveam list "$CTTemplateDisk" | grep -c "${!template}") -eq 0 ]; then
-    pveam download $CTTemplateDisk $(pveam available | grep "${!template}" | awk '{print $2}') > /dev/null 2>&1
+  if [ $(pveam list "$ctTemplateDisk" | grep -c "${template}") -eq 0 ]; then
+    pveam download $ctTemplateDisk $(pveam available | grep "${template}" | awk '{print $2}') > /dev/null 2>&1
   fi
 }
 
 function createContainer() {
 # Create Container from Template
-  if [[ $CTTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$CTTemplateDisk; fi
+  if [[ $ctTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$ctTemplateDisk; fi
   if [[ $features == "" ]]; then
     pct create $ctID \
-      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!template}" | awk '{print $2}') \
+      $ctTemplateDisk:vztmpl/$(pveam available | grep "${template}" | awk '{print $2}') \
       --ostype $OSstype \
       --hostname "$hostname" \
       --password "$ctRootpw" \
@@ -133,7 +133,7 @@ function createContainer() {
       --start 1 > /dev/null 2>&1
   else
     pct create $ctID \
-      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!template}" | awk '{print $2}') \
+      $ctTemplateDisk:vztmpl/$(pveam available | grep "${template}" | awk '{print $2}') \
       --ostype $OSstype \
       --hostname "$hostname" \
       --password "$ctRootpw" \
@@ -371,7 +371,7 @@ else
   source <(curl -sSL ${lxcConfigURL}/nonas.list)
 fi
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}  " 3>&1 1>&2 2>&3)
 var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 
 for hostname in $var_lxcchoice; do
