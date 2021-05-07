@@ -57,8 +57,8 @@ recoverConfig=false
 
 # Language selctor
 lng=(\
-  "${lng_wrd_de_short}" "      ${lng_wrd_de_long}" \
-  "${lng_wrd_en_short}" "      ${lng_wrd_en_long}" \
+  "en" "      English" \
+  "de" "      Deutsch" \
 )
 
 # Gateway selector
@@ -634,7 +634,7 @@ else
   configGateway
   configSMTPServer
   configNAS
-  configOctopi
+  #configOctopi
   startServerConfiguration
 fi
 
