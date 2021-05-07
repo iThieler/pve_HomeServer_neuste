@@ -43,6 +43,8 @@ configFile="/root/.cfg_shiot"
 recoverConfig=false
 
 # Container Variables
+ctID=100
+ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
 ctHostname="${1}"
 
@@ -93,10 +95,7 @@ function makeSQLSecure () {
 
 function generateIDIP() {
 # Generates ID and IP-Address for the container to be created
-  if [ $(pct list | grep -c 100) -eq 0 ]; then
-    ctID=100
-    ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
-  else
+  if [ $(pct list | grep -c 100) -eq 1 ]; then
     ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
     ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
   fi
