@@ -35,6 +35,8 @@ lng_wrd_webadress="Webadresse"
 lng_wrd_mediafolder="Medienverzeichnis"
 lng_wrd_backupfolder="Beckupverzeichnis"
 lng_wrd_sharedfolder="Freigabepfad"
+lng_wrd_rename="Umbenennen"
+lng_wrd_delete="Löschen"
 
 ########## Schaltfläschen ##########
 lng_btn_yes="JA"
@@ -124,3 +126,5 @@ lng_ask_device_connected="Ist das Gerät eingeschaltet und mit dem Netzwerk verb
 lng_ask_successfully_delivered="Wurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?"
 lng_ask_diferent_repository="Möchtest Du das Standard Repository von SmartHome-IoT.net nutzen, oder ein anderes Repository angeben?"
 lng_ask_url_repository="Wie lautet die URL zum gewünschten Repository?"
+lng_ask_lxc_rename="Welchen Namen soll der vorhandene Container erhalten?"
+lng_ask_lxc_realy_delete="Bist du wirklich sicher, das Du den Container unwiederruflich löschen möchtest?"
