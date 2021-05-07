@@ -283,7 +283,7 @@ function createLXC() {
       echo -e "XXX\n2\n${lng_txt_lxc_gen_idip}\nXXX"
       generateIDIP
 
-      echo -e "XXX\n9\n${lng_txt_lxc_template_download}\nXXX"
+      echo "9"
       downloadTemplate
 
       echo -e "XXX\n19\n${lng_txt_lxc_added}\nXXX"
@@ -301,18 +301,18 @@ function createLXC() {
       # Restart container if App Armor Profile is changed, DVB-TV-Card or VGA-Card is created in LXC
       if [[ $apparmorProfile != "" ]] || $dvbneeded || $vganeeded; then
         echo -e "XXX\n39\n${lng_wrd_restart}\nXXX"
-        pct reboot $ctID
+        pct reboot ${ctID}
         sleep 15
       fi
 
       # Update/Upgrade Container
       echo -e "XXX\n41\n${lng_txt_lxc_update}\nXXX"
-      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      pct exec ${ctID} -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
       echo -e "XXX\n48\n${lng_txt_lxc_software_install}\nXXX"
       for ct_package in $lxc_Standardsoftware; do
-        pct exec $ctID -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
+        pct exec ${ctID} -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
       done
 
       echo -e "XXX\n59\n${lng_txt_lxc_software_install}\nXXX"
@@ -323,7 +323,7 @@ function createLXC() {
       if [ -n "$lxcCommands" ]; then
         IFS=$'\n'
         for lxccommand in $lxcCommands; do
-          pct exec $ctID -- bash -ci "$lxccommand"
+          pct exec ${ctID} -- bash -ci "$lxccommand"
         done
         unset IFS
       fi
@@ -340,14 +340,14 @@ function createLXC() {
       
       echo -e "XXX\n94\n${lng_txt_lxc_create_description}\nXXX"
       createContainerDescription
-      pct reboot $ctID --timeout 5
+      pct reboot ${ctID} --timeout 5
       sleep 15
 
       echo -e "XXX\n99\n${lng_txt_lxc_create_firewall}\nXXX"
       createContainerFirewallRules
       
       # Insert createt Container in Backup Pool
-      pvesh set /pools/BackupPool -vms "$ctID"
+      pvesh set /pools/BackupPool -vms "${ctID}"
 
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" --gauge "${lng_wrd_preparation}" ${ri} ${c} 0
   else
