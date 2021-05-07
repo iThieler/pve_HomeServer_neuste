@@ -104,13 +104,13 @@ function generateIDIP() {
 
 function downloadTemplate() {
 # Loads the container template from the Internet if not available and saves it for further use
-  if [[ $ctTemplate == "osDevuan" ]]; then
-    ctOstype="unmanaged"
+  if [[ $template == "osDevuan" ]]; then
+    OSstype="unmanaged"
   else
-    ctOstype=$(pveam available | grep "${!ctTemplate}" | awk '{print $2}' | cut -d- -f1)
+    OSstype=$(pveam available | grep "${!template}" | awk '{print $2}' | cut -d- -f1)
   fi
-  if [ $(pveam list "$CTTemplateDisk" | grep -c "${!ctTemplate}") -eq 0 ]; then
-    pveam download $CTTemplateDisk $(pveam available | grep "${!ctTemplate}" | awk '{print $2}') > /dev/null 2>&1
+  if [ $(pveam list "$CTTemplateDisk" | grep -c "${!template}") -eq 0 ]; then
+    pveam download $CTTemplateDisk $(pveam available | grep "${!template}" | awk '{print $2}') > /dev/null 2>&1
   fi
 }
 
@@ -119,8 +119,8 @@ function createContainer() {
   if [[ $CTTemplateDisk == "local" ]]; then rootfs="local-lvm"; else rootfs=$CTTemplateDisk; fi
   if [[ $features == "" ]]; then
     pct create $ctID \
-      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
-      --ostype $ctOstype \
+      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!template}" | awk '{print $2}') \
+      --ostype $OSstype \
       --hostname "$hostname" \
       --password "$ctRootpw" \
       --rootfs $rootfs:$hddsize \
@@ -134,8 +134,8 @@ function createContainer() {
       --start 1 > /dev/null 2>&1
   else
     pct create $ctID \
-      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!ctTemplate}" | awk '{print $2}') \
-      --ostype $ctOstype \
+      $CTTemplateDisk:vztmpl/$(pveam available | grep "${!template}" | awk '{print $2}') \
+      --ostype $OSstype \
       --hostname "$hostname" \
       --password "$ctRootpw" \
       --rootfs $rootfs:$hddsize \
@@ -158,9 +158,9 @@ function createContainerDescription() {
   lxcConfigFile="/etc/pve/lxc/$ctID.conf"
   lxcConfigOld=$(cat $lxcConfigFile)
   if [[ $description == "" ]]; then
-    echo -e "#>> Shell <<\n#$lng_user:   root\n#$lng_password:   $ctRootpw" > $lxcConfigFile
+    echo -e "#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
   else
-    echo -e "#${description}\n#\n#>> Shell <<\n#$lng_user:   root\n#$lng_password:   $ctRootpw" > $lxcConfigFile
+    echo -e "#${description}\n#\n#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
   fi
   if $webgui; then
     for ((i=0;i<=${#webguiPort[@]};i++)); do
@@ -168,20 +168,20 @@ function createContainerDescription() {
       if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
       if [[ ! ${webguiName[i]} == "" ]]; then
         if [ $i -lt 1 ]; then
-          echo -e "#\n#>> ${webguiName[i]} <<\n#$lng_webadress:   $webguiAdress" >> $lxcConfigFile
+          echo -e "#\n#>> ${webguiName[i]} <<\n#$lng_wrd_webadress:   $webguiAdress" >> $lxcConfigFile
         else
-          echo -e "#>> ${webguiName[i]} <<\n#$lng_webadress:   $webguiAdress" >> $lxcConfigFile
+          echo -e "#>> ${webguiName[i]} <<\n#$lng_wrd_webadress:   $webguiAdress" >> $lxcConfigFile
         fi
       fi
-      if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#$lng_user:   ${webguiUser[i]}" >> $lxcConfigFile; fi
-      if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$lng_password:   ${webguiPass[i]}" >> $lxcConfigFile; fi
+      if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#$lng_wrd_user:   ${webguiUser[i]}" >> $lxcConfigFile; fi
+      if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$lng_wrd_password:   ${webguiPass[i]}" >> $lxcConfigFile; fi
     done
   fi
   if [ -n "$var_nasip" ] && $nasneeded; then
-    echo -e "#\n#>> $lng_nas <<\n#$lng_nas_mediafolder:   /media\n#$lng_nas_backupfolder:   /mnt/backup" >> $lxcConfigFile
+    echo -e "#\n#>> $lng_wrd_nas <<\n#$lng_wrd_mediafolder:   /media\n#$lng_wrd_backupfolder:   /mnt/backup" >> $lxcConfigFile
   fi
   if $inst_samba; then
-    echo -e "#\n#>> Samba (smb) <<\n#Windows-$lng_shared_folder:   \\\\\\$ctIP\n#Mac-$lng_shared_folder:       smb://$ctIP\n#Linux-$lng_shared_folder:     smb://$ctIP" >> $lxcConfigFile
+    echo -e "#\n#>> Samba (smb) <<\n#Windows-$lng_wrd_sharedfolder:   \\\\\\$ctIP\n#Mac-$lng_wrd_sharedfolder:       smb://$ctIP\n#Linux-$lng_wrd_sharedfolder:     smb://$ctIP" >> $lxcConfigFile
     echo -e "$smbuserdesc" >> $lxcConfigFile
   fi
   echo -e "$lxcConfigOld" >> $lxcConfigFile
@@ -242,9 +242,9 @@ function installSamba() {
       pct exec $ctID -- bash -ci "mkdir -p /root/sambashare/$user"
       pct exec $ctID -- bash -ci "echo -e \"\n[$user]\ncomment = Sambashare\npath = /root/sambashare/$user\nwrite list = $user\nvalid users = $user\nforce user = smb\" >> /etc/samba/smb.conf"
       if [[ ${smbuserdesc} == "" ]]; then
-        smbuserdesc="#$lng_user:   $user\n#$lng_password:   $smbpasswd"
+        smbuserdesc="#$lng_wrd_user:   $user\n#$lng_wrd_password:   $smbpasswd"
       else
-        smbuserdesc="${smbuserdesc}\n#$lng_user:   $user\n#$lng_password:   $smbpasswd"
+        smbuserdesc="${smbuserdesc}\n#$lng_wrd_user:   $user\n#$lng_wrd_password:   $smbpasswd"
       fi
     done
     pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf"
@@ -256,49 +256,54 @@ function installSamba() {
 function createLXC() {
 # Function creates the LXC container
   ctRootpw=$(createPassword 12)   # Create Rootpassword for Container
+  if $smtpneeded; then
+    if [ -z "$var_mailpassword" ]; then
+      var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+    fi
+  fi
   # check if HDD for Container Templates has been changed
   if [ $(pct list | grep -cw "${hostname}") -eq 0 ]; then
     {
-      echo -e "XXX\n2\n$lng_lxc_setup_text_idip\nXXX"
+      echo -e "XXX\n2\n${lng_txt_lxc_gen_idip}\nXXX"
       generateIDIP
 
-      echo -e "XXX\n9\n$lng_lxc_setup_text_template_download\nXXX"
+      echo -e "XXX\n9\n${lng_txt_lxc_template_download}\nXXX"
       downloadTemplate
 
-      echo -e "XXX\n19\n$lng_lxc_setup_text_container_install\nXXX"
+      echo -e "XXX\n19\n${lng_txt_lxc_added}\nXXX"
       createContainer
 
-      echo -e "XXX\n24\n$lng_lxc_create_text_nas\nXXX"
+      echo -e "XXX\n24\n${lng_txt_lxc_mount_nas}\nXXX"
       mountNASToContainer
 
       # Changes the App Armor profile for the container
       if [ -z $apparmorProfile ]; then sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf; fi
 
-      echo -e "XXX\n31\n$lng_lxc_create_text_dvb_vga\nXXX"
+      echo -e "XXX\n31\n${lng_txt_lxc_bind_hardware}\nXXX"
       mountHardwareToContainer
 
       # Restart container if App Armor Profile is changed, DVB-TV-Card or VGA-Card is created in LXC
       if [[ $apparmorProfile != "" ]] || $dvbneeded || $vganeeded; then
-        echo -e "XXX\n39\n$lng_container_restart\nXXX"
+        echo -e "XXX\n39\n${lng_wrd_restart}\nXXX"
         pct reboot $ctID
         sleep 15
       fi
 
       # Update/Upgrade Container
-      echo -e "XXX\n41\n$lng_lxc_setup_text_container_update\nXXX"
+      echo -e "XXX\n41\n${lng_txt_lxc_update}\nXXX"
       pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
-      echo -e "XXX\n48\n$lng_lxc_setup_text_software_install\nXXX"
+      echo -e "XXX\n48\n${lng_txt_lxc_software_install}\nXXX"
       for ct_package in $lxc_Standardsoftware; do
         pct exec $ctID -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
       done
 
-      echo -e "XXX\n59\n$lng_lxc_setup_text_software_install\nXXX"
+      echo -e "XXX\n59\n${lng_txt_lxc_software_install}\nXXX"
       installSamba
 
       # Commands that are executed in the container
-      echo -e "XXX\n68\n$lng_lxc_create_text_package_install\nXXX"
+      echo -e "XXX\n68\n${lng_txt_lxc_software_install}\nXXX"
       if [ -n "$lxcCommands" ]; then
         IFS=$'\n'
         for lxccommand in $lxcCommands; do
@@ -309,7 +314,7 @@ function createLXC() {
       
       # Commands to be executes in the Host (Proxmox) shell after complete Container creation (call functions)
       if [ -n "$pveCommands" ]; then
-        echo -e "XXX\n82\n$lng_lxc_create_finish\nXXX"
+        echo -e "XXX\n82\n${lng_txt_lxc_create_finish}\nXXX"
         IFS=$'\n'
         for command in $pveCommands; do
           $command
@@ -317,18 +322,18 @@ function createLXC() {
         unset IFS
       fi
       
-      echo -e "XXX\n94\n$lng_lxc_create_text_description\nXXX"
+      echo -e "XXX\n94\n${lng_txt_lxc_create_description}\nXXX"
       createContainerDescription
       pct reboot $ctID --timeout 5
       sleep 15
 
-      echo -e "XXX\n99\n$lng_lxc_create_text_firewall\nXXX"
+      echo -e "XXX\n99\n${lng_txt_lxc_create_firewall}\nXXX"
       createContainerFirewallRules
       
       # Insert createt Container in Backup Pool
       pvesh set /pools/BackupPool -vms "$ctID"
 
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$hostname" --gauge "$lng_lxc_setup_text" 6 ${c} 0
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" --gauge "${lng_wrd_preparation}" ${ri} ${c} 0
   else
     NEWT_COLORS='
           window=black,red
@@ -336,7 +341,7 @@ function createLXC() {
           textbox=white,red
           button=black,yellow
         ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - $lng_lxc_setup" --title "$lng_error" "\"$hostname\"\n\n$lng_lxc_error_text" ${r} ${c}
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" ${r} ${c}
   fi
   pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
 }
@@ -346,12 +351,16 @@ function createLXC() {
 pveam update > /dev/null 2>&1
 source $configFile
 
-whiptail --yesno --yes-button " STANDARD " --no-button " EIGENES " --backtitle "© 2021 - SmartHome-IoT.net - CONTAINER KONFIGURATION" "\nMÖCHTEST DU DAS STANDARD REPOSITORY VON SMARTHOME-IOT.NET NUTZEN, ODER EIN EIGENES REPOSITORY ANGEBEN?" ${r} ${c}
+if [ -z "$var_robotpw" ]; then
+  var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+fi
+
+whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
 yesno=$?
 if [ $yesno -eq 0 ]; then
   lxcConfigURL=${rawSHIOTRepo}
 else
-  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - CONTAINER KONFIGURATION" --title "EIGENES REPOSITORY" "\nWIE LAUTET DIE URL ZU DEINEM REPOSITORY?" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
+  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
 fi
 
 if $nasConfiguration; then
@@ -360,7 +369,7 @@ else
   source <(curl-sSL $lxcConfigURL/nonas.list)
 fi
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - CONTAINER KONFIGURATION" --title "CONTAINER" "WÄHLE DIE CONTAINER, DIE DU INSTALLIEREN MÖCHTEST" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
 var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 
 for hostname in $var_lxcchoice; do
@@ -371,7 +380,10 @@ for hostname in $var_lxcchoice; do
   else
     source <(curl -sSL $containerURL/$hostname/lang/en.lang)
   fi
-  source <(curl -sSL $containerURL/$hostname/install.template)
+  if $fncneeded; then
+# Load the function.template File fromRepository if fncneeded
+    source <(curl -sSL $containerURL/$hostname/functions.template)
+  fi
   source <(curl -sSL $containerURL/$hostname/install.template)
   createLXC
 done
