@@ -44,7 +44,9 @@ recoverConfig=false
 # check if Proxmox is configured
 if [ -f /root/.cfg_shiot ]; then
   source $configFile
+  echo "config"
   source <(curl -sSL ${configURL}/lang/${var_language}.lang)
+  echo "mainConfig"
 else
   curl -sSL https://pve.config.shiot.de | bash
 fi
@@ -54,10 +56,13 @@ hostname=$( echo $hostname | sed -e 's+\"++g' )
 # Load container language file if not exist load english language
 if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
   source <(curl -sSL ${lxcConfigURL}/$hostname/lang/$var_language.lang)
+  echo "containerLanguage"
 else
   source <(curl -sSL ${lxcConfigURL}/$hostname/lang/en.lang)
+  echo "containerLanguage EN"
 fi
 source <(curl -sSL ${lxcConfigURL}/$hostname/install.template)
+echo "install.template"
 
 # Container Variables
 ctID=100
@@ -272,6 +277,7 @@ function installSamba() {
 if $fncneeded; then
 # Load the function.template File fromRepository if fncneeded
   source <(curl -sSL ${lxcConfigURL}/$hostname/functions.template)
+  echo "functions.template"
 fi
 
 function createLXC() {
@@ -388,8 +394,10 @@ unset IFS
 
 if $nasConfiguration; then
   source <(curl -sSL ${lxcConfigURL}/nas.list)
+  echo "NAS"
 else
   source <(curl -sSL ${lxcConfigURL}/nonas.list)
+  echo "NONAS"
 fi
 
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
