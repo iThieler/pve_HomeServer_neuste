@@ -297,10 +297,12 @@ function createLXC() {
       echo -e "XXX\n2\n${lng_txt_lxc_gen_idip}\nXXX"
       generateIDIP
 
+      #echo -e "XXX\n9\n${lng_txt_lxc_template_download}\nXXX"
       echo "9"
       downloadTemplate
 
-      echo -e "XXX\n19\n${lng_txt_lxc_added}\nXXX"
+      #echo -e "XXX\n19\n${lng_txt_lxc_added}\nXXX"
+      echo "19"
       createContainer
 
       echo -e "XXX\n24\n${lng_txt_lxc_mount_nas}\nXXX"
@@ -382,11 +384,19 @@ pveam update > /dev/null 2>&1
 
 if [ -z "$var_robotpw" ]; then
   var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+  exitstatus=$?
+  if [ $exitstatus = 1 ]; then
+    exit
+  fi
 fi
 
 if $smtpneeded; then
   if [ -z "$var_mailpassword" ]; then
-    var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+    var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+    exitstatus=$?
+    if [ $exitstatus = 1 ]; then
+      exit
+    fi
   fi
 fi
 
