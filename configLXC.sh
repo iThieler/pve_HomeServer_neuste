@@ -44,16 +44,26 @@ recoverConfig=false
 # check if Proxmox is configured
 if [ -f /root/.cfg_shiot ]; then
   source $configFile
+  source <(curl -sSL ${configURL}/lang/${var_language}.lang)
 else
   curl -sSL https://pve.config.shiot.de | bash
 fi
+
+# Load Container Installation Files from Repository
+hostname=$( echo $hostname | sed -e 's+\"++g' )
+# Load container language file if not exist load english language
+if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
+  source <(curl -sSL ${lxcConfigURL}/$hostname/lang/$var_language.lang)
+else
+  source <(curl -sSL ${lxcConfigURL}/$hostname/lang/en.lang)
+fi
+source <(curl -sSL ${lxcConfigURL}/$hostname/install.template)
 
 # Container Variables
 ctID=100
 ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
 ctTemplateDisk="local"
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
-ctHostname="${1}"
 
 ######################## Functions ########################
 
@@ -259,14 +269,14 @@ function installSamba() {
   fi
 }
 
+if $fncneeded; then
+# Load the function.template File fromRepository if fncneeded
+  source <(curl -sSL ${lxcConfigURL}/$hostname/functions.template)
+fi
+
 function createLXC() {
 # Function creates the LXC container
   ctRootpw=$(generatePassword 12)   # Create Rootpassword for Container
-  if $smtpneeded; then
-    if [ -z "$var_mailpassword" ]; then
-      var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
-    fi
-  fi
   # check if HDD for Container Templates has been changed
   if [ $(pct list | grep -cw "${hostname}") -eq 0 ]; then
     {
@@ -355,10 +365,15 @@ function createLXC() {
 ####################### start Script ######################
 
 pveam update > /dev/null 2>&1
-source <(curl -sSL ${configURL}/lang/${var_language}.lang)
 
 if [ -z "$var_robotpw" ]; then
   var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+fi
+
+if $smtpneeded; then
+  if [ -z "$var_mailpassword" ]; then
+    var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+  fi
 fi
 
 IFS=$'\n'
@@ -377,22 +392,10 @@ else
   source <(curl -sSL ${lxcConfigURL}/nonas.list)
 fi
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}  " 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
 var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 
 for hostname in $var_lxcchoice; do
-  hostname=$( echo $hostname | sed -e 's+\"++g' )
-# Load container language file if not exist load english language
-  if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
-    source <(curl -sSL ${lxcConfigURL}/$hostname/lang/$var_language.lang)
-  else
-    source <(curl -sSL ${lxcConfigURL}/$hostname/lang/en.lang)
-  fi
-  if $fncneeded; then
-# Load the function.template File fromRepository if fncneeded
-    source <(curl -sSL ${lxcConfigURL}/$hostname/functions.template)
-  fi
-  source <(curl -sSL ${lxcConfigURL}/$hostname/install.template)
   createLXC
 done
 
