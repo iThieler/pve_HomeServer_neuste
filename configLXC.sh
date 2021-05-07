@@ -293,7 +293,7 @@ function createLXC() {
       mountNASToContainer
 
       # Changes the App Armor profile for the container
-      if [ -z $apparmorProfile ]; then sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf; fi
+      if [ -z $apparmorProfile ]; then sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/${ctID}.conf; fi
 
       #echo -e "XXX\n31\n${lng_txt_lxc_bind_hardware}\nXXX"
       echo "31"
@@ -303,20 +303,20 @@ function createLXC() {
       if [[ $apparmorProfile != "" ]] || $dvbneeded || $vganeeded; then
         #echo -e "XXX\n39\n${lng_wrd_restart}\nXXX"
         echo "39"
-        pct reboot $ctID
+        pct reboot ${ctID}
         sleep 15
       fi
 
       # Update/Upgrade Container
       #echo -e "XXX\n41\n${lng_txt_lxc_update}\nXXX"
       echo "41"
-      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      pct exec ${ctID} -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
       #echo -e "XXX\n48\n${lng_txt_lxc_software_install}\nXXX"
       echo "48"
       for package in $lxc_Standardsoftware; do
-        pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
+        pct exec ${ctID} -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
       done
 
       #echo -e "XXX\n59\n${lng_txt_lxc_software_install}\nXXX"
@@ -329,7 +329,7 @@ function createLXC() {
         echo "68"
         IFS=$'\n'
         for command in $lxcCommands; do
-          pct exec $ctID -- bash -ci "$command"
+          pct exec ${ctID} -- bash -ci "$command"
         done
         unset IFS
       fi
@@ -348,7 +348,7 @@ function createLXC() {
       #echo -e "XXX\n94\n${lng_txt_lxc_create_description}\nXXX"
       echo "94"
       createContainerDescription
-      pct reboot $ctID --timeout 5
+      pct reboot ${ctID} --timeout 5
       sleep 15
 
       #echo -e "XXX\n99\n${lng_txt_lxc_create_firewall}\nXXX"
@@ -357,7 +357,7 @@ function createLXC() {
       
       # Insert createt Container in Backup Pool
       echo "100"
-      pvesh set /pools/BackupPool -vms "$ctID"
+      pvesh set /pools/BackupPool -vms "${ctID}"
 
     } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" --gauge "\n${lng_txt_lxc_added}" ${ri} ${c} 0
   else
@@ -369,7 +369,7 @@ function createLXC() {
         ' \
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" ${r} ${c}
   fi
-  pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+  pct exec ${ctID} -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
 }
 
 ####################### start Script ######################
