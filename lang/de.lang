@@ -5,6 +5,7 @@ lng_wrd_or="oder"
 lng_wrd_config_file="Konfigurationsdatei"
 lng_wrd_ipadress="IP-Adresse"
 lng_wrd_filename="Dateiname"
+lng_wrd_user="Benutzer"
 lng_wrd_username="Benutzername"
 lng_wrd_password="Passwort"
 lng_wrd_welcome="Willkommen"
@@ -30,10 +31,10 @@ lng_wrd_octopi="OctoPi"
 lng_wrd_message="Nachricht"
 lng_wrd_homenetwork="Heimnetzwerk"
 lng_wrd_container="Container"
-lng_wrd_en_short="en"
-lng_wrd_en_long="English"
-lng_wrd_de_short="de"
-lng_wrd_de_long="Deutsch"
+lng_wrd_webadress="Webadresse"
+lng_wrd_mediafolder="Medienverzeichnis"
+lng_wrd_backupfolder="Beckupverzeichnis"
+lng_wrd_sharedfolder="Freigabepfad"
 
 ########## Schaltfläschen ##########
 lng_btn_yes="JA"
@@ -42,6 +43,8 @@ lng_btn_ok="OK"
 lng_btn_retry="ERNEUT AUFRUFEN"
 lng_btn_cancel="ABBRECHEN"
 lng_btn_exit="BEENDEN"
+lng_btn_standard="STANDARD"
+lng_btn_other="ANDERES"
 
 ########## Texte ##########
 lng_txt_another_manufacturer="Ein nicht aufgührter Hersteller"
@@ -82,12 +85,14 @@ lng_txt_lxc_gen_idip="Der Container bekommt eine ID und eine IP-Adresse zugewies
 lng_txt_lxc_template_download="Lade Container Template herunter"
 lng_txt_lxc_added="Der Container wird in auf deinem Server bereitgestellt"
 lng_txt_lxc_mount_nas="Deine NAS wird an den Container gebunden"
-lng_txt_lxc_bind_dvb="Die TV-/DVB-Karte wird an den Container gebunden"
-lng_txt_lxc_bind_vga="Die Grafikkarte wird an den Container gebunden"
+lng_txt_lxc_bind_hardware="Die TV-/DVB-/VGA-Karte wird an den Container gebunden"
 lng_txt_lxc_update="Der Container wird aktualisiert"
 lng_txt_lxc_software_install="Die Containersoftware wird installiert"
-lng_txt_lxc_create_filestructure="Erstelle benötigte Filestruktur im Container"
-
+lng_txt_lxc_create_finish="Die Containerinstallation wird beendet"
+lng_txt_lxc_create_description="Erstelle Containerbeschreibung in Proxmox"
+lng_txt_lxc_create_firewall="Für den Container benötigte Firewallregeln werden erstellt"
+lng_txt_lxc_error="Es ist bereits ein Container mit diesem Namen in auf deinem Server installiert. Dieser Container muss zuerst umbenannt oder entfernt werden."
+lng_txt_lxc_choose_container="Wähle die Container, die Du installieren möchtest"
 
 ########## Fragen ##########
 lng_ask_add_lxc="Möchtest Du stattdessen einen oder mehrere Container deiner Proxmox Umgebung hinzufügen?"
@@ -117,6 +122,6 @@ lng_ask_nas_folder_exist="Existieren die angegebenen Ordner und hat dein Netzwer
 lng_ask_ip_correct="Ist die IP-Adresse korrekt?"
 lng_ask_device_connected="Ist das Gerät eingeschaltet und mit dem Netzwerk verbunden?"
 lng_ask_successfully_delivered="Wurde die E-Mail erfolgreich zugestellt (Es kann je nach Anbieter bis zu 15 Minuten dauern)?"
-
-
+lng_ask_diferent_repository="Möchtest Du das Standard Repository von SmartHome-IoT.net nutzen, oder ein anderes Repository angeben?"
+lng_ask_url_repository="Wie lautet die URL zum gewünschten Repository?"
 
