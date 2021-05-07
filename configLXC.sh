@@ -36,49 +36,26 @@ c=$(( c < 80 ? 80 : c ))
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
 
-configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
+# check if Script runs FirstTime
 rawSHIOTRepo="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
+configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
 configFile="/root/.cfg_shiot"
+
+if [ -f $configFile ]; then
+  source $configFile
+  source <(curl -sSL $configURL/lang/$var_language.lang)
+  # Loads the template file so that all variables are set
+  source <(curl -sSL $rawSHIOTRepo/_template/install.template)
+fi
+
 recoverConfig=false
 
-# check if Proxmox is configured
-if [ -f /root/.cfg_shiot ]; then
-  source $configFile
-  source <(curl -sSL ${configURL}/lang/${var_language}.lang)
-else
-  curl -sSL https://pve.config.shiot.de | bash
-fi
-
-# Load Container Installation Files from Repository
-IFS=$'\n'
-whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
-yesno=$?
-if [ $yesno -eq 0 ]; then
-  lxcConfigURL="${rawSHIOTRepo}"
-else
-  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
-fi
-unset IFS
-
-for lxcChoice in $var_lxcchoice; do
-  hostname=$( echo $lxcChoice | sed -e 's+\"++g' )
-  # Load container language file if not exist load english language
-  if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$lxcChoice/lang/$var_language.lang"; then
-    source <(curl -sSL ${lxcConfigURL}/$lxcChoice/lang/$var_language.lang)
-    echo "containerLanguage"
-  else
-    source <(curl -sSL ${lxcConfigURL}/$lxcChoice/lang/en.lang)
-    echo "containerLanguage EN"
-  fi
-  source <(curl -sSL ${lxcConfigURL}/$lxcChoice/install.template)
-  echo "install.template"
-done
-
 # Container Variables
-ctID=100
-ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
-ctTemplateDisk="local"
 ctIDall=$(pct list | tail -n +2 | awk '{print $1}')
+ctID="100"
+ctIP=$networkIP.$(( $(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f4) + 5 ))
+hostname=""
+ctRootpw=""
 
 ######################## Functions ########################
 
@@ -126,7 +103,7 @@ function makeSQLSecure () {
 }
 
 function generateIDIP() {
-# Generates ID and IP-Address for the container to be created
+# Generates ID and IP-Address for the container to be created if is notthe first
   if [ $(pct list | grep -c 100) -eq 1 ]; then
     ctID=$(( $(pct list | tail -n1 | awk '{print $1}') + 1 ))
     ctIP=$networkIP.$(( $(lxc-info $(pct list | tail -n1 | awk '{print $1}') -iH | grep "$networkIP" | cut -d. -f4) + 1 ))
@@ -238,7 +215,7 @@ function createContainerFirewallRules() {
 
 function mountNASToContainer() {
 # Mounted the NAS to container if exist and is set in Container Configuration Template
-  if [ -n "$var_nasip" ] && $nasneeded; then
+  if $nasConfiguration && $nasneeded; then
     pct exec $ctID -- bash -ci "mkdir -p /media"
     pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
     pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
@@ -267,7 +244,7 @@ function installSamba() {
   if [ -z "$inst_samba" ]; then
     pct exec $ctID -- bash -ci "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
     for user in $sambaUser; do
-      smbpasswd=$(generatePassword 8)
+      smbpasswd=$(createPassword 8)
       pct exec $ctID -- bash -ci "adduser --no-create-home --disabled-login --shell /bin/false $user"
       pct exec $ctID -- bash -ci "( echo \"$smbpasswd\"; sleep 1; echo \"$smbpasswd\" ) | sudo smbpasswd -s -a $user"
       pct exec $ctID -- bash -ci "mkdir -p /root/sambashare/$user"
@@ -284,19 +261,23 @@ function installSamba() {
   fi
 }
 
-if $fncneeded; then
-# Load the function.template File fromRepository if fncneeded
-  source <(curl -sSL ${lxcConfigURL}/$hostname/functions.template)
-  echo "functions.template"
-fi
-
 function createLXC() {
 # Function creates the LXC container
   ctRootpw=$(generatePassword 12)   # Create Rootpassword for Container
+  if $smtpneeded; then
+    if [ -z "$var_mailpassword" ]; then
+      var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+      exitstatus=$?
+      if [ $exitstatus = 1 ]; then
+        exit
+      fi
+    fi
+  fi
   # check if HDD for Container Templates has been changed
   if [ $(pct list | grep -cw "${hostname}") -eq 0 ]; then
     {
-      echo -e "XXX\n2\n${lng_txt_lxc_gen_idip}\nXXX"
+      #echo -e "XXX\n2\n${lng_txt_lxc_gen_idip}\nXXX"
+      echo "2"
       generateIDIP
 
       #echo -e "XXX\n9\n${lng_txt_lxc_template_download}\nXXX"
@@ -307,48 +288,56 @@ function createLXC() {
       echo "19"
       createContainer
 
-      echo -e "XXX\n24\n${lng_txt_lxc_mount_nas}\nXXX"
+      #echo -e "XXX\n24\n${lng_txt_lxc_mount_nas}\nXXX"
+      echo "24"
       mountNASToContainer
 
       # Changes the App Armor profile for the container
       if [ -z $apparmorProfile ]; then sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf; fi
 
-      echo -e "XXX\n31\n${lng_txt_lxc_bind_hardware}\nXXX"
+      #echo -e "XXX\n31\n${lng_txt_lxc_bind_hardware}\nXXX"
+      echo "31"
       mountHardwareToContainer
 
       # Restart container if App Armor Profile is changed, DVB-TV-Card or VGA-Card is created in LXC
       if [[ $apparmorProfile != "" ]] || $dvbneeded || $vganeeded; then
-        echo -e "XXX\n39\n${lng_wrd_restart}\nXXX"
-        pct reboot ${ctID}
+        #echo -e "XXX\n39\n${lng_wrd_restart}\nXXX"
+        echo "39"
+        pct reboot $ctID
         sleep 15
       fi
 
       # Update/Upgrade Container
-      echo -e "XXX\n41\n${lng_txt_lxc_update}\nXXX"
-      pct exec ${ctID} -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+      #echo -e "XXX\n41\n${lng_txt_lxc_update}\nXXX"
+      echo "41"
+      pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
       
       # Install Container Standardsoftware
-      echo -e "XXX\n48\n${lng_txt_lxc_software_install}\nXXX"
-      for ct_package in $lxc_Standardsoftware; do
-        pct exec ${ctID} -- bash -ci "apt-get install -y $ct_package > /dev/null 2>&1"
+      #echo -e "XXX\n48\n${lng_txt_lxc_software_install}\nXXX"
+      echo "48"
+      for package in $lxc_Standardsoftware; do
+        pct exec $ctID -- bash -ci "apt-get install -y $package > /dev/null 2>&1"
       done
 
-      echo -e "XXX\n59\n${lng_txt_lxc_software_install}\nXXX"
+      #echo -e "XXX\n59\n${lng_txt_lxc_software_install}\nXXX"
+      echo "59"
       installSamba
 
       # Commands that are executed in the container
-      echo -e "XXX\n68\n${lng_txt_lxc_software_install}\nXXX"
       if [ -n "$lxcCommands" ]; then
+        #echo -e "XXX\n68\n${lng_txt_lxc_software_install}\nXXX"
+        echo "68"
         IFS=$'\n'
-        for lxccommand in $lxcCommands; do
-          pct exec ${ctID} -- bash -ci "$lxccommand"
+        for command in $lxcCommands; do
+          pct exec $ctID -- bash -ci "$command"
         done
         unset IFS
       fi
       
       # Commands to be executes in the Host (Proxmox) shell after complete Container creation (call functions)
       if [ -n "$pveCommands" ]; then
-        echo -e "XXX\n82\n${lng_txt_lxc_create_finish}\nXXX"
+        #echo -e "XXX\n82\n${lng_txt_lxc_create_finish}\nXXX"
+        echo "82"
         IFS=$'\n'
         for command in $pveCommands; do
           $command
@@ -356,18 +345,21 @@ function createLXC() {
         unset IFS
       fi
       
-      echo -e "XXX\n94\n${lng_txt_lxc_create_description}\nXXX"
+      #echo -e "XXX\n94\n${lng_txt_lxc_create_description}\nXXX"
+      echo "94"
       createContainerDescription
-      pct reboot ${ctID} --timeout 5
+      pct reboot $ctID --timeout 5
       sleep 15
 
-      echo -e "XXX\n99\n${lng_txt_lxc_create_firewall}\nXXX"
+      #echo -e "XXX\n99\n${lng_txt_lxc_create_firewall}\nXXX"
+      echo "97"
       createContainerFirewallRules
       
       # Insert createt Container in Backup Pool
-      pvesh set /pools/BackupPool -vms "${ctID}"
+      echo "100"
+      pvesh set /pools/BackupPool -vms "$ctID"
 
-    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" --gauge "${lng_wrd_preparation}" ${ri} ${c} 0
+    } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" --gauge "\n${lng_txt_lxc_added}" ${ri} ${c} 0
   else
     NEWT_COLORS='
           window=black,red
@@ -392,26 +384,36 @@ if [ -z "$var_robotpw" ]; then
   fi
 fi
 
-if $smtpneeded; then
-  if [ -z "$var_mailpassword" ]; then
-    var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
-    exitstatus=$?
-    if [ $exitstatus = 1 ]; then
-      exit
-    fi
-  fi
+whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
+yesno=$?
+if [ $yesno -eq 0 ]; then
+  lxcConfigURL=${rawSHIOTRepo}
+else
+  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
 fi
 
 if $nasConfiguration; then
-  source <(curl -sSL ${lxcConfigURL}/nas.list)
+  source <(curl -sSL $lxcConfigURL/nas.list)
 else
-  source <(curl -sSL ${lxcConfigURL}/nonas.list)
+  source <(curl -sSL $lxcConfigURL/nonas.list)
 fi
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" ${r} ${c} 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_txt_lxc_choose_container}" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
 var_lxcchoice=$(echo $var_lxcchoice | sed -e 's#\"##g')
 
 for hostname in $var_lxcchoice; do
+  hostname=$( echo $hostname | sed -e 's+\"++g' )
+# Load container language file if not exist load english language
+  if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
+    source <(curl -sSL $lxcConfigURL/$hostname/lang/$var_language.lang)
+  else
+    source <(curl -sSL $lxcConfigURL/$hostname/lang/en.lang)
+  fi
+  if $fncneeded; then
+# Load the function.template File fromRepository if fncneeded
+    source <(curl -sSL $lxcConfigURL/$hostname/functions.template)
+  fi
+  source <(curl -sSL $lxcConfigURL/$hostname/install.template)
   createLXC
 done
 
