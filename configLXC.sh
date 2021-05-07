@@ -434,7 +434,26 @@ for hostname in $var_lxcchoice; do
           textbox=white,red
           button=black,yellow
         ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" ${r} ${c}
+    whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" ${r} ${c}
+    yesno=$?
+    if [ $yesno -eq 0 ]; then
+      pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}" 3>&1 1>&2 2>&3)
+    else
+      NEWT_COLORS='
+            window=black,red
+            border=white,red
+            textbox=white,red
+            button=black,yellow
+          ' \
+      whiptail --yesno --yes-button " ${lng_wrd_yes} " --no-button " ${lng_wrd_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" ${r} ${c}
+      yesno=$?
+      if [ $yesno -eq 0 ]; then
+        pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1
+      else
+        exit
+      fi
+    fi
+  fi
 done
 
 exit
