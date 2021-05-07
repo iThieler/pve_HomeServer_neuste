@@ -35,6 +35,8 @@ lng_wrd_webadress="Web address"
 lng_wrd_mediafolder="Media Folder"
 lng_wrd_backupfolder="Beckup directory"
 lng_wrd_sharedfolder="Share path"
+lng_wrd_rename="Rename"
+lng_wrd_delete="Delete"
 
 ######### Buttons #########
 lng_btn_yes="YES"
@@ -124,3 +126,5 @@ lng_ask_device_connected="Is the device powered on and connected to the network?
 lng_ask_successfully_delivered="Was the email successfully delivered (It may take up to 15 minutes depending on the provider)?"
 lng_ask_diferent_repository="Do you want to use the default repository from SmartHome-IoT.net, or specify a different repository?"
 lng_ask_url_repository="What is the URL to the desired repository?"
+lng_ask_lxc_rename="What name should the existing container be given?"
+lng_ask_lxc_realy_delete="Are you really sure you want to delete the container permanently?"
