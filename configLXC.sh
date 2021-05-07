@@ -60,17 +60,19 @@ else
 fi
 unset IFS
 
-hostname=$( echo $hostname | sed -e 's+\"++g' )
-# Load container language file if not exist load english language
-if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
-  source <(curl -sSL ${lxcConfigURL}/$hostname/lang/$var_language.lang)
-  echo "containerLanguage"
-else
-  source <(curl -sSL ${lxcConfigURL}/$hostname/lang/en.lang)
-  echo "containerLanguage EN"
-fi
-source <(curl -sSL ${lxcConfigURL}/$hostname/install.template)
-echo "install.template"
+for lxcChoice in $var_lxcchoice; do
+  hostname=$( echo $lxcChoice | sed -e 's+\"++g' )
+  # Load container language file if not exist load english language
+  if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$lxcChoice/lang/$var_language.lang"; then
+    source <(curl -sSL ${lxcConfigURL}/$lxcChoice/lang/$var_language.lang)
+    echo "containerLanguage"
+  else
+    source <(curl -sSL ${lxcConfigURL}/$lxcChoice/lang/en.lang)
+    echo "containerLanguage EN"
+  fi
+  source <(curl -sSL ${lxcConfigURL}/$lxcChoice/install.template)
+  echo "install.template"
+done
 
 # Container Variables
 ctID=100
