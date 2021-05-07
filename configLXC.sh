@@ -365,9 +365,9 @@ else
 fi
 
 if $nasConfiguration; then
-  source <(curl-sSL $lxcConfigURL/nas.list)
+  source <(curl -sSL $lxcConfigURL/nas.list)
 else
-  source <(curl-sSL $lxcConfigURL/nonas.list)
+  source <(curl -sSL $lxcConfigURL/nonas.list)
 fi
 
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "${lng_txt_lxc_choose_container}" 20 80 10 "${lxclist[@]}" 3>&1 1>&2 2>&3)
