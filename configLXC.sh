@@ -350,6 +350,7 @@ function createLXC() {
 
 pveam update > /dev/null 2>&1
 source $configFile
+source <(curl -sSL $configURL/lang/$var_language.lang)
 
 if [ -z "$var_robotpw" ]; then
   var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
