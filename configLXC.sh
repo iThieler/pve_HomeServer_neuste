@@ -35,12 +35,18 @@ c=$(( c < 80 ? 80 : c ))
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'
-rawSHIOTRepo="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
 
-# check if Script runs FirstTime
 configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
+rawSHIOTRepo="https://raw.githubusercontent.com/shiot/lxc_HomeServer/master"
 configFile="/root/.cfg_shiot"
 recoverConfig=false
+
+# check if Proxmox is configured
+if [ -f /root/.cfg_shiot ]; then
+  source $configFile
+else
+  curl -sSL https://pve.config.shiot.de | bash
+fi
 
 # Container Variables
 ctID=100
@@ -349,7 +355,6 @@ function createLXC() {
 ####################### start Script ######################
 
 pveam update > /dev/null 2>&1
-source $configFile
 source <(curl -sSL ${configURL}/lang/${var_language}.lang)
 
 if [ -z "$var_robotpw" ]; then
