@@ -44,14 +44,22 @@ recoverConfig=false
 # check if Proxmox is configured
 if [ -f /root/.cfg_shiot ]; then
   source $configFile
-  echo "config"
   source <(curl -sSL ${configURL}/lang/${var_language}.lang)
-  echo "mainConfig"
 else
   curl -sSL https://pve.config.shiot.de | bash
 fi
 
 # Load Container Installation Files from Repository
+IFS=$'\n'
+whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
+yesno=$?
+if [ $yesno -eq 0 ]; then
+  lxcConfigURL="${rawSHIOTRepo}"
+else
+  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
+fi
+unset IFS
+
 hostname=$( echo $hostname | sed -e 's+\"++g' )
 # Load container language file if not exist load english language
 if curl --output /dev/null --silent --head --fail "$lxcConfigURL/$hostname/lang/$var_language.lang"; then
@@ -381,16 +389,6 @@ if $smtpneeded; then
     var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
   fi
 fi
-
-IFS=$'\n'
-whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
-yesno=$?
-if [ $yesno -eq 0 ]; then
-  lxcConfigURL="${rawSHIOTRepo}"
-else
-  lxcConfigURL=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_url_repository}" ${ri} ${c} https://raw.githubusercontent.com/ 3>&1 1>&2 2>&3)
-fi
-unset IFS
 
 if $nasConfiguration; then
   source <(curl -sSL ${lxcConfigURL}/nas.list)
