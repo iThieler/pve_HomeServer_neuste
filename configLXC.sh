@@ -168,22 +168,22 @@ function createContainer() {
     pveam download $ctTemplateDisk $lxcTemplateName > /dev/null 2>&1
   fi
 
-  pctCreateCommand="$ctTemplateDisk:vztmpl/"$lxcTemplateName" \
+  pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
-                    --hostname \"$hostname\" \
+                    --hostname $hostname \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
                     --memory $memory \
                     --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
+                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$networkIP.$ctIP/$cidr,ip6=dhcp \
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 0"
 #  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c amd64) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch amd64"; fi
 #  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c i386) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch i386"; fi
-  if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
+  if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   echo "pct create $ctID $pctCreateCommand"
