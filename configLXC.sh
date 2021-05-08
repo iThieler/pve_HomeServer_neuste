@@ -26,6 +26,10 @@ if [ ! -f $configFile ]; then
   exit
 fi
 
+# Set Repo URL's
+repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
+
 # Load PVE Configuration Variables and update Template Dictionary
 if [ -f "$configFile" ]; then
   source $configFile
@@ -34,10 +38,6 @@ if [ -f "$configFile" ]; then
 else
   exit
 fi
-
-# Set Repo URL's
-repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
 
 whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" 20 80
 yesno=$?
