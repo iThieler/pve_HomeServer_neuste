@@ -134,7 +134,6 @@ function createContainer() {
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $(lxc-info $ctIDLast -iH | cut -d. -f4) +1 ))
-    echo $ctIP
   fi
 
 # Get rootfs
@@ -179,7 +178,7 @@ function createContainer() {
                     --unprivileged $unprivileged \
                     --start 0"
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
-  pctCreateCommand=$($pctCreateCommand | awk '{printf "%s;%s;%s;",$1,$2,$3; for (i=4;i<NF+1;i++) {printf "%s ",$i};print ""}')
+  pctCreateCommand=$( echo $pctCreateCommand | awk '{printf "%s;%s;%s;",$1,$2,$3; for (i=4;i<NF+1;i++) {printf "%s ",$i};print ""}')
 
   echo "pct create $ctID $pctCreateCommand"
 
@@ -187,7 +186,6 @@ function createContainer() {
 }
 
 function configContainer() {
-  echo "configContainer=$ctID"
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
     source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
