@@ -188,7 +188,8 @@ function createContainer() {
 
   echo "pct create $ctID $pctCreateCommand"
 
-  pct create $ctID $pctCreateCommand #> /dev/null 2>&1 && sleep 5
+  pct create $ctID $pctCreateCommand #> /dev/null 2>&1
+  sleep 15
 }
 
 function configContainer() {
