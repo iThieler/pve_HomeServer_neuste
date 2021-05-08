@@ -158,18 +158,18 @@ function createContainer() {
   fi
 
   pctCreateCommand="$ctTemplateDisk:vztmpl/"$lxcTemplateName" \
-                    --ostype $osType \
-                    --hostname \"$hostname\" \
-                    --password \"$ctRootPW\" \
-                    --rootfs $rootfs:$hddsize \
-                    --cores $cpucores \
-                    --memory $memory \
-                    --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
-                    --onboot 1 \
-                    --force 1 \
-                    --unprivileged $unprivileged \
-                    --start 0"
+  --ostype $osType \
+  --hostname \"$hostname\" \
+  --password \"$ctRootPW\" \
+  --rootfs $rootfs:$hddsize \
+  --cores $cpucores \
+  --memory $memory \
+  --swap $swap \
+  --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
+  --onboot 1 \
+  --force 1 \
+  --unprivileged $unprivileged \
+  --start 0"
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
 
   echo "pct create $ctID $pctCreateCommand"
