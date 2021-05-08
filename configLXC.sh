@@ -181,6 +181,8 @@ function createContainer() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 0"
+  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c amd64) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch amd64"; fi
+  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c i386) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch i386"; fi
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
