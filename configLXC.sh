@@ -304,6 +304,10 @@ for hostname in $var_lxcchoice; do
     yesno=$?
     if [ $yesno -eq 0 ]; then
       pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}" 3>&1 1>&2 2>&3)
+      ctRootPW="$(generatePassword 12)"
+      source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+      createContainer
+      configContainer
     else
       NEWT_COLORS='
             window=black,red
@@ -315,6 +319,10 @@ for hostname in $var_lxcchoice; do
       yesno=$?
       if [ $yesno -eq 0 ]; then
         pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1
+        ctRootPW="$(generatePassword 12)"
+        source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+        createContainer
+        configContainer
       else
         exit
       fi
