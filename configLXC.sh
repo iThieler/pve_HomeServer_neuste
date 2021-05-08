@@ -173,15 +173,13 @@ function createContainer() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 0"
-#  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c amd64) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch amd64"; fi
-#  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c i386) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch i386"; fi
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   echo "pct create $ctID $pctCreateCommand"
 
-  pct create $ctID $pctCreateCommand #> /dev/null 2>&1
-  sleep 15
+  pct create $ctID $pctCreateCommand > /dev/null 2>&1
+  sleep 5
 }
 
 function configContainer() {
@@ -201,7 +199,6 @@ function configContainer() {
 # Load the function.template File fromRepository if fncneeded
   if $fncneeded; then
     source <(curl -sSL $repoUrlLXC/$hostname/functions.template)
-    echo "fncTemplate=$repoUrlLXC/$hostname/functions.template"
   fi
 
 # Ask for SMTP-Password if SMTP is needed
@@ -212,7 +209,6 @@ function configContainer() {
       if [ $exitstatus = 1 ]; then
         exit
       fi
-      echo "SMTP-PASSWORD"
     fi
   fi
 
@@ -238,7 +234,6 @@ function configContainer() {
 
 # Start Container
   pct start $ctID
-  echo "pct start $ctID"
 
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
   pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' >> /etc/ssh/ssh_config"
@@ -270,7 +265,7 @@ function configContainer() {
         smbuserdesc="${smbuserdesc}\n#$lng_wrd_user:   $user\n#$lng_wrd_password:   $smbpasswd"
       fi
     done
-    pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf"
+    pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' >> /etc/samba/smb.conf"
     pct exec $ctID -- bash -ci "chown -R smb: /root/sambashare"
     pct exec $ctID -- bash -ci "systemctl restart smbd.service"
   fi
