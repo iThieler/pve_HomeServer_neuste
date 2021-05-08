@@ -179,7 +179,7 @@ function createContainer() {
                     --unprivileged $unprivileged \
                     --start 0"
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
-  pctCreateCommand=_$("$pctCreateCommand | sed -i 's#
+  #pctCreateCommand=_$("$pctCreateCommand | sed -i 's#
 
   echo "pct create $ctID $pctCreateCommand"
 
