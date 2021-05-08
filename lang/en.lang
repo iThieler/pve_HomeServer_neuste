@@ -95,6 +95,7 @@ lng_txt_lxc_create_description="Create container description in Proxmox"
 lng_txt_lxc_create_firewall="Create firewall rules needed for the container".
 lng_txt_lxc_error="There is already a container with this name installed on your server. This container must be renamed or removed first."
 lng_txt_lxc_choose_container="Choose the containers you want to install"
+lng_txt_hostname="Only upper and lower case letters, as well as numbers and hyphens may be used."
 
 ######## Questions ########
 lng_ask_add_lxc="Do you want to add one or more containers to your proxmox environment instead?"
