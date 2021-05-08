@@ -152,25 +152,34 @@ function createContainer() {
   else
     osType=$(pveam available | grep "$template" | awk '{print $2}' | cut -d- -f1)
   fi
+
+  echo ""
+  echo ""
+  echo ""
+  echo $osType
+  echo ""
+  echo ""
+  echo ""
   
   if [ $(pveam list "$ctTemplateDisk" | grep -c "$template") -eq 0 ]; then
     pveam download $ctTemplateDisk $lxcTemplateName > /dev/null 2>&1
   fi
 
   pctCreateCommand="$ctTemplateDisk:vztmpl/"$lxcTemplateName" \
-  --ostype $osType \
-  --hostname \"$hostname\" \
-  --password \"$ctRootPW\" \
-  --rootfs $rootfs:$hddsize \
-  --cores $cpucores \
-  --memory $memory \
-  --swap $swap \
-  --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
-  --onboot 1 \
-  --force 1 \
-  --unprivileged $unprivileged \
-  --start 0"
+                    --ostype "$osType" \
+                    --hostname \"$hostname\" \
+                    --password \"$ctRootPW\" \
+                    --rootfs $rootfs:$hddsize \
+                    --cores $cpucores \
+                    --memory $memory \
+                    --swap $swap \
+                    --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
+                    --onboot 1 \
+                    --force 1 \
+                    --unprivileged $unprivileged \
+                    --start 0"
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
+  pctCreateCommand=_$("$pctCreateCommand | sed -i 's#
 
   echo "pct create $ctID $pctCreateCommand"
 
