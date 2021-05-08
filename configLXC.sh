@@ -144,17 +144,19 @@ function createContainer() {
   fi
 
 # Create Container from Template File download Template OS if not exist
+  lxcTemplateName="$(pveam available | grep "$template" | awk '{print $2}')"
+  
   if [[ $template == "osDevuan" ]]; then
     osType="unmanaged"
   else
-    osType=$(pveam available | grep "${template}" | awk '{print $2}' | cut -d- -f1)
-  fi
-  if [ $(pveam list "$ctTemplateDisk" | grep -c "${template}") -eq 0 ]; then
-    pveam download $ctTemplateDisk $(pveam available | grep "${template}" | awk '{print $2}') > /dev/null 2>&1
+    osType=$(pveam available | grep "$template" | awk '{print $2}' | cut -d- -f1)
   fi
   
-  lxcTemplateName="$(pveam available | grep "${template}" | awk '{print $2}')"
-  pctCreateCommand="$ctTemplateDisk:vztmpl/$(pveam available | grep "${template}" | awk '{print $2}') \
+  if [ $(pveam list "$ctTemplateDisk" | grep -c "$template") -eq 0 ]; then
+    pveam download $ctTemplateDisk $lxcTemplateName > /dev/null 2>&1
+  fi
+
+  pctCreateCommand="$ctTemplateDisk:vztmpl/"$lxcTemplateName" \
                     --ostype $osType \
                     --hostname \"$hostname\" \
                     --password \"$ctRootPW\" \
