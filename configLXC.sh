@@ -1,5 +1,7 @@
 #!/bin/bash
 
+debug=true
+
 # Operating systems
 osAlpine3_11="alpine-3.11-default"       # Container Template for Alpine v3.11
 osAlpine3_12="alpine-3.12-default"       # Container Template for Alpine v3.12
@@ -27,7 +29,11 @@ if [ ! -f $configFile ]; then
 fi
 
 # Set Repo URL's
-repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+if $debug; then
+  repoVersionPVE="master"
+else
+  repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+fi
 repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
 
 # Load PVE Configuration Variables and update Template Dictionary
