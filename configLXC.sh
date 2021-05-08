@@ -173,7 +173,7 @@ function createContainer() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 0"
-  if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
+  if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   echo "pct create $ctID $pctCreateCommand"
@@ -183,12 +183,6 @@ function createContainer() {
 }
 
 function configContainer() {
-  echo ""
-  echo ""
-  echo ""
-  echo ""
-  echo ""
-  echo "configContainer"
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
     source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
@@ -294,6 +288,58 @@ function configContainer() {
     unset IFS
   fi
 
+# Create Container description, you can find it on Proxmox WebGUI
+  lxcConfigFile="/etc/pve/lxc/$ctID.conf"
+  lxcConfigOld=$(cat $lxcConfigFile)
+
+  if [ -z "$description" ]; then
+    echo -e "#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
+  else
+    echo -e "#${description}\n#\n#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
+  fi
+
+  if $webgui; then
+    for ((i=0;i<=${#webguiPort[@]};i++)); do
+      if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$ctIP"; else webguiAdress="${webguiProt[i]}://${ctIP}:${webguiPort[i]}"; fi
+      if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
+      if [[ ! ${webguiName[i]} == "" ]]; then
+        if [ $i -lt 1 ]; then
+          echo -e "#\n#>> ${webguiName[i]} <<\n#$lng_wrd_webadress:   $webguiAdress" >> $lxcConfigFile
+        else
+          echo -e "#>> ${webguiName[i]} <<\n#$lng_wrd_webadress:   $webguiAdress" >> $lxcConfigFile
+        fi
+      fi
+      if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#$lng_wrd_user:   ${webguiUser[i]}" >> $lxcConfigFile; fi
+      if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$lng_wrd_password:   ${webguiPass[i]}" >> $lxcConfigFile; fi
+    done
+  fi
+
+  if [ -n "$var_nasip" ] && $nasneeded; then
+    echo -e "#\n#>> $lng_wrd_nas <<\n#$lng_wrd_mediafolder:   /media\n#$lng_wrd_backupfolder:   /mnt/backup" >> $lxcConfigFile
+  fi
+
+  if $inst_samba; then
+    echo -e "#\n#>> Samba (smb) <<\n#Windows-$lng_wrd_sharedfolder:   \\\\\\$ctIP\n#Mac-$lng_wrd_sharedfolder:       smb://$ctIP\n#Linux-$lng_wrd_sharedfolder:     smb://$ctIP" >> $lxcConfigFile
+    echo -e "$smbuserdesc" >> $lxcConfigFile
+  fi
+  echo -e "$lxcConfigOld" >> $lxcConfigFile
+
+# Create Firewall Group and Rules for Container
+  echo -e "\n[group $(echo $hostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+  if $inst_samba; then
+    echo -e "IN ACCEPT -source +network -p tcp -dport 445 -log nolog # Samba (smb)" >> $clusterfileFW
+    echo -e "IN ACCEPT -source +network -p tcp -dport 137 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
+    echo -e "IN ACCEPT -source +network -p udp -dport 137 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
+    echo -e "IN ACCEPT -source +network -p udp -dport 138 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
+    echo -e "IN ACCEPT -source +network -p tcp -dport 139 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
+  fi
+  for ((i=0;i<=${#fwPort[@]};i++)); do
+    if [[ ${fwNetw[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetw[i]}"; fi
+    if [[ ${fwDesc[i]} == "" ]]; then fw_desc=""; else fw_desc=" # ${fwDesc[i]}"; fi
+    echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
+  done
+  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+
 # Cleanup Container History
   pct exec ${ctID} -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
 }
@@ -313,12 +359,17 @@ for hostname in $var_lxcchoice; do
         ' \
     whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" 20 80
     yesno=$?
+    # Rename existing Container with same Name
     if [ $yesno -eq 0 ]; then
-      pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}" 3>&1 1>&2 2>&3)
-      ctRootPW="$(generatePassword 12)"
-      source <(curl -sSL $repoUrlLXC/$hostname/install.template)
-      createContainer
-      configContainer
+      newName=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}-old" 3>&1 1>&2 2>&3)
+      # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
+      if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName == *[ÄäÖöÜüß]* ]]; then
+        pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName
+        ctRootPW="$(generatePassword 12)"
+        source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+        createContainer
+        configContainer
+      fi
     else
       NEWT_COLORS='
             window=black,red
@@ -328,17 +379,19 @@ for hostname in $var_lxcchoice; do
           ' \
       whiptail --yesno --yes-button " ${lng_wrd_yes} " --no-button " ${lng_wrd_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 20 80
       yesno=$?
+      # Ask if Container realy want to delete existing Container,if not skip Container creation
       if [ $yesno -eq 0 ]; then
         pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1
         ctRootPW="$(generatePassword 12)"
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
         configContainer
-      else
-        exit
       fi
     fi
   fi
 done
 
+# Cleanup Shell History
+cat /dev/null > ~/.bash_history && history -c && history -w
 
+exit
