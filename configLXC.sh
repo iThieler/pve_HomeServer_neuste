@@ -185,6 +185,7 @@ function createContainer() {
 }
 
 function configContainer() {
+  echo "configContainer"
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
     source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
