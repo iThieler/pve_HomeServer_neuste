@@ -181,14 +181,14 @@ function createContainer() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 0"
-  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c amd64) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch amd64"; fi
-  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c i386) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch i386"; fi
+#  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c amd64) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch amd64"; fi
+#  if [ $(pveam available | grep "${template}" | awk '{print $2}' | grep -c i386) -eq 1 ]; then pctCreateCommand="$pctCreateCommand --arch i386"; fi
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   echo "pct create $ctID $pctCreateCommand"
 
-  pct create $ctID $pctCreateCommand > /dev/null 2>&1 && sleep 5
+  pct create $ctID $pctCreateCommand #> /dev/null 2>&1 && sleep 5
 }
 
 function configContainer() {
@@ -202,6 +202,7 @@ function configContainer() {
 # Load the function.template File fromRepository if fncneeded
   if $fncneeded; then
     source <(curl -sSL $repoUrlLXC/$hostname/functions.template)
+    echo "fncTemplate=$repoUrlLXC/$hostname/functions.template"
   fi
 
 # Ask for SMTP-Password if SMTP is needed
@@ -212,12 +213,14 @@ function configContainer() {
       if [ $exitstatus = 1 ]; then
         exit
       fi
+      echo "SMTP-PASSWORD"
     fi
   fi
 
 # Changes the App Armor profile for the container
   if [ -z "$apparmorProfile" ]; then
     sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
+    echo "APPARMOR"
   fi
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
@@ -235,10 +238,11 @@ function configContainer() {
   pvesh set /pools/BackupPool -vms "$ctID"
 
 # Start Container
-  pct start "$ctID"
+  pct start $ctID
+  echo "pct start $ctID"
 
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
-  pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config"
+  pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' >> /etc/ssh/ssh_config"
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
   if $nasConfiguration && $nasneeded; then
