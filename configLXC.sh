@@ -172,7 +172,7 @@ function createContainer() {
                     --start 0"
   if [[ -n "$features" ]]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
 
-  echo $pctCreateCommand
+  echo "pct create $ctID $pctCreateCommand"
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1 && sleep 5
 }
