@@ -26,6 +26,15 @@ if [ ! -f $configFile ]; then
   exit
 fi
 
+# Load PVE Configuration Variables and update Template Dictionary
+if [ -f "$configFile" ]; then
+  source $configFile
+  source <(curl -sSL $repoUrlPVE/lang/$var_language.lang)
+  pveam update > /dev/null 2>&1
+else
+  exit
+fi
+
 # Set Repo URL's
 repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
@@ -42,26 +51,6 @@ else
   repoNameLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_repository}" ${ri} ${c} 3>&1 1>&2 2>&3)
   repoVersionLXC=$(curl --silent "https://api.github.com/repos/$repoUserLXC/$repoNameLXC/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
-fi
-
-# Set SmartHome-Iot.net configuration File
-configFile="/root/.cfg_shiot"
-
-# Load PVE Configuration Variables and update Template Dictionary
-if [ -f $configFile ]; then
-  pveam update > /dev/null 2>&1
-  source $configFile
-  source <(curl -sSL $repoUrlPVE/lang/$var_language.lang)
-  ctRootPW=""
-  if [[ $ctTemplateDisk == "local" ]]; then
-    rootfs="local-lvm"
-  else
-    rootfs=$ctTemplateDisk
-  fi
-  ctID="100"
-  ctIP="$($networkIP.$(( $($pveIP | cut -d. -f4) + 5 )))"
-else
-  exit
 fi
 
 # Load Container Repository
@@ -83,6 +72,9 @@ if [ -z "$var_robotpw" ]; then
   if [ $exitstatus -eq 1 ]; then
     exit
   fi
+  ctRootPW=""
+  ctID="100"
+  ctIP="$($networkIP.$(( $($pveIP | cut -d. -f4) + 5 )))"
 fi
 
 function generatePassword() {
@@ -134,6 +126,13 @@ function createContainer() {
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $(lxc-info $ctIDLast -iH | cut -d. -f4) +1 ))
+  fi
+
+# Get rootfs
+  if [[ $ctTemplateDisk == "local" ]]; then
+    rootfs="local-lvm"
+  else
+    rootfs=$ctTemplateDisk
   fi
 
 # Create Container from Template File download Template OS if not exist
