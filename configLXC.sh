@@ -82,7 +82,7 @@ if [ -z "$var_robotpw" ]; then
   ctRootPW=""
   ctID="100"
   hostIP=$(echo $pveIP | cut -d. -f4)
-  ctIP="$($networkIP.$(( $hostIP + 5 )))"
+  ctIP="$(( $hostIP + 5 ))"
 fi
 
 function generatePassword() {
@@ -134,7 +134,6 @@ function createContainer() {
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $(lxc-info $ctIDLast -iH | cut -d. -f4) +1 ))
-    ctIP=$($networkIP.$ctIP)
     echo $ctIP
   fi
 
@@ -166,7 +165,7 @@ function createContainer() {
                     --cores $cpucores \
                     --memory $memory \
                     --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,ip=\"$ctIP\"/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
+                    --net0 name=eth0,bridge=vmbr0,ip=$networkIP.$ctIP/$cidr,gw=\"$gatewayIP\",ip6=dhcp,firewall=1 \
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
