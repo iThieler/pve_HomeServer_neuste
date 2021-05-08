@@ -39,7 +39,7 @@ fi
 repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
 
-whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" ${r} ${c}
+whiptail --yesno --yes-button " ${lng_btn_standard} " --no-button " ${lng_btn_other} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" "\n${lng_ask_diferent_repository}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
   repoUserLXC=shiot
@@ -47,8 +47,8 @@ if [ $yesno -eq 0 ]; then
   repoVersionLXC=$(curl --silent "https://api.github.com/repos/$repoUserLXC/$repoNameLXC/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
 else
-  repoUserLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_username}" ${ri} ${c} 3>&1 1>&2 2>&3)
-  repoNameLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_repository}" ${ri} ${c} 3>&1 1>&2 2>&3)
+  repoUserLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_username}" 10 80 3>&1 1>&2 2>&3)
+  repoNameLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_repository}" 10 80 3>&1 1>&2 2>&3)
   repoVersionLXC=$(curl --silent "https://api.github.com/repos/$repoUserLXC/$repoNameLXC/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
 fi
@@ -67,7 +67,7 @@ var_lxcchoice="$(echo $var_lxcchoice | sed -e 's#\"##g')"
 
 # Ask for Robotpassword if not set in config File
 if [ -z "$var_robotpw" ]; then
-  var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" 10 80 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [ $exitstatus -eq 1 ]; then
     exit
@@ -180,7 +180,7 @@ function configContainer() {
 # Ask for SMTP-Password if SMTP is needed
   if $smtpneeded; then
     if [ -z "$var_mailpassword" ]; then
-      var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+      var_mailpassword=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_mailconfiguration}" --title "${lng_wrd_mailserver}" "\n${lng_ask_mail_server_password}" 10 80 3>&1 1>&2 2>&3)
       exitstatus=$?
       if [ $exitstatus = 1 ]; then
         exit
@@ -286,7 +286,7 @@ for hostname in $var_lxcchoice; do
           textbox=white,red
           button=black,yellow
         ' \
-    whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" ${r} ${c}
+    whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" 20 80
     yesno=$?
     if [ $yesno -eq 0 ]; then
       pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}" 3>&1 1>&2 2>&3)
@@ -297,7 +297,7 @@ for hostname in $var_lxcchoice; do
             textbox=white,red
             button=black,yellow
           ' \
-      whiptail --yesno --yes-button " ${lng_wrd_yes} " --no-button " ${lng_wrd_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" ${r} ${c}
+      whiptail --yesno --yes-button " ${lng_wrd_yes} " --no-button " ${lng_wrd_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 20 80
       yesno=$?
       if [ $yesno -eq 0 ]; then
         pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1
