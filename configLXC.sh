@@ -73,14 +73,16 @@ var_lxcchoice="$(echo $var_lxcchoice | sed -e 's#\"##g')"
 
 # Ask for Robotpassword if not set in config File
 if [ -z "$var_robotpw" ]; then
-  var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" 10 80 3>&1 1>&2 2>&3)
+  var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_netrobot}" "\n${lng_ask_netrobot_password}" 10 80 3>&1 1>&2 2>&3)
   exitstatus=$?
   if [ $exitstatus -eq 1 ]; then
     exit
   fi
+  # Set Variables used by this Script
   ctRootPW=""
   ctID="100"
-  ctIP="$($networkIP.$(( $($pveIP | cut -d. -f4) + 5 )))"
+  hostIP=$($pveIP | cut -d. -f4)
+  ctIP="$($networkIP.$(( $hostIP + 5 )))"
 fi
 
 function generatePassword() {
@@ -196,7 +198,7 @@ function configContainer() {
 
 # Changes the App Armor profile for the container
   if [ -z "$apparmorProfile" ]; then
-    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/${ctID}.conf
+    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
   fi
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
