@@ -132,8 +132,11 @@ function createContainer() {
 # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 1 ]; then
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
+    echo $ctIDLast
     ctID=$(( $ctIDLast +1 ))
+    echo $ctID
     ctIP=$(( $(lxc-info $ctIDLast -iH | cut -d. -f4) +1 ))
+    echo $ctIP
   fi
 
 # Get rootfs
@@ -142,19 +145,23 @@ function createContainer() {
   else
     rootfs=$ctTemplateDisk
   fi
+  echo $rootfs
 
 # Create Container from Template File download Template OS if not exist
   lxcTemplateName="$(pveam available | grep "$template" | awk '{print $2}')"
+  echo $lxcTemplateName
   
   if [[ $template == "osDevuan" ]]; then
     osType="unmanaged"
   else
     osType=$(pveam available | grep "$template" | awk '{print $2}' | cut -d- -f1)
   fi
+  echo $osType
   
   if [ $(pveam list "$ctTemplateDisk" | grep -c "$template") -eq 0 ]; then
     pveam download $ctTemplateDisk $lxcTemplateName > /dev/null 2>&1
   fi
+  echo "RepoURL=$repoUrlPVE"
 
   pctCreateCommand="$ctTemplateDisk:vztmpl/"$lxcTemplateName" \
                     --ostype $osType \
