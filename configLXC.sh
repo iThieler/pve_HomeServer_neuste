@@ -155,14 +155,6 @@ function createContainer() {
   else
     osType=$(pveam available | grep "$template" | awk '{print $2}' | cut -d- -f1)
   fi
-
-  echo ""
-  echo ""
-  echo ""
-  echo $osType
-  echo ""
-  echo ""
-  echo ""
   
   if [ $(pveam list "$ctTemplateDisk" | grep -c "$template") -eq 0 ]; then
     pveam download $ctTemplateDisk $lxcTemplateName > /dev/null 2>&1
