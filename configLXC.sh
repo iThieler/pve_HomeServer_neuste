@@ -376,6 +376,8 @@ for hostname in $var_lxcchoice; do
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
         configContainer
+      else
+        echo "newName=$newName"
       fi
     else
       NEWT_COLORS='
