@@ -374,6 +374,7 @@ for hostname in $var_lxcchoice; do
       # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
       if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName != *[ÄäÖöÜüß]* ]]; then
         pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName > /dev/null 2>&1
+        sleep 10
         ctRootPW="$(generatePassword 12)"
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
