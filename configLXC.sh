@@ -34,6 +34,7 @@ if $debug; then
 else
   repoVersionPVE=$(curl --silent "https://api.github.com/repos/shiot/pve_HomeServer/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
 fi
+
 repoUrlPVE="https://raw.githubusercontent.com/shiot/pve_HomeServer/$repoVersionPVE"
 
 # Load PVE Configuration Variables and update Template Dictionary
@@ -113,9 +114,9 @@ function makeSQLSecure () {
   expect \"Press y|Y for Yes, any other key for No:\"
   send \"n\r\"
   expect \"New password:\"
-  send \"${ctRootpw}\r\"
+  send \"${ctRootPW}\r\"
   expect \"Re-enter new password:\"
-  send \"${ctRootpw}\r\"
+  send \"${ctRootPW}\r\"
   expect \"Remove anonymous users?\"
   send \"y\r\"
   expect \"Disallow root login remotely?\"
@@ -184,8 +185,10 @@ function configContainer() {
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
     source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
+    echo "1-LanguageURL=$repoUrlLXC/$hostname/lang/$var_language.lang"
   else
     source <(curl -sSL $repoUrlLXC/$hostname/lang/en.lang)
+    echo "2-LanguageURL=$repoUrlLXC/$hostname/lang/en.lang"
   fi
 
 # Load the function.template File fromRepository if fncneeded
@@ -210,7 +213,7 @@ function configContainer() {
     echo "APPAMOR"
   fi
 
-  echo "$ctRootpw"
+  echo "$ctRootPW"
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
   if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
@@ -294,9 +297,9 @@ function configContainer() {
   lxcConfigOld=$(cat $lxcConfigFile)
 
   if [ -z "$description" ]; then
-    echo -e "#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
+    echo -e "#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootPW" > $lxcConfigFile
   else
-    echo -e "#${description}\n#\n#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootpw" > $lxcConfigFile
+    echo -e "#${description}\n#\n#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootPW" > $lxcConfigFile
   fi
 
   if $webgui; then
@@ -345,8 +348,9 @@ function configContainer() {
 
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 
-# Cleanup Container History
-  pct exec ${ctID} -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+# Cleanup Container History an reboot
+  pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
+  pct reboot $ctID --timeout 5
 }
 
 for hostname in $var_lxcchoice; do
@@ -369,7 +373,7 @@ for hostname in $var_lxcchoice; do
       newName=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}" 20 80 10 "${hostname}-old" 3>&1 1>&2 2>&3)
       # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
       if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName == *[ÄäÖöÜüß]* ]]; then
-        pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName
+        pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName > /dev/null 2>&1
         ctRootPW="$(generatePassword 12)"
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
@@ -386,7 +390,7 @@ for hostname in $var_lxcchoice; do
       yesno=$?
       # Ask if Container realy want to delete existing Container,if not skip Container creation
       if [ $yesno -eq 0 ]; then
-        pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1
+        pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1 > /dev/null 2>&1
         ctRootPW="$(generatePassword 12)"
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
