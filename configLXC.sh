@@ -368,7 +368,7 @@ for hostname in $var_lxcchoice; do
     yesno=$?
     # Rename existing Container with same Name
     if [ $yesno -eq 0 ]; then
-      newName=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}\n\n${lng_txt_hostname}" 20 80 10 "${hostname}-old" 3>&1 1>&2 2>&3)
+      newName=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}\n\n${lng_txt_hostname}" 10 80 "${hostname}-old" 3>&1 1>&2 2>&3)
       # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
       if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName == *[ÄäÖöÜüß]* ]]; then
         pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName > /dev/null 2>&1
@@ -384,7 +384,7 @@ for hostname in $var_lxcchoice; do
             textbox=white,red
             button=black,yellow
           ' \
-      whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 20 80
+      whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 10 80
       yesno=$?
       # Ask if Container realy want to delete existing Container,if not skip Container creation
       if [ $yesno -eq 0 ]; then
