@@ -274,7 +274,6 @@ function configContainer() {
     IFS=$'\n'
     for command in $lxcCommands; do
       pct exec $ctID -- bash -ci "$command"
-      echo "pct exec $ctID -- bash -ci \"$command\"\n"
     done
     unset IFS
   fi
