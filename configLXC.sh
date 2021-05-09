@@ -371,7 +371,9 @@ for hostname in $var_lxcchoice; do
       if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName != *[ÄäÖöÜüß]* ]]; then
         id=$(pct list | grep -w $hostname | awk '{print $1}')
         pct shutdown $id --timeout 5
+        sleep 10
         pct set $id --Hostname $newName > /dev/null 2>&1
+        sleep 10
         pct start $id
         sleep 10
         ctRootPW="$(generatePassword 12)"
