@@ -208,10 +208,7 @@ function configContainer() {
 # Changes the App Armor profile for the container
   if [ -n "$apparmorProfile" ]; then
     sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
-    echo "APPAMOR"
   fi
-
-  echo "$ctRootPW"
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
   if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
@@ -277,7 +274,7 @@ function configContainer() {
     IFS=$'\n'
     for command in $lxcCommands; do
       pct exec $ctID -- bash -ci "$command"
-      echo "pct exec $ctID -- bash -ci "$command""
+      echo "pct exec $ctID -- bash -ci \"$command\"\n"
     done
     unset IFS
   fi
@@ -287,7 +284,6 @@ function configContainer() {
     IFS=$'\n'
     for command in $pveCommands; do
       $command
-      echo "$command"
     done
     unset IFS
   fi
