@@ -176,10 +176,8 @@ function createContainer() {
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
-  echo "pct create $ctID $pctCreateCommand"
-
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
-  sleep 5
+  sleep 10
 }
 
 function configContainer() {
@@ -208,8 +206,9 @@ function configContainer() {
 
 # Changes the App Armor profile for the container
   if [ -z "$apparmorProfile" ]; then
-    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' >> /etc/pve/lxc/$ctID.conf
+    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf
     echo "APPARMOR"
+    echo "/etc/pve/lxc/$ctID.conf"
   fi
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
@@ -377,7 +376,7 @@ for hostname in $var_lxcchoice; do
             textbox=white,red
             button=black,yellow
           ' \
-      whiptail --yesno --yes-button " ${lng_wrd_yes} " --no-button " ${lng_wrd_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 20 80
+      whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 20 80
       yesno=$?
       # Ask if Container realy want to delete existing Container,if not skip Container creation
       if [ $yesno -eq 0 ]; then
