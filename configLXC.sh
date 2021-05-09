@@ -370,14 +370,12 @@ for hostname in $var_lxcchoice; do
     if [ $yesno -eq 0 ]; then
       newName=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}\n\n${lng_txt_hostname}" 10 80 "${hostname}-old" 3>&1 1>&2 2>&3)
       # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
-      if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName == *[ÄäÖöÜüß]* ]]; then
+      if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName != *[ÄäÖöÜüß]* ]]; then
         pct set $(pct list | grep -w $hostname | awk '{print $1}') --Hostname $newName > /dev/null 2>&1
         ctRootPW="$(generatePassword 12)"
         source <(curl -sSL $repoUrlLXC/$hostname/install.template)
         createContainer
         configContainer
-      else
-        echo "newName=$newName"
       fi
     else
       NEWT_COLORS='
