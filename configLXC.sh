@@ -185,10 +185,8 @@ function configContainer() {
 # Load container language file if not exist load english language
   if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
     source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
-    echo "1-LanguageURL=$repoUrlLXC/$hostname/lang/$var_language.lang"
   else
     source <(curl -sSL $repoUrlLXC/$hostname/lang/en.lang)
-    echo "2-LanguageURL=$repoUrlLXC/$hostname/lang/en.lang"
   fi
 
 # Load the function.template File fromRepository if fncneeded
@@ -208,7 +206,7 @@ function configContainer() {
   fi
 
 # Changes the App Armor profile for the container
-  if [[ $apparmorProfile == "" ]]; then
+  if [ -n "$apparmorProfile" ]; then
     sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
     echo "APPAMOR"
   fi
