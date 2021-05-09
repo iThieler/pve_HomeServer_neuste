@@ -1,7 +1,5 @@
 #!/bin/bash
 
-debug=true
-
 # Operating systems
 osAlpine3_11="alpine-3.11-default"       # Container Template for Alpine v3.11
 osAlpine3_12="alpine-3.12-default"       # Container Template for Alpine v3.12
@@ -18,6 +16,8 @@ osOpensuse15_2="opensuse-15.2-default"   # Container Template for openSUSE v15.2
 osUbuntu18_04="ubuntu-18.04-standard"    # Container Template for Ubuntu v18.04
 osUbuntu20_04="ubuntu-20.04-standard"    # Container Template for Ubuntu v20.04
 osUbuntu20_10="ubuntu-20.10-standard"    # Container Template for Ubuntu v20.10
+
+debug=false
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'  # if [[ ! $URL =~ $regexURL ]]; then; fi
