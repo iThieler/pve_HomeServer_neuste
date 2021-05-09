@@ -205,11 +205,12 @@ function configContainer() {
   fi
 
 # Changes the App Armor profile for the container
-  if [ -z "$apparmorProfile" ]; then
-    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf
-    echo "APPARMOR"
-    echo "/etc/pve/lxc/$ctID.conf"
+  if [[ $apparmorProfile == "" ]]; then
+    sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
+    echo "APPAMOR"
   fi
+
+  echo "$ctRootpw"
 
 # Mounted the DVB-TV-Card and/or VGA-Card to container if exist and is needed
   if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
@@ -227,9 +228,10 @@ function configContainer() {
 
 # Start Container
   pct start $ctID
+  sleep 10
 
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
-  pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' >> /etc/ssh/ssh_config"
+  pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config > /dev/null 2>&1"
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
   if $nasConfiguration && $nasneeded; then
@@ -258,7 +260,7 @@ function configContainer() {
         smbuserdesc="${smbuserdesc}\n#$lng_wrd_user:   $user\n#$lng_wrd_password:   $smbpasswd"
       fi
     done
-    pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' >> /etc/samba/smb.conf"
+    pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf > /dev/null 2>&1"
     pct exec $ctID -- bash -ci "chown -R smb: /root/sambashare"
     pct exec $ctID -- bash -ci "systemctl restart smbd.service"
   fi
@@ -324,7 +326,9 @@ function configContainer() {
   echo -e "$lxcConfigOld" >> $lxcConfigFile
 
 # Create Firewall Group and Rules for Container
+  clusterfileFW="/etc/pve/firewall/cluster.fw"
   echo -e "\n[group $(echo $hostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+
   if $inst_samba; then
     echo -e "IN ACCEPT -source +network -p tcp -dport 445 -log nolog # Samba (smb)" >> $clusterfileFW
     echo -e "IN ACCEPT -source +network -p tcp -dport 137 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
@@ -332,11 +336,13 @@ function configContainer() {
     echo -e "IN ACCEPT -source +network -p udp -dport 138 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
     echo -e "IN ACCEPT -source +network -p tcp -dport 139 -log nolog # Samba (NetBios/Name resolution)" >> $clusterfileFW
   fi
+
   for ((i=0;i<=${#fwPort[@]};i++)); do
     if [[ ${fwNetw[i]} == "" ]]; then fwnw=""; else fwnw=" -source +${fwNetw[i]}"; fi
     if [[ ${fwDesc[i]} == "" ]]; then fw_desc=""; else fw_desc=" # ${fwDesc[i]}"; fi
     echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
   done
+
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 
 # Cleanup Container History
