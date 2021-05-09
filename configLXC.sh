@@ -274,7 +274,6 @@ function configContainer() {
     IFS=$'\n'
     for command in $lxcCommands; do
       pct exec $ctID -- bash -ci "$command"
-      echo "pct exec $ctID -- bash -ci \"$command\""
     done
     unset IFS
   fi
@@ -292,7 +291,7 @@ function configContainer() {
   lxcConfigFile="/etc/pve/lxc/$ctID.conf"
   lxcConfigOld=$(cat $lxcConfigFile)
 
-  if [ -z "$description" ]; then
+  if [ -n "$description" ]; then
     echo -e "#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootPW" > $lxcConfigFile
   else
     echo -e "#${description}\n#\n#>> Shell <<\n#$lng_wrd_user:   root\n#$lng_wrd_password:   $ctRootPW" > $lxcConfigFile
@@ -300,7 +299,7 @@ function configContainer() {
 
   if $webgui; then
     for ((i=0;i<=${#webguiPort[@]};i++)); do
-      if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$ctIP"; else webguiAdress="${webguiProt[i]}://${ctIP}:${webguiPort[i]}"; fi
+      if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$networkIP.$ctIP"; else webguiAdress="${webguiProt[i]}://$networkIP.$ctIP:${webguiPort[i]}"; fi
       if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
       if [[ ! ${webguiName[i]} == "" ]]; then
         if [ $i -lt 1 ]; then
@@ -319,7 +318,7 @@ function configContainer() {
   fi
 
   if $inst_samba; then
-    echo -e "#\n#>> Samba (smb) <<\n#Windows-$lng_wrd_sharedfolder:   \\\\\\$ctIP\n#Mac-$lng_wrd_sharedfolder:       smb://$ctIP\n#Linux-$lng_wrd_sharedfolder:     smb://$ctIP" >> $lxcConfigFile
+    echo -e "#\n#>> Samba (smb) <<\n#Windows-$lng_wrd_sharedfolder:   \\\\\\$networkIP.$ctIP\n#Mac-$lng_wrd_sharedfolder:       smb://$networkIP.$ctIP\n#Linux-$lng_wrd_sharedfolder:     smb://$networkIP.$ctIP" >> $lxcConfigFile
     echo -e "$smbuserdesc" >> $lxcConfigFile
   fi
   echo -e "$lxcConfigOld" >> $lxcConfigFile
