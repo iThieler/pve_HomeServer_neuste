@@ -22,12 +22,12 @@ regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A
 
 # Network Variables
 gatewayIP=$(ip r | grep default | cut -d" " -f3)
-pveIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
+pve_ip=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
 cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2)
 networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f1,2,3)
 publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
-fqdn=$(hostname -f)
-hostname=$(hostname)
+pve_fqdn=$(hostname -f)
+pve_hostname=$(hostname)
 
 # Hardware Variables
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
@@ -42,9 +42,9 @@ fi
 
 # Proxmox Variables
 clusterfileFW="/etc/pve/firewall/cluster.fw"
-hostfileFW="/etc/pve/nodes/$hostname/host.fw"
-timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
-osname=buster
+hostfileFW="/etc/pve/nodes/$pve_hostname/host.fw"
+pve_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
+pve_osname=buster
 
 # SmartHome-IoT.net Github scripts in Variables
 configURL="https://raw.githubusercontent.com/shiot/pve_HomeServer/master"
@@ -385,11 +385,11 @@ function startServerConfiguration() {
     fi
       echo -e "XXX\n19\n${lng_wrd_configure} Proxmox ${lng_wrd_repository}\nXXX"
       if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-        echo "deb http://download.proxmox.com/debian/pve $osname pve-no-subscription" >> /etc/apt/sources.list.d/pve-community.list 2>&1 >/dev/null
+        echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" >> /etc/apt/sources.list.d/pve-community.list 2>&1 >/dev/null
     fi
       echo -e "XXX\n26\n${lng_wrd_configure} Ceph ${lng_wrd_repository}\nXXX"
       if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-        echo "deb http://download.proxmox.com/debian/ceph-octopus $osname main" >> /etc/apt/sources.list.d/ceph.list 2>&1 >/dev/null
+        echo "deb http://download.proxmox.com/debian/ceph-octopus $pve_osname main" >> /etc/apt/sources.list.d/ceph.list 2>&1 >/dev/null
       fi
 
     # Performs a system update and installs software required for this script
@@ -540,7 +540,7 @@ function startServerConfiguration() {
   if [ -z $firewallConfiguration ] || ! $firewallConfiguration || $recoverConfig; then
   # Function configures and activates the Proxmox firewall
     mkdir -p /etc/pve/firewall
-    mkdir -p /etc/pve/nodes/$hostname
+    mkdir -p /etc/pve/nodes/$pve_hostname
     # Cluster level firewall
     echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${lng_wrd_homenetwork}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${lng_txt_privatenetworks_comment}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
     # Host level Firewall
@@ -557,50 +557,50 @@ function createConfigFile() {
   echo -e "\n\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
   echo -e "\0043\0043         Variables starting with var_ were created by you           \0043\0043" >> $configFile
   echo -e "\n\0043 Proxmox-/System configuration" >> $configFile
-  echo -e "basicConfiguration=$basicConfiguration" >> $configFile
-  echo -e "pveIP=$pveIP" >> $configFile
-  echo -e "fqdn=$fqdn" >> $configFile
-  echo -e "hostname=$hostname" >> $configFile
-  echo -e "osname=$osname" >> $configFile
-  echo -e "timezone=$timezone" >> $configFile
+  echo -e "export basicConfiguration=$basicConfiguration" >> $configFile
+  echo -e "export pve_ip=$pve_ip" >> $configFile
+  echo -e "export pve_fqdn=$pve_fqdn" >> $configFile
+  echo -e "export pve_hostname=$pve_hostname" >> $configFile
+  echo -e "export pve_osname=$pve_osname" >> $configFile
+  echo -e "export pve_timezone=$pve_timezone" >> $configFile
   echo -e "\nvar_language=$var_language" >> $configFile
   echo -e "\n\0043 Gateway configuration" >> $configFile
-  echo -e "var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
-  echo -e "gatewayIP=$gatewayIP" >> $configFile
-  echo -e "networkIP=$networkIP" >> $configFile
-  echo -e "cidr=$cidr" >> $configFile
-  echo -e "var_servervlan=$var_servervlan" >> $configFile
-  echo -e "var_smarthomevlan=$var_smarthomevlan" >> $configFile
-  echo -e "var_guestvlan=$var_guestvlan" >> $configFile
+  echo -e "export var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
+  echo -e "export gatewayIP=$gatewayIP" >> $configFile
+  echo -e "export networkIP=$networkIP" >> $configFile
+  echo -e "export cidr=$cidr" >> $configFile
+  echo -e "export var_servervlan=$var_servervlan" >> $configFile
+  echo -e "export var_smarthomevlan=$var_smarthomevlan" >> $configFile
+  echo -e "export var_guestvlan=$var_guestvlan" >> $configFile
   echo -e "\n\0043 Firewall configuration" >> $configFile
-  echo -e "firewallConfiguration=$firewallConfiguration" >> $configFile
-  echo -e "clusterfileFW=$clusterfileFW" >> $configFile
-  echo -e "hostfileFW=$hostfileFW" >> $configFile
+  echo -e "export firewallConfiguration=$firewallConfiguration" >> $configFile
+  echo -e "export clusterfileFW=$clusterfileFW" >> $configFile
+  echo -e "export hostfileFW=$hostfileFW" >> $configFile
   echo -e "\n\0043 SMTP-Server configuration" >> $configFile
-  echo -e "emailConfiguration=$emailConfiguration" >> $configFile
-  echo -e "var_rootmail=$var_rootmail" >> $configFile
-  echo -e "var_mailserver=$var_mailserver" >> $configFile
-  echo -e "var_mailport=$var_mailport" >> $configFile
-  echo -e "var_mailusername=$var_mailusername" >> $configFile
-  echo -e "var_mailpassword=\"\"" >> $configFile
-  echo -e "var_senderaddress=$var_senderaddress" >> $configFile
-  echo -e "var_mailtls=$var_mailtls" >> $configFile
-  echo -e "sendmail=$sendmail" >> $configFile
+  echo -e "export emailConfiguration=$emailConfiguration" >> $configFile
+  echo -e "export var_rootmail=$var_rootmail" >> $configFile
+  echo -e "export var_mailserver=$var_mailserver" >> $configFile
+  echo -e "export var_mailport=$var_mailport" >> $configFile
+  echo -e "export var_mailusername=$var_mailusername" >> $configFile
+  echo -e "export var_mailpassword=\"\"" >> $configFile
+  echo -e "export var_senderaddress=$var_senderaddress" >> $configFile
+  echo -e "export var_mailtls=$var_mailtls" >> $configFile
+  echo -e "export sendmail=$sendmail" >> $configFile
   echo -e "\n\0043 HDD-/Storage configuration" >> $configFile
-  echo -e "sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
-  echo -e "rootDisk=$rootDisk" >> $configFile
-  echo -e "secHDDConfiguration=$secHDDConfiguration" >> $configFile
-  echo -e "secondDisk=$secondDisk" >> $configFile
-  echo -e "ctTemplateDisk=$ctTemplateDisk" >> $configFile
+  echo -e "export sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
+  echo -e "export rootDisk=$rootDisk" >> $configFile
+  echo -e "export secHDDConfiguration=$secHDDConfiguration" >> $configFile
+  echo -e "export secondDisk=$secondDisk" >> $configFile
+  echo -e "export ctTemplateDisk=$ctTemplateDisk" >> $configFile
   echo -e "\n\0043 Netrobot configuration" >> $configFile
-  echo -e "var_robotname=$var_robotname" >> $configFile
-  echo -e "var_robotpw=\"\"" >> $configFile
+  echo -e "export var_robotname=$var_robotname" >> $configFile
+  echo -e "export var_robotpw=\"\"" >> $configFile
   echo -e "\n\0043 NAS configuration" >> $configFile
-  echo -e "nasConfiguration=$nasConfiguration" >> $configFile
-  echo -e "var_nasip=$var_nasip" >> $configFile
-  echo -e "var_synologynas=$var_synologynas" >> $configFile
+  echo -e "export nasConfiguration=$nasConfiguration" >> $configFile
+  echo -e "export var_nasip=$var_nasip" >> $configFile
+  echo -e "export var_synologynas=$var_synologynas" >> $configFile
   echo -e "\n\0043 OctoPi configuration" >> $configFile
-  echo -e "var_octoip=$var_octoip" >> $configFile
+  echo -e "export var_octoip=$var_octoip" >> $configFile
   sed -i 's/ //g' $configFile
   if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration.txt; fi
 }
