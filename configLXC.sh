@@ -17,7 +17,8 @@ osUbuntu18_04="ubuntu-18.04-standard"    # Container Template for Ubuntu v18.04
 osUbuntu20_04="ubuntu-20.04-standard"    # Container Template for Ubuntu v20.04
 osUbuntu20_10="ubuntu-20.10-standard"    # Container Template for Ubuntu v20.10
 
-debug=false
+debug=true
+echo "debug: $debug"
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'  # if [[ ! $URL =~ $regexURL ]]; then; fi
@@ -56,13 +57,14 @@ if [ $yesno -eq 0 ]; then
   else
     repoVersionLXC=$(curl --silent "https://api.github.com/repos/$repoUserLXC/$repoNameLXC/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
   fi
-  repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
 else
   repoUserLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_username}" 10 80 3>&1 1>&2 2>&3)
   repoNameLXC=$(whiptail --inputbox --ok-button " OK " --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container} ${lng_wrd_repository}" "\n${lng_ask_github_repository}" 10 80 3>&1 1>&2 2>&3)
   repoVersionLXC=$(curl --silent "https://api.github.com/repos/$repoUserLXC/$repoNameLXC/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
-  repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
 fi
+
+# set Repo URL
+export repoUrlLXC="https://raw.githubusercontent.com/$repoUserLXC/$repoNameLXC/$repoVersionLXC"
 
 # Load Container Repository
 source <(curl -sSL $repoUrlLXC/_template/install.template)    # Loads the template file so all variables are set
@@ -168,7 +170,7 @@ function createContainer() {
 
     pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                       --ostype "$osType" \
-                      --hostname $hostname \
+                      --hostname $hostname_lxc \
                       --password \"$ctRootPW\" \
                       --rootfs $rootfs:$hddsize \
                       --cores $cpucores \
@@ -184,21 +186,21 @@ function createContainer() {
 
     pct create $ctID $pctCreateCommand > /dev/null 2>&1
     sleep 10
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_wrd_container $lng_wrd_configuration" --title "$hostname" --gauge "$lng_txt_lxc_added" 10 80 0
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_wrd_container $lng_wrd_configuration" --title "$hostname_lxc" --gauge "$lng_txt_lxc_added" 10 80 0
 }
 
 function configContainer() {
   {
   # Load container language file if not exist load english language
-    if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname/lang/$var_language.lang"; then
-      source <(curl -sSL $repoUrlLXC/$hostname/lang/$var_language.lang)
+    if curl --output /dev/null --silent --head --fail "$repoUrlLXC/$hostname_lxc/lang/$var_language.lang"; then
+      source <(curl -sSL $repoUrlLXC/$hostname_lxc/lang/$var_language.lang)
     else
-      source <(curl -sSL $repoUrlLXC/$hostname/lang/en.lang)
+      source <(curl -sSL $repoUrlLXC/$hostname_lxc/lang/en.lang)
     fi
 
   # Load the function.template File fromRepository if fncneeded
     if $fncneeded; then
-      source <(curl -sSL $repoUrlLXC/$hostname/functions.template)
+      source <(curl -sSL $repoUrlLXC/$hostname_lxc/functions.template)
     fi
 
   # Ask for SMTP-Password if SMTP is needed
@@ -344,7 +346,7 @@ function configContainer() {
   # Create Firewall Group and Rules for Container
     echo 97
     clusterfileFW="/etc/pve/firewall/cluster.fw"
-    echo -e "\n[group $(echo $hostname|tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+    echo -e "\n[group $(echo fwsg_$hostname_lxc | tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
 
     if $inst_samba; then
       echo -e "IN ACCEPT -source +network -p tcp -dport 445 -log nolog # Samba (smb)" >> $clusterfileFW
@@ -360,19 +362,20 @@ function configContainer() {
       echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
     done
 
-    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+    echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname_lxc|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 
   # Cleanup Container History an reboot
     echo 99
     pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history && history -c && history -w"
     pct reboot $ctID --timeout 5
-  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_wrd_container $lng_wrd_configuration" --title "$hostname" --gauge "$lng_txt_lxc_config" 10 80 18
+  } | whiptail --backtitle "© 2021 - SmartHome-IoT.net - $lng_wrd_container $lng_wrd_configuration" --title "$hostname_lxc" --gauge "$lng_txt_lxc_config" 10 80 18
 }
 
-for hostname in $var_lxcchoice; do
-  if [ $(pct list | grep -cw "$hostname") -eq 0 ]; then
+for choosedLXC in $var_lxcchoice; do
+  export hostname_lxc=$choosedLXC
+  if [ $(pct list | grep -cw "$hostname_lxc") -eq 0 ]; then
     ctRootPW="$(generatePassword 12)"
-    source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+    source <(curl -sSL $repoUrlLXC/$hostname_lxc/install.template)
     createContainer
     configContainer
   else
@@ -382,22 +385,22 @@ for hostname in $var_lxcchoice; do
           textbox=white,red
           button=black,yellow
         ' \
-    whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_txt_lxc_error}" 20 80
+    whiptail --yesno --yes-button " ${lng_wrd_rename} " --no-button " ${lng_wrd_delete} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname_lxc" "\n${lng_txt_lxc_error}" 20 80
     yesno=$?
     # Rename existing Container with same Name
     if [ $yesno -eq 0 ]; then
-      newName=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}\n\n${lng_txt_hostname}" 10 80 "${hostname}-old" 3>&1 1>&2 2>&3)
-      # Check if $newName is a valid Hostname containe only upper and lower case letters and/or digits if it is skip Container creation
+      newName=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "${lng_wrd_container}" "\n${lng_ask_lxc_rename}\n\n${lng_txt_hostname_lxc}" 10 80 "${hostname_lxc}-old" 3>&1 1>&2 2>&3)
+      # Check if $newName is a valid hostname_lxc containe only upper and lower case letters and/or digits if it is skip Container creation
       if [[ $newName =~ ^[A-Za-z0-9-]+$ ]] && [[ $newName != *[ÄäÖöÜüß]* ]]; then
-        id=$(pct list | grep -w $hostname | awk '{print $1}')
+        id=$(pct list | grep -w $hostname_lxc | awk '{print $1}')
         pct shutdown $id --timeout 5
         sleep 10
-        pct set $id --Hostname $newName > /dev/null 2>&1
+        pct set $id --hostname_lxc $newName > /dev/null 2>&1
         sleep 10
         pct start $id
         sleep 10
         ctRootPW="$(generatePassword 12)"
-        source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+        source <(curl -sSL $repoUrlLXC/$hostname_lxc/install.template)
         createContainer
         configContainer
       fi
@@ -408,13 +411,13 @@ for hostname in $var_lxcchoice; do
             textbox=white,red
             button=black,yellow
           ' \
-      whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname" "\n${lng_ask_lxc_realy_delete}" 10 80
+      whiptail --yesno --yes-button " ${lng_btn_yes} " --no-button " ${lng_btn_no} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_container} ${lng_wrd_configuration}" --title "$hostname_lxc" "\n${lng_ask_lxc_realy_delete}" 10 80
       yesno=$?
       # Ask if Container realy want to delete existing Container,if not skip Container creation
       if [ $yesno -eq 0 ]; then
-        pct destroy $(pct list | grep -w $hostname | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1 > /dev/null 2>&1
+        pct destroy $(pct list | grep -w $hostname_lxc | awk '{print $1}') --destroy-unreferenced-disks --force 1 --purge 1 > /dev/null 2>&1
         ctRootPW="$(generatePassword 12)"
-        source <(curl -sSL $repoUrlLXC/$hostname/install.template)
+        source <(curl -sSL $repoUrlLXC/$hostname_lxc/install.template)
         createContainer
         configContainer
       fi
