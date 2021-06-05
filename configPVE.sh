@@ -557,50 +557,50 @@ function createConfigFile() {
   echo -e "\n\0043\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net \0043\0043" >> $configFile
   echo -e "\0043\0043         Variables starting with var_ were created by you           \0043\0043" >> $configFile
   echo -e "\n\0043 Proxmox-/System configuration" >> $configFile
-  echo -e "export basicConfiguration=$basicConfiguration" >> $configFile
-  echo -e "export pve_ip=$pve_ip" >> $configFile
-  echo -e "export pve_fqdn=$pve_fqdn" >> $configFile
-  echo -e "export pve_hostname=$pve_hostname" >> $configFile
-  echo -e "export pve_osname=$pve_osname" >> $configFile
-  echo -e "export pve_timezone=$pve_timezone" >> $configFile
+  echo -e "basicConfiguration=$basicConfiguration" >> $configFile
+  echo -e "pve_ip=$pve_ip" >> $configFile
+  echo -e "pve_fqdn=$pve_fqdn" >> $configFile
+  echo -e "pve_hostname=$pve_hostname" >> $configFile
+  echo -e "pve_osname=$pve_osname" >> $configFile
+  echo -e "pve_timezone=$pve_timezone" >> $configFile
   echo -e "\nvar_language=$var_language" >> $configFile
   echo -e "\n\0043 Gateway configuration" >> $configFile
-  echo -e "export var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
-  echo -e "export gatewayIP=$gatewayIP" >> $configFile
-  echo -e "export networkIP=$networkIP" >> $configFile
-  echo -e "export cidr=$cidr" >> $configFile
-  echo -e "export var_servervlan=$var_servervlan" >> $configFile
-  echo -e "export var_smarthomevlan=$var_smarthomevlan" >> $configFile
-  echo -e "export var_guestvlan=$var_guestvlan" >> $configFile
+  echo -e "var_gwmanufacturer=$var_gwmanufacturer" >> $configFile
+  echo -e "gatewayIP=$gatewayIP" >> $configFile
+  echo -e "networkIP=$networkIP" >> $configFile
+  echo -e "cidr=$cidr" >> $configFile
+  echo -e "var_servervlan=$var_servervlan" >> $configFile
+  echo -e "var_smarthomevlan=$var_smarthomevlan" >> $configFile
+  echo -e "var_guestvlan=$var_guestvlan" >> $configFile
   echo -e "\n\0043 Firewall configuration" >> $configFile
-  echo -e "export firewallConfiguration=$firewallConfiguration" >> $configFile
-  echo -e "export clusterfileFW=$clusterfileFW" >> $configFile
-  echo -e "export hostfileFW=$hostfileFW" >> $configFile
+  echo -e "firewallConfiguration=$firewallConfiguration" >> $configFile
+  echo -e "clusterfileFW=$clusterfileFW" >> $configFile
+  echo -e "hostfileFW=$hostfileFW" >> $configFile
   echo -e "\n\0043 SMTP-Server configuration" >> $configFile
-  echo -e "export emailConfiguration=$emailConfiguration" >> $configFile
-  echo -e "export var_rootmail=$var_rootmail" >> $configFile
-  echo -e "export var_mailserver=$var_mailserver" >> $configFile
-  echo -e "export var_mailport=$var_mailport" >> $configFile
-  echo -e "export var_mailusername=$var_mailusername" >> $configFile
-  echo -e "export var_mailpassword=\"\"" >> $configFile
-  echo -e "export var_senderaddress=$var_senderaddress" >> $configFile
-  echo -e "export var_mailtls=$var_mailtls" >> $configFile
-  echo -e "export sendmail=$sendmail" >> $configFile
+  echo -e "emailConfiguration=$emailConfiguration" >> $configFile
+  echo -e "var_rootmail=$var_rootmail" >> $configFile
+  echo -e "var_mailserver=$var_mailserver" >> $configFile
+  echo -e "var_mailport=$var_mailport" >> $configFile
+  echo -e "var_mailusername=$var_mailusername" >> $configFile
+  echo -e "var_mailpassword=\"\"" >> $configFile
+  echo -e "var_senderaddress=$var_senderaddress" >> $configFile
+  echo -e "var_mailtls=$var_mailtls" >> $configFile
+  echo -e "sendmail=$sendmail" >> $configFile
   echo -e "\n\0043 HDD-/Storage configuration" >> $configFile
-  echo -e "export sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
-  echo -e "export rootDisk=$rootDisk" >> $configFile
-  echo -e "export secHDDConfiguration=$secHDDConfiguration" >> $configFile
-  echo -e "export secondDisk=$secondDisk" >> $configFile
-  echo -e "export ctTemplateDisk=$ctTemplateDisk" >> $configFile
+  echo -e "sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!" >> $configFile
+  echo -e "rootDisk=$rootDisk" >> $configFile
+  echo -e "secHDDConfiguration=$secHDDConfiguration" >> $configFile
+  echo -e "secondDisk=$secondDisk" >> $configFile
+  echo -e "ctTemplateDisk=$ctTemplateDisk" >> $configFile
   echo -e "\n\0043 Netrobot configuration" >> $configFile
-  echo -e "export var_robotname=$var_robotname" >> $configFile
-  echo -e "export var_robotpw=\"\"" >> $configFile
+  echo -e "var_robotname=$var_robotname" >> $configFile
+  echo -e "var_robotpw=\"\"" >> $configFile
   echo -e "\n\0043 NAS configuration" >> $configFile
-  echo -e "export nasConfiguration=$nasConfiguration" >> $configFile
-  echo -e "export var_nasip=$var_nasip" >> $configFile
-  echo -e "export var_synologynas=$var_synologynas" >> $configFile
+  echo -e "nasConfiguration=$nasConfiguration" >> $configFile
+  echo -e "var_nasip=$var_nasip" >> $configFile
+  echo -e "var_synologynas=$var_synologynas" >> $configFile
   echo -e "\n\0043 OctoPi configuration" >> $configFile
-  echo -e "export var_octoip=$var_octoip" >> $configFile
+  echo -e "var_octoip=$var_octoip" >> $configFile
   sed -i 's/ //g' $configFile
   if [ -n "$var_nasip" ]; then cp $configFile /mnt/pve/backups/Proxmox_Configuration.txt; fi
 }
