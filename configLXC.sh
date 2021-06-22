@@ -87,7 +87,7 @@ if [ -z "$var_robotpw" ]; then
   fi
   # Set Variables used by this Script
   ctRootPW=""
-  ctID="100"
+  ctID=100
   hostIP=$(echo $pveIP | cut -d. -f4)
   ctIP="$(( $hostIP + 5 ))"
 fi
