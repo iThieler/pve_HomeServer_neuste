@@ -85,12 +85,13 @@ if [ -z "$var_robotpw" ]; then
   if [ $exitstatus -eq 1 ]; then
     exit
   fi
-  # Set Variables used by this Script
-  ctRootPW=""
-  ctID=100
-  hostIP=$(echo $pveIP | cut -d. -f4)
-  ctIP="$(( $hostIP + 5 ))"
 fi
+
+# Set Variables used by this Script
+ctRootPW=""
+ctID=100
+hostIP=$(echo $pveIP | cut -d. -f4)
+ctIP="$(( $hostIP + 5 ))"
 
 function generatePassword() {
 # Function generates a random secure password
@@ -144,6 +145,7 @@ function createContainer() {
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $ctIPLast +1 ))
   fi
+  echo $ctID
 
 # Get rootfs
   if [[ $ctTemplateDisk == "local" ]]; then
