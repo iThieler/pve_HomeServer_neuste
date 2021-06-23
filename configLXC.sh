@@ -145,7 +145,6 @@ function createContainer() {
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $ctIPLast +1 ))
   fi
-  echo $ctID
 
 # Get rootfs
   if [[ $ctTemplateDisk == "local" ]]; then
