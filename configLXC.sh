@@ -141,7 +141,7 @@ function createContainer() {
   echo "Erzeuge Container ID & IP"
   if [ $(pct list | grep -cw 100) -eq 1 ]; then
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
-    ctIPLast=$(lxc-info $ctIDLast -iH | cut -d. -f4)
+    ctIPLast=$(lxc-info $ctIDLast -iH | cut -d. -f4 | tail +2)
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $ctIPLast +1 ))
   fi
