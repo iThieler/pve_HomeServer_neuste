@@ -90,7 +90,7 @@ fi
 # Set Variables used by this Script
 ctRootPW=""
 ctID=100
-hostIP=$(echo $pveIP | cut -d. -f4)
+hostIP=$(echo $pve_ip | cut -d. -f4)
 ctIP="$(( $hostIP + 5 ))"
 
 function generatePassword() {
@@ -357,7 +357,7 @@ function configContainer() {
     echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
   done
 
-  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP $(echo $hostname_lxc|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP fwsg_$(echo $hostname_lxc|tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 
 # Cleanup Container History an reboot
   echo "Lösche Verlaufsdaten im Container"
