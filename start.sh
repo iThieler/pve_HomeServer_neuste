@@ -1,7 +1,15 @@
 #!/bin/bash
 
+function githubLatest() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+    grep '"tag_name":' |                                            # Get tag line
+    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+}
+
+gh_tag=$(githubLatest "shiot/pve_HomeServer")
+
 clear
-source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/logo.sh)
+source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_tag}/logo.sh)
 logo
 
 # Checks if Proxmox ist installed
@@ -21,7 +29,7 @@ fi
 {
   apt-get update 2>&1 >/dev/null
   echo -e "XXX\n29\nInstall required software ...\nXXX"
-  for package in "parted smartmontools libsasl2-modules lxc-pve git"; do
+  for package in "parted smartmontools libsasl2-modules lxc-pve"; do
     if [ $(dpkg-query -W -f='${Status}' "$package" | grep -c "ok installed") -eq 0 ]; then
       apt-get install -y "$package" 2>&1 >/dev/null
     fi
@@ -29,7 +37,8 @@ fi
   echo -e "XXX\n87\nSystem will be updated ...\nXXX"
   apt-get dist-upgrade -y 2>&1 >/dev/null && apt-get autoremove -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
   echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-  git clone https://github.com/shiot/pve_HomeServer.git
+  wget -c https://github.com/shiot/pve_HomeServer/archive/refs/tags/${gh_tag}.tar.gz -O - | tar -xz
+  mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
 } | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 10 80 0
 echo "- System updated and required software installed"
 
