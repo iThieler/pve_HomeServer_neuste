@@ -45,6 +45,7 @@ echo "- System updated and required software installed"
 # Enter script Dir and load required files
 cd pve_HomeServer/
 source handler/global_functions.sh
+source bin/variables.sh
 source language/_languages.sh
 
 # Choose Script Language
