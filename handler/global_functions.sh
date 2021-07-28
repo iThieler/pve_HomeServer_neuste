@@ -13,3 +13,24 @@ function githubLatest() {
     grep '"tag_name":' |                                            # Get tag line
     sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
 }
+
+function generatePassword() {
+# Function generates a random secure Linux password
+  chars=({0..9} {a..z} {A..Z} "_" "%" "&" "+" "-")
+  for i in $(eval echo "{1..$1}"); do
+    echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
+  done 
+}
+
+function generateAPIKey() {
+# Function generates a random API-Key
+  chars=({0..9} {a..f})
+  for i in $(eval echo "{1..$1}"); do
+    echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
+  done 
+}
+
+function cleanupHistory() {
+# Function clean the Shell History
+  cat /dev/null > ~/.bash_history && history -c && history -w
+}
