@@ -7,15 +7,6 @@ source "$shiot_configPath/$shiot_configFile"
 var_language="$1"
 var_nasip="$2"
 
-# Network Variables
-gatewayIP=$(ip r | grep default | cut -d" " -f3)
-pve_ip=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
-cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2)
-networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f1,2,3)
-publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
-pve_fqdn=$(hostname -f)
-pve_hostname=$(hostname)
-
 # Hardware Variables
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
 
@@ -26,12 +17,6 @@ if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##
 else
   ctTemplateDisk="local"
 fi
-
-# Proxmox Variables
-clusterfileFW="/etc/pve/firewall/cluster.fw"
-hostfileFW="/etc/pve/nodes/$pve_hostname/host.fw"
-pve_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
-pve_osname=$(cat /etc/os-release | grep VERSION_CODENAME | cut -d= -f2)
 
 # ask User for Script Language
 if [ -z "$var_language" ]; then
@@ -138,6 +123,7 @@ var_mailpassword=\"\"
 var_senderaddress=$var_senderaddress
 var_mailtls=$var_mailtls
 sendmail=$sendmail
+
 # HDD-/Storage configuration
 sysHDDConfiguration=$sysHDDConfiguration      \0043 DO NOT CHANGE THIS!!!
 rootDisk=$rootDisk
