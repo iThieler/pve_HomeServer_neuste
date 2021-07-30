@@ -1,11 +1,19 @@
 #!/bin/bash
 
+var_language="$1"
+var_nasip="$2"
+
 source "bin/variables.sh"
 source "handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
-var_language="$1"
-var_nasip="$2"
+# ask User for Script Language
+if [ -z "$var_language" ]; then
+  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  source "language/$var_language.sh"
+else
+  source "language/$var_language.sh"
+fi
 
 # Hardware Variables
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
@@ -18,17 +26,11 @@ else
   ctTemplateDisk="local"
 fi
 
-# ask User for Script Language
-if [ -z "$var_language" ]; then
-  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  source <(curl -sSL $configURL/lang/$var_language.lang)
-fi
-
 # config Netrobot
 if [ -z "$var_robotname" ]; then
-  var_robotname=$(whiptail --inputbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_exit} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_netrobot}" "\n${lng_ask_netrobotname}" ${ri} ${c} netrobot 3>&1 1>&2 2>&3)
+  var_robotname=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${lng_ask_netrobotname}" ${ri} ${c} netrobot 3>&1 1>&2 2>&3)
   if [ -z "$var_robotpw" ]; then
-    var_robotpw=$(whiptail --passwordbox --ok-button " ${lng_btn_ok} " --cancel-button " ${lng_btn_cancel} " --backtitle "© 2021 - SmartHome-IoT.net - ${lng_wrd_network_infrastructure}" --title "${lng_wrd_password}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
+    var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${lng_txt_netrobot_password}\n\n${lng_ask_netrobot_password}" ${ri} ${c} 3>&1 1>&2 2>&3)
     if [[ $var_robotpw = "" ]]; then
       var_robotpw=$(generatePassword 26)
     fi
