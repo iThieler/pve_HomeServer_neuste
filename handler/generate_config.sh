@@ -15,17 +15,6 @@ else
   source "language/$var_language.sh"
 fi
 
-# Hardware Variables
-rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
-
-# search second Harddisk and check if is SSD
-if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')/queue/rotational) -eq 0 ]]; then
-  secondDisk=$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')
-  ctTemplateDisk="data"
-else
-  ctTemplateDisk="local"
-fi
-
 # config Netrobot
 if [ -z "$var_robotname" ]; then
   var_robotname=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0051}" 10 80 netrobot 3>&1 1>&2 2>&3)
