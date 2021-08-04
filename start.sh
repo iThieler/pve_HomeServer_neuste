@@ -55,7 +55,7 @@ source language/_languages.sh
 var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
 source language/$var_language.sh
 
-# If no Config File is found, ask User to recover or to make a new Configuration
+# If no Config Path is found, ask User to recover or to make a new Configuration
 if [ ! -d "$shiot_configPath" ]; then
   mkdir -p $shiot_configPath
   NEWT_COLORS='
@@ -76,16 +76,56 @@ if [ ! -d "$shiot_configPath" ]; then
     cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0006}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
     cfg_mountUser=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0007}" 10 80 netrobot 3>&1 1>&2 2>&3)
     cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0008} \"${cfg_mountUser}\"?" 10 80 3>&1 1>&2 2>&3)
-    mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_nasIP/$cfg_dir /mnt/cfg_temp
-    cp /mnt/cfg_temp/$cfg_filename $shiot_configPath/$shiot_configFile
-    umount /mnt/cfg_temp
-    rm -d /mnt/cfg_temp
+    mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_nasIP/$cfg_dir /mnt/cfg_temp > /dev/null 2>&1
+    cp /mnt/cfg_temp/$cfg_filename $shiot_configPath/$shiot_configFile > /dev/null 2>&1
+    umount /mnt/cfg_temp > /dev/null 2>&1
+    rm -d /mnt/cfg_temp > /dev/null 2>&1
     echo "- ${txt_0009}"
   else
-    bash handler/generate_config.sh $var_language $cfg_nasIP
+    if bash handler/generate_config.sh $var_language $cfg_nasIP; then
+      echo "- ${txt_0010}"
+    else
+      echo "- ${txt_0011}"
+      exit
+    fi
   fi
 fi
 
-bash bin/config_pve${pve_majorversion}.sh
+# Start and wait for Proxmox Basic configuration if it's not already done
+if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
+  if bash bin/config_pve${pve_majorversion}.sh; then
+    echo "- ${txt_0012}"
+    echo "PVE config OK" >> "$shiot_configPath/helper"
+  else
+    echo "- ${txt_0013}"
+    echo "PVE config not OK" >> "$shiot_configPath/helper"
+  fi
+fi
 
-exit 0
+# Generate an Config Container (LXC) in Proxmox if User want it
+whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0014}" 20 80
+yesno=$?
+if [ $yesno -eq 0 ]; then
+  if bash bin/generate_lxc.sh; then
+    echo "- ${txt_0015}"
+  fi
+else
+  echo "- ${txt_0016}"
+fi
+
+# Generate an Config virtual Mashines (VM) in Proxmox if User want it
+whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_7} " "\n${txt_0017}" 20 80
+yesno=$?
+if [ $yesno -eq 0 ]; then
+  if bash bin/generate_vm.sh; then
+    echo "- ${txt_0018}"
+  fi
+else
+  echo "- ${txt_0019}"
+fi
+
+# Cleanup Proxmox History
+cat /dev/null > ~/.bash_history && history -c && history -w
+echo "- ${txt_0020}"
+
+exit
