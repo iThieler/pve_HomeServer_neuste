@@ -15,10 +15,15 @@ tit_2="NAS"
 tit_3="NETZWERKROBOTER"
 tit_4="VLAN"
 tit_5="MAILSERVER"
+tit_6="LXC-Konfiguration"
+tit_7="VM-Konfiguration"
 
 # Words
 wrd_1="Benutzername"
 wrd_2="Passwort"
+wrd_3="Heimnetzwerk"
+wrd_4="Basiskonfiguration"
+wrd_5="Vorbereitung"
 
 # start.sh
 txt_0001="Leider konnte das Standard Konfigurationsverzeichnis nicht gefunden werden."
@@ -30,6 +35,17 @@ txt_0006="Wie heißt die Datei, die die Konfigurationsvariablen enthält?"
 txt_0007="Wie lautet der Benutzername des Benutzers der Leserechte auf deiner NAS hat?"
 txt_0008="Wie lautet das Passwort von"
 txt_0009="Konfigurationsdatei erfolgreich kopiert"
+txt_0010="Die Konfigurationsdatei wurde erfolgreich erstellt"
+txt_0011="Die Konfigurationsdatei konnte nicht erstellt werden, dieses Skript wird vorzeitig beendet"
+txt_0012="Proxmox Basiskonfiguration erfolgreich beendet"
+txt_0013="Proxmox Basiskonfiguration nicht erfolgreich beendet"
+txt_0014="Möchtest Du Container in Proxmox installieren?"
+txt_0015="Conatiner erfolgreich erstellt und konfiguriert"
+txt_0016="Conatinerkonfiguration nicht gewünscht"
+txt_0017="Möchtest Du virtuelle Maschinen in Proxmox installieren?"
+txt_0018="Virtuelle Maschinen erfolgreich erstellt"
+txt_0019="Konfiguration von virtuellen Maschinen nicht gewünscht"
+txt_0020="Der Shell Verlauf von Proxmox Verlauf wurde bereinigt"
 
 # handler/generate_config.sh
 txt_0051="Wie lautet der Benutzername, den Du deinem Netzwerkroboter zugewiesen hast?"
@@ -52,6 +68,22 @@ txt_0067="Nutzt Du eine NAS in deinem Netzwerk?"
 txt_0068="Wie lautet die IP-Adresse deiner NAS?"
 txt_0069="Sollen deine Passwörter unverschlüsselt im Klartext in der Konfigurationsdatei gespeichert werden?"
 
+# bin/config_pve6.sh
+txt_0101="Deine NAS wird in Proxmox eingebunden"
+txt_0102="Container in diesem Pool sind im täglichen Backup eingeschlossen"
+txt_0103="Proxmox Repository wird geändert (Community)"
+txt_0104="Aktiviere S.M.A.R.T. auf der Systemfestplatte"
+txt_0105="Konfiguriere E-Mail-Benachrichtigung über Systemfestplattenfehler"
+txt_0106="Aktiviere und konfiguriere Proxmox Firewall"
+txt_0107="alle privaten Netzwerke, wichtig für VPN"
+txt_0108="Mailserver erfolgreich konfiguriert"
+txt_0109="Mailserver konfiguration nicht erfolgreich"
 
-
-
+# bin/config_email.sh
+txt_0151="Dies ist eine Testnachricht, versendet durch das Konfigurationsskript von https://SmartHome-IoT.net"
+txt_0152="Wenn Du deise E-Mail empfangen hast, kannst Du mit deiner HomeServer konfiguration durch die Bestätigung des Empfangs dieser E-Mail weiter machen."
+txt_0153="Mailserver erfolgreich eingerichtet"
+txt_0154="Es wurde eine E-Mail anfolgende Adresse gesendet"
+txt_0155="Wurde die E-Mail erfolgreich zugestellt? (Je nach Anbieter kann dies bis zu 15 Minuten dauern)"
+txt_0156="Die Protokolldatei wird nun auf bekannte Fehler überprüft, gefundene Fehler werden automatisch behoben."
+txt_0157="Du findest das Fehlerprotokol in der folgenden Datei."
