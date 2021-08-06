@@ -48,9 +48,9 @@ echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
 if [ -d "pve_HomeServer*" ]; then rm -rf pve_HomeServer*; fi
-wget -c $gh_download -O - | tar -xz
+wget -qc $gh_download -O - | tar -xz
 mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
-echo "- GitHub Repository Version ${gh_tag} downloaded to local disk"
+echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
 cd pve_HomeServer/
@@ -99,13 +99,15 @@ if [ ! -d "$shiot_configPath/" ]; then
 fi
 
 # Start and wait for Proxmox Basic configuration if it's not already done
-if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
-  if bash bin/config_pve${pve_majorversion}.sh; then
-    echo "- ${txt_0012}"
-    echo "PVE config OK" >> "$shiot_configPath/helper"
-  else
-    echo "- ${txt_0013}"
-    echo "PVE config not OK" >> "$shiot_configPath/helper"
+if [ -f "$shiot_configPath/helper" ]; then
+  if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
+    if bash bin/config_pve${pve_majorversion}.sh; then
+      echo "- ${txt_0012}"
+      echo "PVE config OK" >> "$shiot_configPath/helper"
+    else
+      echo "- ${txt_0013}"
+      echo "PVE config not OK" >> "$shiot_configPath/helper"
+    fi
   fi
 fi
 
