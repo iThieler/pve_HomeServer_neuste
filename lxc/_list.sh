@@ -2,10 +2,10 @@
 
 # These containers do not require a Nas
 lxc=( \
-  "Heimdall" "App Dashboard" on \
-  "ReverseProxy" "NGINX Proxy Manager" on \
-  "ExitAccess" "piHole & piVPN" on \
-  "iDBGrafana" "influxDB & Grafana" on \
+  "Heimdall" "App Dashboard" off \
+  "ReverseProxy" "NGINX Proxy Manager" off \
+  "ExitAccess" "piHole & piVPN" off \
+  "iDBGrafana" "influxDB & Grafana" off \
   "ioBroker" "SmartHome - Automate your life" off \
   "3cx" "Phone System " off \
   )
