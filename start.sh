@@ -20,7 +20,7 @@ source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_t
 logo
 
 # Checks if Proxmox ist installed
-if [ ! -d "/etc/pve/"]; then
+if [ ! -d "/etc/pve/" ]; then
   echo "- No Proxmox installation was found. This script can be executed only on Proxmox servers!"
   exit 1
 fi
@@ -39,7 +39,7 @@ fi
   echo -e "XXX\n$percent\nInstall required software ...\nXXX"
   for package in "parted smartmontools libsasl2-modules lxc-pve"; do
     percent=$(( $percent + 11 ))
-    if [ $(dpkg-query -W -f='${Status}' "$package" | grep -c "ok installed") -eq 0 ]; then
+    if [ $(dpkg-query -s "$package" | grep -c "ok installed") -eq 0 ]; then
       echo -e "XXX\n$percent\nInstall required software - $package ...\nXXX"
       apt-get install -y "$package" 2>&1 >/dev/null
     fi
@@ -50,7 +50,7 @@ fi
   wget -c $gh_download -O - | tar -xz
   mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
 } | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 10 80 0
-echo "- System updated and required software installed"
+echo "- System updated and required software is installed"
 
 # Enter script Dir and load required files
 cd pve_HomeServer/
@@ -63,7 +63,7 @@ var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --m
 source language/$var_language.sh
 
 # If no Config Path is found, ask User to recover or to make a new Configuration
-if [ ! -d "$shiot_configPath" ]; then
+if [ ! -d "$shiot_configPath/" ]; then
   mkdir -p $shiot_configPath
   NEWT_COLORS='
     window=black,red
@@ -84,7 +84,7 @@ if [ ! -d "$shiot_configPath" ]; then
     cfg_mountUser=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0007}" 10 80 netrobot 3>&1 1>&2 2>&3)
     cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0008} \"${cfg_mountUser}\"?" 10 80 3>&1 1>&2 2>&3)
     mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_nasIP/$cfg_dir /mnt/cfg_temp > /dev/null 2>&1
-    cp /mnt/cfg_temp/$cfg_filename $shiot_configPath/$shiot_configFile > /dev/null 2>&1
+    cp /mnt/cfg_temp/$cfg_filename "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
     umount /mnt/cfg_temp > /dev/null 2>&1
     rm -d /mnt/cfg_temp > /dev/null 2>&1
     echo "- ${txt_0009}"
