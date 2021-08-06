@@ -6,6 +6,7 @@ function githubLatest() {
     sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
 }
 
+# check its master curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 if [[ $1 == "master" ]]; then
   gh_tag="master"
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/heads/master.tar.gz"
