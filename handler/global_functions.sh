@@ -39,6 +39,7 @@ function cleanupHistory() {
 
 function lxc_mountNAS() {
   ############################################################
+  echo "- Funktion lxc_mountNAS"
 }
 
 function lxc_SQLSecure() {
