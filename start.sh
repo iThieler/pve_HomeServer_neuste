@@ -43,7 +43,7 @@ fi
   apt-get autoremove -y 2>&1 >/dev/null
   pveam update 2>&1 >/dev/null
   echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 10 80 0
+} | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 6 80 0
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
@@ -135,7 +135,9 @@ else
 fi
 
 # Cleanup Proxmox History
-cat /dev/null > ~/.bash_history && history -c && history -w
+cat /dev/null > ~/.bash_history
+history -c
+history -w
 echo "- ${txt_0020}"
 
 exit
