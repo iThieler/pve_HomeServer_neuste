@@ -37,7 +37,7 @@ function cleanupHistory() {
   cat /dev/null > ~/.bash_history && history -c && history -w
 }
 
-function lxc_mountNAS(){
+function lxc_mountNAS() {
   ############################################################
 }
 
