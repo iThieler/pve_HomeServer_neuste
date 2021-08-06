@@ -38,9 +38,7 @@ fi
   percent=29
   echo -e "XXX\n$percent\nInstall required software ...\nXXX"
   for package in "parted smartmontools libsasl2-modules lxc-pve"; do
-    percent=$(( $percent + 11 ))
     if [ $(dpkg-query -s "$package" | grep -c "ok installed") -eq 0 ]; then
-      echo -e "XXX\n${percent}\nInstall required software - $package ...\nXXX"
       apt-get install -y "$package" 2>&1 >/dev/null
     fi
   done
