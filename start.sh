@@ -37,18 +37,20 @@ fi
   apt-get update 2>&1 >/dev/null
   percent=29
   echo -e "XXX\n$percent\nInstall required software ...\nXXX"
-  for package in "parted smartmontools libsasl2-modules lxc-pve"; do
-    if [ $(dpkg-query -s "$package" | grep -c "ok installed") -eq 0 ]; then
-      apt-get install -y "$package" 2>&1 >/dev/null
-    fi
-  done
+  apt-get install -y parted smartmontools libsasl2-modules lxc-pve 2>&1 >/dev/null
   echo -e "XXX\n87\nSystem will be updated ...\nXXX"
-  apt-get dist-upgrade -y 2>&1 >/dev/null && apt-get autoremove -y 2>&1 >/dev/null && pveam update 2>&1 >/dev/null
+  apt-get dist-upgrade -y 2>&1 >/dev/null
+  apt-get autoremove -y 2>&1 >/dev/null
+  pveam update 2>&1 >/dev/null
   echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-  wget -c $gh_download -O - | tar -xz
-  mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
 } | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 10 80 0
 echo "- System updated and required software is installed"
+
+# Cloning gitHub Repository to lacal HDD
+if [ -d "pve_HomeServer*" ]; then rm -rf pve_HomeServer*; fi
+wget -c $gh_download -O - | tar -xz
+mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
+echo "- GitHub Repository Version ${gh_tag} downloaded to local disk"
 
 # Enter script Dir and load required files
 cd pve_HomeServer/
