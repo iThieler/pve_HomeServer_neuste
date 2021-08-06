@@ -20,8 +20,8 @@ source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_t
 logo
 
 # Checks if Proxmox ist installed
-if [ ! -d "/etc/pve/"]
-  echo "No Proxmox installation was found. This script can be executed only on Proxmox servers!"
+if [ ! -d "/etc/pve/"]; then
+  echo "- No Proxmox installation was found. This script can be executed only on Proxmox servers!"
   exit 1
 fi
 
