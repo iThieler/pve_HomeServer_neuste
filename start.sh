@@ -28,7 +28,7 @@ fi
 # Checks the PVE MajorRelease
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
 if [ $pve_majorversion -ne 6 ]; then
-  echo "This script currently works only for Proxmox version 6.X"
+  echo "- This script currently works only for Proxmox version 6.X"
   exit 1
 fi
 
