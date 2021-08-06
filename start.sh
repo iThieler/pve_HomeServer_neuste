@@ -47,7 +47,8 @@ fi
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "pve_HomeServer*" ]; then rm -rf pve_HomeServer*; fi
+if [ -d "pve_HomeServer" ]; then rm -rf "pve_HomeServer/"; fi
+if [ -d "pve_HomeServer-${gh_tag}" ]; then rm -rf "pve_HomeServer-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
 mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
@@ -138,3 +139,5 @@ cat /dev/null > ~/.bash_history && history -c && history -w
 echo "- ${txt_0020}"
 
 exit
+
+#curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
