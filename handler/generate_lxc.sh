@@ -1,26 +1,25 @@
 #!/bin/bash
 
-source "bin/variables.sh"
-source "bin/var_containerOS.sh"
-source "handler/global_functions.sh"
-# source "lxc/_list.sh.sh"
+source "$script_path/bin/variables.sh"
+source "$script_path/bin/var_containerOS.sh"
+source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
 ctRootPW=""
 
 # make list of available Containers, hide already existing
-available_lxc=$(find lxc/* -prune -type d | while IFS= read -r d; do echo -e "\"$d\""; done | sed -e 's#lxc/##g' | sed ':M;N;$!bM;s#\n# #g')
+available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "\"$d\""; done | sed -e 's#lxc/##g' | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 for lxc in $available_lxc; do
-  description=$(cat lxc/${lxc}/description.txt | sed -n '1p')
-  if [ $(cat lxc/${lxc}/description.txt | grep -cw "nas") -eq 0 ]; then
+  description=$(cat "$script_path/lxc/${lxc}/description.txt" | sed -n '1p')
+  if [ $(cat "$script_path/lxc/${lxc}/description.txt" | grep -cw "nas") -eq 0 ]; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
     else
       echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
     fi
   fi
-  if [ $(cat lxc/${lxc}/description.txt | grep -cw "nas") -eq 1 ] && [ -n $var_nasip ]; then
+  if [ $(cat "$script_path/lxc/${lxc}/description.txt" | grep -cw "nas") -eq 1 ] && [ -n $var_nasip ]; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
     else
@@ -42,7 +41,7 @@ fi
 function create() {
   containername="$1"
   # Load Container generate Variables
-  source "lxc/$containername/var_generate.sh"
+  source "$script_path/lxc/$containername/var_generate.sh"
 
   # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 1 ]; then
@@ -86,7 +85,7 @@ function create() {
   sleep 10
   if [ pct list | grep -cw $containername -eq 1 ]; then
     echo -e "- Der Container \"$containername\" wurde mit der ID \"$ctID\" erstellt"
-    if bin/config_lxc.sh $ctID; then
+    if "$script_path/bin/config_lxc.sh" $ctID; then
       echo -e "- Der Container \"$containername\" wurde konfiguriert"
     else
       echo -e "- Der Container \"$containername\" konnte nicht konfiguriertwerden"
@@ -100,7 +99,6 @@ var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "\"$d\""; done | sed ':M;N;$!bM;s#\n# #g')
-$(pct list | awk -F ' ' '{print $NF}' | tail -n +2) > /tmp/lxcavailable.txt
 for available_lxc in $lxc_available; do
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
     pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}')
