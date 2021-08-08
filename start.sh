@@ -47,14 +47,14 @@ fi
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "$script_path/pve_HomeServer" ]; then rm -rf "$script_path/pve_HomeServer/"; fi
-if [ -d "$script_path/pve_HomeServer-${gh_tag}" ]; then rm -rf "$script_path/pve_HomeServer-${gh_tag}/"; fi
+if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
+if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
-mv "$script_path/pve_HomeServer-${gh_tag}/" "$script_path/pve_HomeServer/"
+mv "$script_path-${gh_tag}/" "$script_path/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
-cd "$script_path/pve_HomeServer/"
+cd "$script_path/"
 source "$script_path/handler/global_functions.sh"
 source "$script_path/bin/variables.sh"
 source "$script_path/language/_languages.sh"
