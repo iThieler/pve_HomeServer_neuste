@@ -3,16 +3,16 @@
 var_language="$1"
 var_nasip="$2"
 
-source "bin/variables.sh"
-source "handler/global_functions.sh"
+source "$script_path/bin/variables.sh"
+source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
 # ask User for Script Language
 if [ -z "$var_language" ]; then
   var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  source "language/$var_language.sh"
+  source "$script_path/language/$var_language.sh"
 else
-  source "language/$var_language.sh"
+  source "$script_path/language/$var_language.sh"
 fi
 
 # config Netrobot
