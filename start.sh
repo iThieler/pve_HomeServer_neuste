@@ -35,8 +35,7 @@ fi
 # Performs a system update and installs software required for this script
 {
   apt-get update 2>&1 >/dev/null
-  percent=29
-  echo -e "XXX\n$percent\nInstall required software ...\nXXX"
+  echo -e "XXX\n29\nInstall required software ...\nXXX"
   apt-get install -y parted smartmontools libsasl2-modules lxc-pve 2>&1 >/dev/null
   echo -e "XXX\n87\nSystem will be updated ...\nXXX"
   apt-get dist-upgrade -y 2>&1 >/dev/null
@@ -47,10 +46,10 @@ fi
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
-if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
+if [ -d "/root/pve_HomeServer/" ]; then rm -rf "/root/pve_HomeServer/"; fi
+if [ -d "/root/pve_HomeServer-${gh_tag}/" ]; then rm -rf "/root/pve_HomeServer-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
-mv "$script_path-${gh_tag}/" "$script_path/"
+mv "/root/pve_HomeServer-${gh_tag}/" "/root/pve_HomeServer/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
