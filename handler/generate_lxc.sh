@@ -100,8 +100,9 @@ var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "\"$d\""; done | sed ':M;N;$!bM;s#\n# #g')
+$(pct list | awk -F ' ' '{print $NF}' | tail -n +2) > /tmp/lxcavailable.txt
 for available_lxc in $lxc_available; do
-  if [ $($available_lxc | grep -cw $var_lxcchoice) -eq 0 ]; then
+  if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
     pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}')
   fi
 done
