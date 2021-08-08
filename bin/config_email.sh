@@ -1,7 +1,7 @@
 #!/bin/bash
 
-source "bin/variables.sh"
-source "handler/global_functions.sh"
+source "$script_path/bin/variables.sh"
+source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
 # config email notification
