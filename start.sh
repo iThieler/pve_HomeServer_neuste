@@ -47,21 +47,21 @@ fi
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "pve_HomeServer" ]; then rm -rf "pve_HomeServer/"; fi
-if [ -d "pve_HomeServer-${gh_tag}" ]; then rm -rf "pve_HomeServer-${gh_tag}/"; fi
+if [ -d "$script_path/pve_HomeServer" ]; then rm -rf "$script_path/pve_HomeServer/"; fi
+if [ -d "$script_path/pve_HomeServer-${gh_tag}" ]; then rm -rf "$script_path/pve_HomeServer-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
-mv pve_HomeServer-${gh_tag}/ pve_HomeServer/
+mv "$script_path/pve_HomeServer-${gh_tag}/" "$script_path/pve_HomeServer/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
-cd pve_HomeServer/
-source handler/global_functions.sh
-source bin/variables.sh
-source language/_languages.sh
+cd "$script_path/pve_HomeServer/"
+source "$script_path/handler/global_functions.sh"
+source "$script_path/bin/variables.sh"
+source "$script_path/language/_languages.sh"
 
 # Choose Script Language
 var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-source language/$var_language.sh
+source "$script_path/language/$var_language.sh"
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
 fi
@@ -93,7 +93,7 @@ if [ ! -d "$shiot_configPath/" ]; then
     rm -d /mnt/cfg_temp > /dev/null 2>&1
     echo "- ${txt_0010}"
   else
-    if bash handler/generate_config.sh $var_language $cfg_nasIP; then
+    if bash "$script_path/handler/generate_config.sh" $var_language $cfg_nasIP; then
       echo "- ${txt_0011}"
     else
       echo "- ${txt_0012}"
@@ -105,7 +105,7 @@ fi
 # Start and wait for Proxmox Basic configuration if it's not already done
 if [ -f "$shiot_configPath/helper" ]; then
   if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
-    if bash bin/config_pve${pve_majorversion}.sh; then
+    if bash "$script_path/bin/config_pve${pve_majorversion}.sh"; then
       echo "- ${txt_0013}"
       echo "PVE config OK" >> "$shiot_configPath/helper"
     else
@@ -119,7 +119,7 @@ fi
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0015}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
-  if bash handler/generate_lxc.sh; then
+  if bash "$script_path/handler/generate_lxc.sh"; then
     echo "- ${txt_0016}"
   fi
 else
@@ -130,7 +130,7 @@ fi
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_7} " "\n${txt_0018}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
-  if bash handler/generate_vm.sh; then
+  if bash "$script_path/handler/generate_vm.sh"; then
     echo "- ${txt_0019}"
   fi
 else
