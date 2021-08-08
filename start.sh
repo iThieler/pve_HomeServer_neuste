@@ -62,7 +62,7 @@ source language/_languages.sh
 # Choose Script Language
 var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
 source language/$var_language.sh
-if [[ ! ${var_language} == "en" ]]; then
+if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
 fi
 
