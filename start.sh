@@ -53,9 +53,9 @@ mv "/root/pve_HomeServer-${gh_tag}/" "/root/pve_HomeServer/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
-cd "$script_path/"
+cd "/root/pve_HomeServer/"
+source "/root/pve_HomeServer/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
-source "$script_path/bin/variables.sh"
 source "$script_path/language/_languages.sh"
 
 # Choose Script Language
