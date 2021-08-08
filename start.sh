@@ -119,7 +119,7 @@ fi
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0015}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
-  if bash bin/generate_lxc.sh; then
+  if bash handler/generate_lxc.sh; then
     echo "- ${txt_0016}"
   fi
 else
@@ -130,7 +130,7 @@ fi
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_7} " "\n${txt_0018}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
-  if bash bin/generate_vm.sh; then
+  if bash handler/generate_vm.sh; then
     echo "- ${txt_0019}"
   fi
 else
