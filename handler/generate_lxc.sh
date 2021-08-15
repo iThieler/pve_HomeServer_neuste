@@ -39,7 +39,7 @@ else
 fi
 
 function create() {
-  containername=$1
+  containername="$1"
   # Load Container generate Variables
   source "$script_path/lxc/${containername}/var_generate.sh"
 
@@ -67,7 +67,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --description $(cat $script_path/lxc/${containername}/description.txt | sed -n '1p') \
+                    --description $(cat $script_path/lxc/$containername/description.txt | sed -n '1p') \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
