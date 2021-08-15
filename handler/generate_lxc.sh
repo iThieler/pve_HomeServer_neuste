@@ -39,9 +39,9 @@ else
 fi
 
 function create() {
-  containername="$1"
+  containername=$1
   # Load Container generate Variables
-  source "$script_path/lxc/$containername/var_generate.sh"
+  source "$script_path/lxc/${containername}/var_generate.sh"
 
   # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 1 ]; then
@@ -67,7 +67,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --description $(cat lxc/${containername}/description.txt | sed -n '1p') \
+                    --description $(cat $script_path/lxc/${containername}/description.txt | sed -n '1p') \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
@@ -101,7 +101,7 @@ var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "\"$d\""; done | sed ':M;N;$!bM;s#\n# #g')
 for available_lxc in $lxc_available; do
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
-    pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}')
+    pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1
   fi
 done
 
