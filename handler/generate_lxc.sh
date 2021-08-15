@@ -98,7 +98,7 @@ function create() {
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\nWähle die Container, die Du installieren möchtest. Aktivierte Container sind bereits installiert,wenn Du sie deaktivierst werden sie deinstalliert." 20 80 10 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
 
 # delete available Container not choosen
-lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "\"$d\""; done | sed ':M;N;$!bM;s#\n# #g')
+lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
 for available_lxc in $lxc_available; do
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
     pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1
@@ -111,6 +111,6 @@ for choosed_lxc in $var_lxcchoice; do
     ctRootPW="$(generatePassword 12)"
     create $choosed_lxc $ctRootPW
   else
-    echo -e "- Der Containe \"$choosed_lxc\" konnte nicht erstellt werden, da er schon existiert"
+    echo -e "- Der Container \"$choosed_lxc\" konnte nicht erstellt werden, da er schon existiert"
   fi
 done
