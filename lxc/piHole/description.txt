@@ -1,1 +1,1 @@
-netzwerkweite Software zum Blockieren von Werbung und Tracking
+Server zum netzwerkweiten Blockieren von Werbung
