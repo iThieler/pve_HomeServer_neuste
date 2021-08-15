@@ -8,7 +8,7 @@ source "$shiot_configPath/$shiot_configFile"
 ctRootPW=""
 
 # make list of available Containers, hide already existing
-available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "\"$d\""; done | sed -e 's#lxc/##g' | sed ':M;N;$!bM;s#\n# #g')
+available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "\"$d\""; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 for lxc in $available_lxc; do
   description=$(cat "$script_path/lxc/${lxc}/description.txt" | sed -n '1p')
