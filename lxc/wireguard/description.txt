@@ -1,1 +1,1 @@
-UniFi Controller für Ubiquiti
+VPN-Server für wireGuard
