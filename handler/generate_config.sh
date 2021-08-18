@@ -5,7 +5,9 @@ var_nasip="$2"
 
 source "/root/pve_HomeServer/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
-source "$shiot_configPath/$shiot_configFile"
+if [ -f "$shiot_configPath/$shiot_configFile" ]; then
+  source "$shiot_configPath/$shiot_configFile"
+fi
 
 # ask User for Script Language
 if [ -z "$var_language" ]; then
@@ -22,10 +24,9 @@ if [ -z "$var_robotname" ]; then
     var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0052}\n\n${txt_0053}" 10 80 3>&1 1>&2 2>&3)
     if [[ $var_robotpw = "" ]]; then
       var_robotpw=$(generatePassword 26)
-      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0054}\n\n${wrd_1}: ${var_robotname}\n${wrd_2}: ${var_robotpw}\n\n${txt_0055}" 10 80
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0054}\n\n${wrd_1}: ${var_robotname}\n${wrd_2}: ${var_robotpw}" 10 80
     fi
   fi
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0055}\n\nbackups\nmedia" 10 80
 fi
 
 # config VLAN
@@ -82,6 +83,7 @@ if [ -z "$var_nasip" ]; then
     while ! pingIP $var_nasip; do
       var_nasip=$(whiptail --inputbox --ok-button " ${btn_7} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0068}?" $networkIP. 10 80 3>&1 1>&2 2>&3)
     done
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0055}\n\nbackups\nmedia" 10 80
   fi
 fi
 
