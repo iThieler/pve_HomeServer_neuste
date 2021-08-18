@@ -11,25 +11,27 @@ ctRootPW=""
 # make list of available Containers, hide already existing
 available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
+desc="desc_${var_language}"
+if [ -z "${!desc}" ]; then desc="desc_en"; fi 
 for lxc in $available_lxc; do
   source $script_path/lxc/${lxc}/description.sh
   if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
     fi
   fi
 done
@@ -90,14 +92,17 @@ function create() {
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
-                    --start 0"
+                    --start 1"
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 10
   if [ pct list | grep -cw $containername -eq 1 ]; then
+    pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+    pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     echo -e "- ${txt_0201}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+    sleep 10
     if "$script_path/bin/config_lxc.sh" $ctID; then
       echo -e "- ${txt_0202}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     else
