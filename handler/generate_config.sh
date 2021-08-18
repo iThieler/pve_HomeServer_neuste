@@ -3,7 +3,7 @@
 var_language="$1"
 var_nasip="$2"
 
-source "$script_path/bin/variables.sh"
+source "/root/pve_HomeServer/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
