@@ -17,21 +17,21 @@ for lxc in $available_lxc; do
   source $script_path/lxc/${lxc}/description.sh
   if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \"$("${!desc}")\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \"$("${!desc}")\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
     fi
   fi
 done
