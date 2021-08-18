@@ -17,21 +17,21 @@ for lxc in $available_lxc; do
   source $script_path/lxc/${lxc}/description.sh
   if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
-      echo -e "\"${lxc}\" \""${!desc}"\" off \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
     else
-      echo -e "\"${lxc}\" \""${!desc}"\" on \\" >> /tmp/lxclist.sh
+      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   fi
 done
@@ -113,7 +113,7 @@ function create() {
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 10 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
