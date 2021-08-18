@@ -103,7 +103,7 @@ fi
 
 # Start and wait for Proxmox Basic configuration if it's not already done
 if [ -f "$shiot_configPath/helper" ]; then
-  if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
+  if [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then ########### ändere zu 1 für produktiv
     if bash "$script_path/bin/config_pve${pve_majorversion}.sh"; then
       echo "- ${txt_0013}"
       echo "PVE config OK" >> "$shiot_configPath/helper"
