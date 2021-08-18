@@ -3,8 +3,8 @@
 source "/root/pve_HomeServer/bin/variables.sh"
 source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
-source "$script_path/language/$var_language.sh"
 source "$shiot_configPath/$shiot_configFile"
+source "$script_path/language/$var_language.sh"
 
 ctRootPW=""
 
