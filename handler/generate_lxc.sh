@@ -12,15 +12,20 @@ ctRootPW=""
 available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 for lxc in $available_lxc; do
-  description=$(cat "$script_path/lxc/${lxc}/description.txt" | sed -n '1p')
-  if [ $(cat "$script_path/lxc/${lxc}/description.txt" | grep -cw "nas") -eq 0 ]; then
+  source $script_path/lxc/${lxc}/description.sh
+  if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
     else
       echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
     fi
-  fi
-  if [ $(cat "$script_path/lxc/${lxc}/description.txt" | grep -cw "nas") -eq 1 ] && [ -n $var_nasip ]; then
+  elif [ -n "$var_nasip" ] && ! $nasonly; then
+    if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
+      echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
+    else
+      echo -e "\"${lxc}\" \"${description}\" on \\" >> /tmp/lxclist.sh
+    fi
+  elif [ -n "$var_nasip" ] && $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \"${description}\" off \\" >> /tmp/lxclist.sh
     else
@@ -110,6 +115,9 @@ lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= re
 for available_lxc in $lxc_available; do
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
     pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1 > /dev/null 2>&1
+    ##################################################################
+    ############# Delete firewall rules of the container #############
+    ##################################################################
   fi
 done
 
