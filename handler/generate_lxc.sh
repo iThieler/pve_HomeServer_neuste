@@ -3,6 +3,7 @@
 source "/root/pve_HomeServer/bin/variables.sh"
 source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
+source "$script_path/language/$var_language.sh"
 source "$shiot_configPath/$shiot_configFile"
 
 ctRootPW=""
@@ -40,6 +41,13 @@ fi
 
 function create() {
   containername="$1"
+  # Load container language file if not exist load english language
+  if "$script_path/lxc/${containername}/language/$var_language.sh"; then
+    source "$script_path/lxc/${containername}/language/$var_language.sh"
+  else
+    source "$script_path/lxc/${containername}/language/en.sh"
+  fi
+
   # Load Container generate Variables
   source "$script_path/lxc/${containername}/var_generate.sh"
 
@@ -84,24 +92,24 @@ function create() {
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 10
   if [ pct list | grep -cw $containername -eq 1 ]; then
-    echo -e "- Der Container \"$containername\" wurde mit der ID \"$ctID\" erstellt"
+    echo -e "- ${txt_0201}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     if "$script_path/bin/config_lxc.sh" $ctID; then
-      echo -e "- Der Container \"$containername\" wurde konfiguriert"
+      echo -e "- ${txt_0202}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     else
-      echo -e "- Der Container \"$containername\" konnte nicht konfiguriertwerden"
+      echo -e "- ${txt_0203}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     fi
   else
-    echo -e "- Der Container \"$containername\" konnte nicht erstellt werden"
+    echo -e "- ${txt_0204}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\nWähle die Container, die Du installieren möchtest. Aktivierte Container sind bereits installiert,wenn Du sie deaktivierst werden sie deinstalliert." 20 80 10 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 10 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
 for available_lxc in $lxc_available; do
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
-    pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1
+    pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1 > /dev/null 2>&1
   fi
 done
 
@@ -111,6 +119,8 @@ for choosed_lxc in $var_lxcchoice; do
     ctRootPW="$(generatePassword 12)"
     create $choosed_lxc $ctRootPW
   else
-    echo -e "- Der Container \"$choosed_lxc\" konnte nicht erstellt werden, da er schon existiert"
+    echo -e "- ${txt_0206}: ${wrd_6} \"$choosed_lxc\" "
   fi
 done
+
+exit 0
