@@ -54,13 +54,13 @@ wget -qc $gh_download -O - | tar -xz
 mv "$script_path-${gh_tag}/" "$script_path/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
-# Enter script Dir and load required files
+# Load required files
 source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$script_path/language/_languages.sh"
 
 # Choose Script Language
-var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 15 "\n${lng[@]}" 3>&1 1>&2 2>&3)
+var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 15 "${lng[@]}" 3>&1 1>&2 2>&3)
 source "$script_path/language/$var_language.sh"
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
