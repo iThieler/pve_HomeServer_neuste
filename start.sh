@@ -60,7 +60,7 @@ source "$script_path/handler/global_functions.sh"
 source "$script_path/language/_languages.sh"
 
 # Choose Script Language
-export var_language=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Language " "\nChoose the Script language" 20 80 15 "${lng[@]}" 3>&1 1>&2 2>&3)
+export var_language=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Language " "\nChoose the Script language" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
 source "$script_path/language/$var_language.sh"
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
