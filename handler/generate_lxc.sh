@@ -47,7 +47,7 @@ else
 fi
 
 function create() {
-  containername="$1"
+  containername=$1
   # Load container language file if not exist load english language
   if "$script_path/lxc/${containername}/language/$var_language.sh"; then
     source "$script_path/lxc/${containername}/language/$var_language.sh"
@@ -56,7 +56,7 @@ function create() {
   fi
 
   # Load Container generate Variables
-  source "$script_path/lxc/${containername}/var_generate.sh"
+  source "$script_path/lxc/${containername}/generate.sh"
 
   # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 1 ]; then
@@ -82,7 +82,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --description $(cat $script_path/lxc/$containername/description.txt | sed -n '1p') \
+                    --description "$description" \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
@@ -98,7 +98,7 @@ function create() {
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 10
-  if [ pct list | grep -cw $containername -eq 1 ]; then
+  if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     echo -e "- ${txt_0201}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
