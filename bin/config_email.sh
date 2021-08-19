@@ -47,7 +47,7 @@ if [[ $yesno == 1 ]]; then
     textbox=white,red
     button=black,yellow
   ' \
-  whiptail --msgbox --ok-button " ${btn_1} " --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_5}" "${txt_0156}" ${r} ${c}
+  whiptail --msgbox --ok-button " ${btn_1} " --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_5}" "${txt_0156}" 10 80
   if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
     if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
       postconf smtputf8_enable=no
@@ -64,7 +64,7 @@ if [[ $yesno == 1 ]]; then
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0157}\n\n/var/log/mail.log" ${r} ${c}
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0157}\n\n/var/log/mail.log" 10 80
   fi
   exit 1
 else
