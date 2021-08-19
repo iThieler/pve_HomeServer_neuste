@@ -77,10 +77,12 @@ fi
     sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$secondDisk"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
     systemctl restart smartmontools
   fi
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title " ${wrd_4} " --gauge "\n${wrd_5} ..." 6 ${c} 0
+} | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title " ${wrd_4} " "\n${wrd_5} ..." 6 80 0
 
 if bash $script_path/bin/config_email.sh; then
   echo "- ${txt_0108}"
 else
   echo "- ${txt_0109}"
 fi
+
+exit 0
