@@ -138,7 +138,7 @@ fi
 # Cleanup Script Trash and Shell/Proxmox History
 unset script_path
 unset var_language
-rm lxclist.*
+rm /tmp/lxclist.*
 cat /dev/null > ~/.bash_history
 history -c
 history -w
