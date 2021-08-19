@@ -3,7 +3,7 @@
 var_language="$1"
 var_nasip="$2"
 
-source "/root/pve_HomeServer/bin/variables.sh"
+source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
@@ -21,7 +21,7 @@ fi
 if [ -z "$var_robotname" ]; then
   var_robotname=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0051}" 10 80 netrobot 3>&1 1>&2 2>&3)
   if [ -z "$var_robotpw" ]; then
-    var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0052}\n\n${txt_0053}" 10 80 3>&1 1>&2 2>&3)
+    var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0052}\n${txt_0053}" 10 80 3>&1 1>&2 2>&3)
     if [[ $var_robotpw = "" ]]; then
       var_robotpw=$(generatePassword 26)
       whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0054}\n\n${wrd_1}: ${var_robotname}\n${wrd_2}: ${var_robotpw}" 10 80
