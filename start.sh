@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export script_path="/root/pve_HomeServer"
+
 function githubLatest() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
     grep '"tag_name":' |                                            # Get tag line
@@ -42,24 +44,23 @@ fi
   apt-get autoremove -y 2>&1 >/dev/null
   pveam update 2>&1 >/dev/null
   echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-} | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "System will be updated, required software will be installed ..." 6 80 0
+} | whiptail --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" --gauge "\nSystem will be updated, required software will be installed ..." 6 80 0
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "/root/pve_HomeServer/" ]; then rm -rf "/root/pve_HomeServer/"; fi
-if [ -d "/root/pve_HomeServer-${gh_tag}/" ]; then rm -rf "/root/pve_HomeServer-${gh_tag}/"; fi
+if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
+if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
-mv "/root/pve_HomeServer-${gh_tag}/" "/root/pve_HomeServer/"
+mv "$script_path-${gh_tag}/" "$script_path/"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Enter script Dir and load required files
-#cd "/root/pve_HomeServer/"
-source "/root/pve_HomeServer/bin/variables.sh"
+source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$script_path/language/_languages.sh"
 
 # Choose Script Language
-var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 15 "\n${lng[@]}" 3>&1 1>&2 2>&3)
 source "$script_path/language/$var_language.sh"
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
@@ -112,7 +113,7 @@ if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | g
   fi
 fi
 
-# Generate an Config Container (LXC) in Proxmox if User want it
+# Generate and Config Container (LXC) in Proxmox if User want it
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0015}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
@@ -123,7 +124,7 @@ else
   echo "- ${txt_0017}"
 fi
 
-# Generate an Config virtual Mashines (VM) in Proxmox if User want it
+# Generate and Config virtual Mashines (VM) in Proxmox if User want it
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_7} " "\n${txt_0018}" 20 80
 yesno=$?
 if [ $yesno -eq 0 ]; then
@@ -139,7 +140,7 @@ cat /dev/null > ~/.bash_history
 history -c
 history -w
 echo "- ${txt_0021}"
-
+unset script_path
 exit
 
 #curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
