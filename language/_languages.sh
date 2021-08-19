@@ -1,6 +1,6 @@
 #!/bin/bash
 
 lng=(\
-  "de" "      Deutsch" \
   "en" "      English" \
+  "de" "      Deutsch" \
 )
