@@ -81,7 +81,7 @@ if [ -z "$var_nasip" ]; then
   yesno=$?
   if [ $yesno -eq 0 ]; then
     while ! pingIP $var_nasip; do
-      var_nasip=$(whiptail --inputbox --ok-button " ${btn_7} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0068}?" $networkIP. 10 80 3>&1 1>&2 2>&3)
+      var_nasip=$(whiptail --inputbox --ok-button " ${btn_7} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0068}?" 10 80 $networkIP. 3>&1 1>&2 2>&3)
     done
     whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0055}\n\nbackups\nmedia" 10 80
   fi
