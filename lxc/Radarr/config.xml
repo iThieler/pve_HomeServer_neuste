@@ -1,0 +1,16 @@
+<!-- ~/.config/Radarr/config.xml -->
+<Config>
+  <LogLevel>info</LogLevel>
+  <UpdateMechanism>BuiltIn</UpdateMechanism>
+  <BindAddress>IPADRESSTOCHANGE</BindAddress>
+  <EnableSsl>False</EnableSsl>
+  <SslCertPath></SslCertPath>
+  <Port>80</Port>
+  <UrlBase></UrlBase>
+  <ApiKey>APIKEYTOCHANGE</ApiKey>
+  <Branch>master</Branch>
+  <SslPort>443</SslPort>
+  <LaunchBrowser>True</LaunchBrowser>
+  <SslCertPassword></SslCertPassword>
+  <AnalyticsEnabled>False</AnalyticsEnabled>
+</Config>

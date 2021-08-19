@@ -1,0 +1,90 @@
+#!/bin/bash
+
+standardAdapter="parser javascript web vis vis-inventwo vis-icontwo influxdb proxmox"
+restoreAdapter="parser javascript web vis "
+
+function iobinstallVariation() {
+# Function asks the user if ioBroker should be installed normally or for a restore
+  variation=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "" --menu "$lxc_txt_001" 20 80 15 \ 
+              "1" "${lxc_txt_002}" \ 
+              "2" "${lxc_txt_003}" 3>&1 1>&2 2>&3)
+  if [[ $variation == "2" ]]; then
+    restorevariation=$(whiptail --yesno --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_004" 20 80 3>&1 1>&2 2>&3)
+    yesno=$?
+    if [[ $yesno == 0 ]]; then
+      iobinstallAdapter 1
+      return 0
+    else
+      iobinstallAdapter 2
+      return 0
+    fi
+  else
+    iobinstallAdapter 0
+    return 0
+  fi
+}
+
+function iobinstallAdapter() {
+# Function installs the required adapters >> 0=Reinstallation - 1=Reinstallation/Restore with backitup - 2=Reinstallation/Restore clean
+  if [ $1 -eq 0 ]; then
+    for adp in $standardAdapter; do
+      pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
+    done
+    pct exec $ctID -- bash -ci "mkdir -p /mnt/backup/$containername/javascript/"
+    pct exec $ctID -- bash -ci "iobroker set javascript.0 --mirrorPath \"/mnt/backup/$containername/javascript/\" --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
+    vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
+    pct exec $ctID -- bash -ci "iobroker set vis.0 --license "$vislicensecode" > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set influxdb.0 --host $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --user iobroker --password $ctRootpw --passwordConfirm $ctRootpw --dbname iobroker > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pveIP --name $var_robotname --select-options-225a0870-9529-3d5e-9970-0bbdb092c4d21 true --pwd $var_robotpw > /dev/null 2>&1"
+    if [[ $var_gwmanufacturer == "avm" ]]; then
+      pct exec $ctID -- bash -ci "iobroker add iobroker.fb-checkpresence --enabled > /dev/null 2>&1"
+      whiptail --yesno --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_006" 20 80
+      yesno=$?
+      if [[ $yesno == 0 ]]; then
+        pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $var_robotname --password $var_robotpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
+      else
+        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_007" 20 80 3>&1 1>&2 2>&3)
+        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_008" 20 80 3>&1 1>&2 2>&3)
+        pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $vargwadmin --password $vargwadminpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
+      fi
+    fi
+    if [[ $var_gwmanufacturer == "unifi" ]]; then
+      pct exec $ctID -- bash -ci "iobroker add iobroker.unifi --enabled > /dev/null 2>&1"
+      whiptail --yesno --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_006" 20 80
+      yesno=$?
+      if [[ $yesno == 0 ]]; then
+        pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $var_robotname --controllerPassword $var_robotpw > /dev/null 2>&1"
+      else
+        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_007" 20 80 3>&1 1>&2 2>&3)
+        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_008" 20 80 3>&1 1>&2 2>&3)
+        pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $vargwadmin --controllerPassword $vargwadminpw > /dev/null 2>&1"
+      fi
+    fi
+    if [ -n "$var_nasip" ] && $nasneeded; then
+      pct exec $ctID -- bash -ci "iobroker add iobroker.backitup --enabled > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --influxDBEnabled true --grafanaEnabled true --cifsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true --cifsMount $var_nasip --cifsUser $var_robotname --cifsPassword $var_robotpw --cifsDir \"/mnt/backup/$lxchostname/\" --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"changeme\" --javascriptsPath \"/mnt/backup/$lxchostname/javascript/\" > /dev/null 2>&1"
+      if $var_synologynas; then
+        pct exec $ctID -- bash -ci "iobroker add iobroker.synology --enabled > /dev/null 2>&1"
+        pct exec $ctID -- bash -ci "iobroker set synology.0 --host $var_nasip --login $var_robotname --password $var_robotpw --select-options-eaf2de04-a533-e52b-f1f9-4397440daa4718 true > /dev/null 2>&1"
+      fi
+    fi
+    pct exec $ctID -- bash -ci "iobroker passwd admin --password changeme > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set admin.0 --auth true > /dev/null 2>&1"
+  elif [ $1 = 1 ]; then
+    for adp in $restoreAdapter; do
+      pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
+    done
+    pct exec $ctID -- bash -ci "iobroker add iobroker.backitup --enabled > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --influxDBEnabled true --grafanaEnabled true --cifsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true --cifsMount $var_nasip --cifsUser $var_robotname --cifsPassword $var_robotpw --cifsDir \"/mnt/backup/$lxchostname/\" --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"changeme\" --javascriptsPath \"/mnt/backup/$lxchostname/javascript/\" > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set javascript.0 --mirrorPath \"/mnt/backup/$lxchostname/javascript/\" --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
+    vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
+    pct exec $ctID -- bash -ci "iobroker set vis.0 --license "$vislicensecode" > /dev/null 2>&1"
+  else
+    for adp in $restoreAdapter; do
+      pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
+    done
+    pct exec $ctID -- bash -ci "iobroker set javascript.0 --mirrorPath \"/mnt/backup/$lxchostname/javascript/\" --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
+    vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
+    pct exec $ctID -- bash -ci "iobroker set vis.0 --license "$vislicensecode" > /dev/null 2>&1"
+  fi
+}
