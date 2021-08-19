@@ -51,7 +51,7 @@ if [ -z "$var_rootmail" ]; then
   var_rootmail=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0060}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailserver" ]; then
-  var_mailserver=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0061}" smtp.$(echo "$var_rootmail" | cut -d\@ -f2) 10 80 3>&1 1>&2 2>&3)
+  var_mailserver=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0061}" 10 80 smtp.$(echo "$var_rootmail" | cut -d\@ -f2) 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailport" ]; then
   var_mailport=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0062}" 10 80 587 3>&1 1>&2 2>&3)
