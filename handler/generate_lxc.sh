@@ -9,7 +9,7 @@ source "$script_path/language/$var_language.sh"
 ctRootPW=""
 
 # make list of available Containers, hide already existing
-available_lxc=$(find $script_path/lxc/* -prune -type d | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
+available_lxc=$(find $script_path/lxc/* -prune -type d ! -path $script_path/lxc/_template | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 desc="desc_${var_language}"
 if [ -z "${!desc}" ]; then desc="desc_en"; fi 
