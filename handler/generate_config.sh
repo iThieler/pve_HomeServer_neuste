@@ -66,7 +66,7 @@ if [ -z "$var_mailtls" ]; then
   fi
 fi
 if [ -z "$var_mailusername" ]; then
-  var_mailusername=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0064}" $(pveum user list | grep "root@pam" | awk '{print $5}') 10 80 3>&1 1>&2 2>&3)
+  var_mailusername=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0064}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailpassword" ]; then
   var_mailpassword=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0065}" 10 80 3>&1 1>&2 2>&3)
