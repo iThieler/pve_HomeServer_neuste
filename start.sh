@@ -1,12 +1,8 @@
 #!/bin/bash
+# Testing Script with >> curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 
 export script_path="/root/pve_HomeServer"
-
-function githubLatest() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
-    grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
-}
+source "$script_path/handler/global_functions.sh"
 
 # check its master curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 if [[ $1 == "master" ]]; then
@@ -56,7 +52,6 @@ echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Load required files
 source "$script_path/bin/variables.sh"
-source "$script_path/handler/global_functions.sh"
 source "$script_path/language/_languages.sh"
 
 # Choose Script Language

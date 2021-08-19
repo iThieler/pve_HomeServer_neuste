@@ -22,6 +22,7 @@ clusterfileFW="/etc/pve/firewall/cluster.fw"
 hostfileFW="/etc/pve/nodes/$pve_hostname/host.fw"
 pve_timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 pve_osname=$(cat /etc/os-release | grep VERSION_CODENAME | cut -d= -f2)
+timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 
 # Hardware Variables
 rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
