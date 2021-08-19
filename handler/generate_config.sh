@@ -124,3 +124,5 @@ echo -e "var_senderaddress=\"$var_senderaddress\"" >> $shiot_configPath/$shiot_c
 echo -e "\n\0043 NAS configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_nasip=\"$var_nasip\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_synologynas=\"$var_synologynas\"" >> $shiot_configPath/$shiot_configFile
+
+exit 0
