@@ -158,8 +158,8 @@ echo -e "$lxcConfigOld" >> $lxcConfigFile
 # Create Firewall Group and Rules for Container
 echo "-- $txt_0257"
 clusterfileFW="/etc/pve/firewall/cluster.fw"
-if [ $(cat $clusterfileFW | grep -cw fwsg_$hostname_lxc) -eq 0 ]; then
-  echo -e "\n[group $(echo fwsg_$hostname_lxc | tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
+if [ $(cat $clusterfileFW | grep -cw fwsg_$containername) -eq 0 ]; then
+  echo -e "\n[group $(echo fwsg_$containername | tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
 
   if $sambaneeded; then
     echo -e "IN ACCEPT -source +network -p tcp -dport 445 -log nolog # Samba (smb)" >> $clusterfileFW
@@ -178,8 +178,8 @@ fi
 
 if [ ! -f "/etc/pve/firewall/$ctID.fw" ]; then touch "/etc/pve/firewall/$ctID.fw"; fi
 
-if [ $(cat /etc/pve/firewall/$ctID.fw | grep -cw fwsg_$hostname_lxc) -eq 0 ]; then
-  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP fwsg_$(echo $hostname_lxc | tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
+if [ $(cat /etc/pve/firewall/$ctID.fw | grep -cw fwsg_$containername) -eq 0 ]; then
+  echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP fwsg_$(echo $containername | tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
 fi
 
 # Cleanup Container History an reboot
