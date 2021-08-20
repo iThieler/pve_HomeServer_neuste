@@ -3,8 +3,6 @@
 # General Variables
 shiot_configPath="/opt/smarthome-iot_net"
 shiot_configFile=".config.sh"
-#script_path="/root/pve_HomeServer"
-#script_path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
 pve_version=$(pveversion | cut -d/ -f2 | cut -d- -f1)
 
@@ -25,15 +23,7 @@ pve_osname=$(cat /etc/os-release | grep VERSION_CODENAME | cut -d= -f2)
 timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 
 # Hardware Variables
-rootDisk=$(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"' | cut -d' ' -f2 | cut -d\" -f2 | sed 's#[0-9]*$##')
-
-# search second Harddisk and check if is SSD
-if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')/queue/rotational) -eq 0 ]]; then
-  secondDisk=$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')
-  ctTemplateDisk="data"
-else
-  ctTemplateDisk="local"
-fi
+rootDisk=$(eval $(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"'); echo $PKNAME | sed 's/[0-9]*$//')
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'  # if [[ ! $URL =~ $regexURL ]]; then; fi
