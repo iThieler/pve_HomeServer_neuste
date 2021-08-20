@@ -85,8 +85,9 @@ txt_0104="Enable S.M.A.R.T. on the system disk"
 txt_0105="Configure e-mail notification about system disk errors"
 txt_0106="Enable and configure Proxmox Firewall"
 txt_0107="all private networks, important for VPN"
-txt_0108="Mailserver successfully configured"
-txt_0109="Mailserver configuration not successful"
+txt_0108="Additional SSD is bound to Proxmox"
+txt_0109="Mailserver successfully configured"
+txt_0110="Mailserver configuration not successful"
 
 # bin/config_email.sh
 txt_0151="This is a test message, sent by the configuration script from https://SmartHome-IoT.net"
