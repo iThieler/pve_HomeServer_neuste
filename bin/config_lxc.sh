@@ -8,7 +8,7 @@ source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
-source "$script_path/lxc/$containername/config.sh"
+source "$script_path/lxc/$containername/generate.sh"
 
 # Load container language file if not exist load english language
 if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
@@ -99,25 +99,9 @@ pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -
 echo "-- $txt_0253"
 pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools > /dev/null 2>&1"
 
-# Commands that are executed in the container
-if [ -n "$Commands" ]; then
-  echo "-- $txt_0254"
-  IFS=$'\n'
-  for command in $Commands; do
-    $command
-  done
-  unset IFS
-fi
-
-# Commands to be executes in the Host (Proxmox) shell after complete Container creation
-#if [ -n "$pveCommands" ]; then
-#  echo "-- $txt_0255"
-#  IFS=$'\n'
-#  for command in $pveCommands; do
-#    $command
-#  done
-#  unset IFS
-#fi
+# Execute config. in Container dir to config Container
+echo "-- $txt_0254"
+if ! "$script_path/lxc/$containername/config.sh" $ctID $ctIP; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
 echo "-- $txt_0256"
