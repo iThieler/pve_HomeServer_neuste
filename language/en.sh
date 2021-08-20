@@ -99,12 +99,13 @@ txt_0156="The log file is now checked for known errors, any errors found are aut
 txt_0157="You can find the error log in the following file."
 
 # handler/gnerate_lxc.sh
-txt_0201="The following container has been created and is now prepared for configuration"
-txt_0202="The container was configured"
-txt_0203="The container could not be configured"
-txt_0204="The container could not be created"
-txt_0205="Select the containers you want to install. Enabled containers are already installed, if you disable them they will be uninstalled."
-txt_0206="The container could not be created because it already exists"
+txt_0201="Create a list of available containers"
+txt_0202="The following container has been created and is now prepared for configuration"
+txt_0203="The container was configured"
+txt_0204="The container could not be configured"
+txt_0205="The container could not be created"
+txt_0206="Select the containers you want to install. Enabled containers are already installed, if you disable them they will be uninstalled."
+txt_0207="The container could not be created because it already exists"
 
 # bin/config_lxc_sh.sh
 txt_0251="No NAS can be bound to the container as none is configured"
