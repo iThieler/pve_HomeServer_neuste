@@ -60,7 +60,7 @@ echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
 
 # configure the second hard disk if exists and is an SSD
 if [ -z $secondDisk ]; then
-  echo "-- ${lng_txt_bind_sec_hdd}"
+  echo "-- ${txt_0108}"
   parted -s /dev/$secondDisk "mklabel gpt" > /dev/null 2>&1
   parted -s -a opt /dev/$secondDisk mkpart primary ext4 0% 100% > /dev/null 2>&1
   mkfs.ext4 -Fq -L data /dev/"$secondDisk"1 > /dev/null 2>&1
@@ -78,9 +78,9 @@ if [ -z $secondDisk ]; then
 fi
 
 if bash $script_path/bin/config_email.sh; then
-  echo "- ${txt_0108}"
-else
   echo "- ${txt_0109}"
+else
+  echo "- ${txt_0110}"
 fi
 
 exit 0
