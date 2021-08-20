@@ -11,6 +11,7 @@ fi
 
 # ask User for Script Language
 if [ -z "$var_language" ]; then
+  source "$script_path/language/_languages.sh"
   var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   source "$script_path/language/$var_language.sh"
 else
