@@ -87,7 +87,6 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --description \"$description\" \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
@@ -98,11 +97,11 @@ function create() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 1"
-  if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
+  if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
-  echo -e "\n\n\nID: $ctID\nBefehl: $pctCreateCommand"
+  #echo -e "\n\n\nID: $ctID\nBefehl: $pctCreateCommand"
   sleep 10
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
