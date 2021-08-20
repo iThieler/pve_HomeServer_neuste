@@ -3,8 +3,8 @@
 source "$script_path/bin/variables.sh"
 source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
-source "$script_path/language/$var_language.sh"
 source "$shiot_configPath/$shiot_configFile"
+source "$script_path/language/$var_language.sh"
 
 ctID=$1
 containername="$(pct list | grep $ctID | awk '{print $3}')"
@@ -58,16 +58,15 @@ pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -z "$var_nasip" ] && $nasneeded; then
-    pct exec $ctID -- bash -ci "mkdir -p /media"
-    pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
-    pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
-    pct exec $ctID -- bash -ci "echo \"//$var_nasip/backups  /mnt/backup  cifs  credentials=/home/.smbbackup,uid=1000,gid=1000  0  0\" >> /etc/fstab"
-    pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbmedia"
-    pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
-    pct exec $ctID -- bash -ci "mount -a"
-  else
-    echo "-- $txt_0251"
-  fi
+  pct exec $ctID -- bash -ci "mkdir -p /media"
+  pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
+  pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
+  pct exec $ctID -- bash -ci "echo \"//$var_nasip/backups  /mnt/backup  cifs  credentials=/home/.smbbackup,uid=1000,gid=1000  0  0\" >> /etc/fstab"
+  pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbmedia"
+  pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
+  pct exec $ctID -- bash -ci "mount -a"
+else
+  echo "-- $txt_0251"
 fi
 
 # Install Samba to Container if sambaneeded Variable is true
