@@ -133,4 +133,7 @@ echo -e "\n\0043 NAS configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_nasip=\"$var_nasip\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_synologynas=\"$var_synologynas\"" >> $shiot_configPath/$shiot_configFile
 
+echo -e "\n\0043 Host-/ System-/ Proxmox variables" >> $shiot_configPath/$shiot_configFile
+echo -e "ctTemplateDisk=\"$ctTemplateDisk\"" >> $shiot_configPath/$shiot_configFile
+
 exit 0
