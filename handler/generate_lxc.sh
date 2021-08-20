@@ -9,7 +9,7 @@ source "$script_path/language/$var_language.sh"
 ctRootPW=""
 
 # make list of available Containers, hide already existing
-echo "-- Eine Liste mit verfügbaren Containern wird erstellt"
+echo "- Erstelle Liste mit verfügbaren Containern"
 available_lxc=$(find $script_path/lxc/* -prune -type d ! -path "$script_path/lxc/_*" | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 desc="desc_${var_language}"
@@ -66,7 +66,7 @@ function create() {
     ctIP=$(( $ctIPLast +5 ))
   else
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
-    ctIPLast=$(lxc-info $ctIDLast -iH | cut -d. -f4 | tail +2)
+    ctIPLast=$(lxc-info 100 -iH | grep $networkIP | cut -d. -f4)
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $ctIPLast +1 ))
   fi
@@ -104,9 +104,9 @@ function create() {
   #echo -e "\n\n\nID: $ctID\nBefehl: $pctCreateCommand"
   sleep 10
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
+    echo -e "- ${txt_0201}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
-    echo -e "- ${txt_0201}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     sleep 10
     if "$script_path/bin/config_lxc.sh" $ctID; then
       echo -e "- ${txt_0202}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
