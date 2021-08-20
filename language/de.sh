@@ -85,8 +85,9 @@ txt_0104="Aktiviere S.M.A.R.T. auf der Systemfestplatte"
 txt_0105="Konfiguriere E-Mail-Benachrichtigung über Systemfestplattenfehler"
 txt_0106="Aktiviere und konfiguriere Proxmox Firewall"
 txt_0107="alle privaten Netzwerke, wichtig für VPN"
-txt_0108="Mailserver erfolgreich konfiguriert"
-txt_0109="Mailserver konfiguration nicht erfolgreich"
+txt_0108="Zusätzliche SSD wird an Proxmox gebunden"
+txt_0109="Mailserver erfolgreich konfiguriert"
+txt_0110="Mailserver konfiguration nicht erfolgreich"
 
 # bin/config_email.sh
 txt_0151="Dies ist eine Testnachricht, versendet durch das Konfigurationsskript von https://SmartHome-IoT.net"
