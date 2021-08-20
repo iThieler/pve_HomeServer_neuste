@@ -101,7 +101,7 @@ txt_0157="You can find the error log in the following file."
 # handler/gnerate_lxc.sh
 txt_0201="Create a list of available containers"
 txt_0202="The following container has been created and is now prepared for configuration"
-txt_0203="The container was configured"
+txt_0203="Container configuration successfully completed"
 txt_0204="The container could not be configured"
 txt_0205="The container could not be created"
 txt_0206="Select the containers you want to install. Enabled containers are already installed, if you disable them they will be uninstalled."
