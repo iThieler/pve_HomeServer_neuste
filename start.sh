@@ -1,10 +1,9 @@
 #!/bin/bash
-# Testing Script with >> curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 
 export script_path="/root/pve_HomeServer"
 source "$script_path/handler/global_functions.sh"
 
-# check its master curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
+# check its master, call master with >> curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 if [[ $1 == "master" ]]; then
   gh_tag="master"
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/heads/master.tar.gz"
