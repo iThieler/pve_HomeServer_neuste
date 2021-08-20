@@ -9,7 +9,7 @@ memory=
 swap=
 unprivileged=
 features=""
-description=""
+description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 

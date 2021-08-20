@@ -1,6 +1,7 @@
 #!/bin/bash
 
 ctID=$1
+ctRootPW=$2
 containername="$(pct list | grep $ctID | awk '{print $3}')"
 
 source "$script_path/bin/variables.sh"
@@ -101,7 +102,7 @@ pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-com
 
 # Execute config. in Container dir to config Container
 echo "-- $txt_0254"
-if ! "$script_path/lxc/$containername/config.sh" $ctID $ctIP; then exit 1; fi
+if ! "$script_path/lxc/$containername/config.sh" $ctID $ctRootPW; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
 echo "-- $txt_0256"
