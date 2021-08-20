@@ -1,13 +1,14 @@
 #!/bin/bash
 
+ctID=$1
+containername="$(pct list | grep $ctID | awk '{print $3}')"
+
 source "$script_path/bin/variables.sh"
 source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
-
-ctID=$1
-containername="$(pct list | grep $ctID | awk '{print $3}')"
+source "$script_path/lxc/$containername/config.sh"
 
 # Load container language file if not exist load english language
 if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
