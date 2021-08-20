@@ -9,7 +9,7 @@ source "$script_path/language/$var_language.sh"
 ctRootPW=""
 
 # make list of available Containers, hide already existing
-echo "- Erstelle Liste mit verfügbaren Containern"
+echo "- ${txt_0201}"
 available_lxc=$(find $script_path/lxc/* -prune -type d ! -path "$script_path/lxc/_*" | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 desc="desc_${var_language}"
@@ -104,21 +104,21 @@ function create() {
   #echo -e "\n\n\nID: $ctID\nBefehl: $pctCreateCommand"
   sleep 10
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
-    echo -e "- ${txt_0201}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
+    echo -e "- ${txt_0202}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 10
     if "$script_path/bin/config_lxc.sh" $ctID; then
-      echo -e "- ${txt_0202}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
-    else
       echo -e "- ${txt_0203}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+    else
+      echo -e "- ${txt_0204}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
     fi
   else
-    echo -e "- ${txt_0204}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+    echo -e "- ${txt_0205}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0206}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
@@ -137,7 +137,7 @@ for choosed_lxc in $var_lxcchoice; do
     ctRootPW="$(generatePassword 12)"
     create $choosed_lxc $ctRootPW
   else
-    echo -e "- ${txt_0206}: ${wrd_6} \"$choosed_lxc\" "
+    echo -e "- ${txt_0207}: ${wrd_6} \"$choosed_lxc\" "
   fi
 done
 
