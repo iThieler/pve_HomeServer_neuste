@@ -57,7 +57,7 @@ sleep 10
 pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config > /dev/null 2>&1"
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
-if [ -z "$var_nasip" ] && $nasneeded; then
+if [ -n "$var_nasip" ] && $nasneeded; then
   pct exec $ctID -- bash -ci "mkdir -p /media"
   pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
   pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
@@ -86,7 +86,7 @@ if $sambaneeded; then
     fi
   done
   pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf > /dev/null 2>&1"
-  pct exec $ctID -- bash -ci "chown -R smb: /root/sambashare"
+  pct exec $ctID -- bash -ci "chown -R smb /root/sambashare"
   pct exec $ctID -- bash -ci "systemctl restart smbd.service"
 fi
 
@@ -175,6 +175,8 @@ if [ $(cat $clusterfileFW | grep -cw fwsg_$hostname_lxc) -eq 0 ]; then
     echo -e "IN ACCEPT$fwnw -p ${fwProt[i]} -dport ${fwPort[i]} -log nolog$fw_desc" >> $clusterfileFW
   done
 fi
+
+if [ ! -f "/etc/pve/firewall/$ctID.fw" ]; then touch "/etc/pve/firewall/$ctID.fw"; fi
 
 if [ $(cat /etc/pve/firewall/$ctID.fw | grep -cw fwsg_$hostname_lxc) -eq 0 ]; then
   echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP fwsg_$(echo $hostname_lxc | tr "[:upper:]" "[:lower:]")" > /etc/pve/firewall/$ctID.fw    # Allow generated Firewallgroup, don't change it
