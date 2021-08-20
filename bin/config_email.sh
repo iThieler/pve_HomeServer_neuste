@@ -4,6 +4,14 @@ source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
+# ask User for Script Language
+if [ -z "$var_language" ]; then
+  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  source "$script_path/language/$var_language.sh"
+else
+  source "$script_path/language/$var_language.sh"
+fi
+
 # config email notification
 if grep "root:" /etc/aliases; then
   sed -i "s/^root:.*$/root: $var_rootmail/" /etc/aliases
@@ -38,7 +46,7 @@ rm -rf "/etc/postfix/sasl_passwd"
 
 # test email settings
 echo -e "${txt_0151}\n\n${txt_0152}" | mail -s "[pve] ${txt_0153}" "$var_rootmail"
-whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" ${r} ${c}
+whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" 20 80
 yesno=$?
 if [[ $yesno == 1 ]]; then
   NEWT_COLORS='
@@ -55,7 +63,7 @@ if [[ $yesno == 1 ]]; then
     fi
   fi
   echo -e "${txt_0151}\n\n${txt_0152}" | mail -s "[pve] ${txt_0153}" "$var_rootmail"
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" ${r} ${c}
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" 20 80
   yesno=$?
   if [[ $yesno == 1 ]]; then
     NEWT_COLORS='
