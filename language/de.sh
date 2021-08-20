@@ -99,12 +99,13 @@ txt_0156="Die Protokolldatei wird nun auf bekannte Fehler überprüft, gefundene
 txt_0157="Du findest das Fehlerprotokol in der folgenden Datei."
 
 # handler/gnerate_lxc.sh
-txt_0201="Der folgende Container wurde erstellt und wird jetzt für die Konfiguration vorbereitet"
-txt_0202="Der Container wurde konfiguriert"
-txt_0203="Der Container konnte nicht konfiguriert werden"
-txt_0204="Der Container konnte nicht erstellt werden"
-txt_0205="Wähle die Container, die Du installieren möchtest. Aktivierte Container sind bereits installiert, wenn Du sie deaktivierst werden sie deinstalliert."
-txt_0206="Der Container konnte nicht erstellt werden, da er schon existiert"
+txt_0201="Erstelle eine Liste mit verfügbaren Containern"
+txt_0202="Der folgende Container wurde erstellt und wird jetzt für die Konfiguration vorbereitet"
+txt_0203="Der Container wurde konfiguriert"
+txt_0204="Der Container konnte nicht konfiguriert werden"
+txt_0205="Der Container konnte nicht erstellt werden"
+txt_0206="Wähle die Container, die Du installieren möchtest. Aktivierte Container sind bereits installiert, wenn Du sie deaktivierst werden sie deinstalliert."
+txt_0207="Der Container konnte nicht erstellt werden, da er schon existiert"
 
 # bin/config_lxc_sh.sh
 txt_0251="Es kann keine NAS an den Container gebunden werden, da keine konfiguriert ist"
