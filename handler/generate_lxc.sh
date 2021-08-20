@@ -66,7 +66,7 @@ function create() {
     ctIP=$(( $ctIPLast +5 ))
   else
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
-    ctIPLast=$(lxc-info 100 -iH | grep $networkIP | cut -d. -f4)
+    ctIPLast=$(lxc-info $ctIDLast -iH | grep $networkIP | cut -d. -f4)
     ctID=$(( $ctIDLast +1 ))
     ctIP=$(( $ctIPLast +1 ))
   fi
@@ -101,7 +101,6 @@ function create() {
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
-  #echo -e "\n\n\nID: $ctID\nBefehl: $pctCreateCommand"
   sleep 10
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     echo -e "- ${txt_0202}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
