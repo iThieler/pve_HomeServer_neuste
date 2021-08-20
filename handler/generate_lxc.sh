@@ -9,6 +9,7 @@ source "$script_path/language/$var_language.sh"
 ctRootPW=""
 
 # make list of available Containers, hide already existing
+echo "-- Eine Liste mitverfügbaren Containern wird erstellt"
 available_lxc=$(find $script_path/lxc/* -prune -type d ! -path "$script_path/lxc/_*" | while IFS= read -r d; do echo -e "$d"; done | sed -e "s#$script_path/lxc/##g" | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 desc="desc_${var_language}"
@@ -96,7 +97,7 @@ function create() {
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
-  pct create $ctID $pctCreateCommand > /dev/null 2>&1
+  pct create $ctID $pctCreateCommand #> /dev/null 2>&1
   sleep 10
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
