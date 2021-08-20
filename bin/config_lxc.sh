@@ -18,11 +18,6 @@ else
   source "$script_path/lxc/$containername/language/en.sh"
 fi
 
-# Load special functions for Container config
-if [ -f "$script_path/lxc/$containername/functions.sh" ]; then
-  source "$script_path/lxc/$containername/functions.sh"
-fi
-
 # Ask for SMTP-Password if SMTP is needed and Passwort is not save in shiot_configFile
 if $smtpneeded; then
   if [ -z "$var_mailpassword" ]; then
