@@ -87,6 +87,14 @@ if [ -z "$var_nasip" ]; then
   fi
 fi
 
+# config/search second Harddisk and check if is SSD
+if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')/queue/rotational) -eq 0 ]]; then
+  secondDisk=$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')
+  ctTemplateDisk="data"
+else
+  ctTemplateDisk="local"
+fi
+
 # ask the user if the passwords should be saved in the configuration file
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net"  "\n${txt_0069}" 10 80
 pws=$?
@@ -100,9 +108,9 @@ echo -e "\n\0043 General configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_language=\"$var_language\"" >> $shiot_configPath/$shiot_configFile
 
 echo -e "\n\0043 Network configuration" >> $shiot_configPath/$shiot_configFile
-echo -e "\0043 var_servervlan=\"$var_servervlan\"" >> $shiot_configPath/$shiot_configFile
-echo -e "\0043 var_smarthomevlan=\"$var_smarthomevlan\"" >> $shiot_configPath/$shiot_configFile
-echo -e "\0043 var_guestvlan=\"$var_guestvlan\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_servervlan=\"$var_servervlan\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_smarthomevlan=\"$var_smarthomevlan\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_guestvlan=\"$var_guestvlan\"" >> $shiot_configPath/$shiot_configFile
 
 echo -e "\n\0043 Netrobot configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_robotname=\"$var_robotname\"" >> $shiot_configPath/$shiot_configFile
