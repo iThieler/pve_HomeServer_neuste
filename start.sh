@@ -47,15 +47,23 @@ if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
 if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
 wget -qc $gh_download -O - | tar -xz
 mv "$script_path-${gh_tag}/" "$script_path/"
+find "$script_path/" -type f -iname "*.sh" -exec chmod +x {} \;
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Load required files
 source "$script_path/bin/variables.sh"
-source "$script_path/language/_languages.sh"
+if [ -f "$shiot_configPath/$shiot_configFile" ]; then
+  source "$shiot_configPath/$shiot_configFile"
+fi
 
-# Choose Script Language
-export var_language=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Language " "\nChoose the Script language" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-source "$script_path/language/$var_language.sh"
+# ask User for Script Language
+if [ -z "$var_language" ]; then
+  source "$script_path/language/_languages.sh"
+  export var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  source "$script_path/language/$var_language.sh"
+else
+  source "$script_path/language/$var_language.sh"
+fi
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
 fi
