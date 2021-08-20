@@ -99,7 +99,7 @@ txt_0156="Die Protokolldatei wird nun auf bekannte Fehler überprüft, gefundene
 txt_0157="Du findest das Fehlerprotokol in der folgenden Datei."
 
 # handler/gnerate_lxc.sh
-txt_0201="Der Container wurde erstellt"
+txt_0201="Der folgende Container wurde erstellt und wird jetzt für die Konfiguration vorbereitet"
 txt_0202="Der Container wurde konfiguriert"
 txt_0203="Der Container konnte nicht konfiguriert werden"
 txt_0204="Der Container konnte nicht erstellt werden"
