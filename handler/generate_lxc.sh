@@ -87,7 +87,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --description "$description" \
+                    --description \"$description\" \
                     --password \"$ctRootPW\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
@@ -98,7 +98,7 @@ function create() {
                     --force 1 \
                     --unprivileged $unprivileged \
                     --start 1"
-  if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
+  if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features \"$features\""; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
 
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
