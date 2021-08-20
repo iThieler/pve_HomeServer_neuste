@@ -109,12 +109,12 @@ function create() {
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 10
     if "$script_path/bin/config_lxc.sh" $ctID; then
-      echo -e "- ${txt_0203}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+      echo -e "- ${txt_0203}"
     else
-      echo -e "- ${txt_0204}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+      echo -e "- ${txt_0204}"
     fi
   else
-    echo -e "- ${txt_0205}: ${wrd_6} \"$containername\" -- ${wrd_7} \"$ctID\""
+    echo -e "- ${txt_0205}"
   fi
 }
 
