@@ -62,7 +62,8 @@ function create() {
   # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 0 ]; then
     ctID=100
-    ctIP=$(( $pve_ip +5 ))
+    ctIPLast=$(echo $pve_ip | cut -d. -f4)
+    ctIP=$(( $ctIPLast +5 ))
   else
     ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
     ctIPLast=$(lxc-info $ctIDLast -iH | cut -d. -f4 | tail +2)
