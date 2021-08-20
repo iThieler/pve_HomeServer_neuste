@@ -113,7 +113,7 @@ function create() {
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3)
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0205}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
