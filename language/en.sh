@@ -99,7 +99,7 @@ txt_0156="The log file is now checked for known errors, any errors found are aut
 txt_0157="You can find the error log in the following file."
 
 # handler/gnerate_lxc.sh
-txt_0201="The container has been created"
+txt_0201="The following container has been created and is now prepared for configuration"
 txt_0202="The container was configured"
 txt_0203="The container could not be configured"
 txt_0204="The container could not be created"
