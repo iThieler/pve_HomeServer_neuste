@@ -105,11 +105,12 @@ echo "-- $txt_0256"
 lxcConfigFile="/etc/pve/lxc/$ctID.conf"
 lxcConfigOld=$(cat $lxcConfigFile)
 
-if [ -n "$description" ]; then
-  echo -e "#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
-else
-  echo -e "#${description}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
-fi
+source "$script_path/lxc/$containername/description.sh"
+
+desc="desc_${var_language}"
+if [ -z "${!desc}" ]; then desc="desc_en"; fi 
+
+echo -e "#${!desc}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
