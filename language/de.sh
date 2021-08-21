@@ -77,8 +77,6 @@ txt_0066="Wie lautet die Absendeadresse, von der deine E-Mails versendet werden 
 txt_0067="Nutzt Du eine NAS in deinem Netzwerk?"
 txt_0068="Wie lautet die IP-Adresse deiner NAS?"
 txt_0069="Sollen deine Passwörter unverschlüsselt im Klartext in der Konfigurationsdatei gespeichert werden?"
-txt_0070="Der folgende Container wird gelöscht."
-txt_0071="Bist Du sicher das Du fortsetzen möchtest?"
 
 # bin/config_pve6.sh
 txt_0101="Deine NAS wird in Proxmox eingebunden"
@@ -109,6 +107,9 @@ txt_0204="Der Container konnte nicht konfiguriert werden"
 txt_0205="Der Container konnte nicht erstellt werden"
 txt_0206="Wähle die Container, die Du installieren möchtest. Aktivierte Container sind bereits installiert, wenn Du sie deaktivierst werden sie deinstalliert."
 txt_0207="Der Container konnte nicht erstellt werden, da er schon existiert"
+txt_0208="Der folgende Container wird gelöscht."
+txt_0209="Bist Du sicher das Du fortsetzen möchtest?"
+txt_0210="Der folgende Container wurde entfernt"
 
 # bin/config_lxc_sh.sh
 txt_0251="Es kann keine NAS an den Container gebunden werden, da keine konfiguriert ist"
