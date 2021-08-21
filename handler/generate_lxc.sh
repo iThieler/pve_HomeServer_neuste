@@ -139,7 +139,7 @@ for available_lxc in $lxc_available; do
       ############# Delete firewall rules of the container #############
       ##################################################################
       sleep 5
-      echo "- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
+      echo -e "- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: ${available_lxc}"
     fi
   fi
 done
