@@ -47,7 +47,6 @@ if [[ $variation == "2" ]]; then
     pct exec $ctID -- bash -ci "iobroker set javascript.0 --mirrorPath \"/mnt/backup/$containername/javascript/\" --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
     vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
     pct exec $ctID -- bash -ci "iobroker set vis.0 --license "$vislicensecode" > /dev/null 2>&1"
-    return 0
   else
     for adp in $restoreAdapter; do
       pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
@@ -55,7 +54,6 @@ if [[ $variation == "2" ]]; then
     pct exec $ctID -- bash -ci "iobroker set javascript.0 --mirrorPath \"/mnt/backup/$containername/javascript/\" --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
     vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
     pct exec $ctID -- bash -ci "iobroker set vis.0 --license "$vislicensecode" > /dev/null 2>&1"
-    return 0
   fi
 else
   for adp in $standardAdapter; do
@@ -103,7 +101,6 @@ else
   fi
   pct exec $ctID -- bash -ci "iobroker passwd admin --password changeme > /dev/null 2>&1"
   pct exec $ctID -- bash -ci "iobroker set admin.0 --auth true > /dev/null 2>&1"
-  return 0
 fi
 
 exit 0
