@@ -88,7 +88,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --password \"$ctRootpw\" \
+                    --password $ctRootpw \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
                     --memory $memory \
