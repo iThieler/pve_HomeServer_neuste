@@ -33,6 +33,7 @@ wrd_10="NAS"
 wrd_11="Media directory"
 wrd_12="Backup directory"
 wrd_13="Share path"
+wrd_14="or"
 
 # start.sh
 txt_0001="Script language changed to"
