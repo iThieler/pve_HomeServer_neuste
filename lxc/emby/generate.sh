@@ -15,7 +15,7 @@ description="${desc_001}"
 
 webgui=true
 webguiName=( "WebGUI" )
-webguiPort=( "32400")
+webguiPort=( "8096")
 webguiPath=( "/web" )
 webguiUser=( "" )
 webguiPass=( "" )
