@@ -54,7 +54,7 @@ pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_
 
 # Install Container Standardsoftware
 echo "-- $txt_0253"
-pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -n "$var_nasip" ] && $nasneeded; then
