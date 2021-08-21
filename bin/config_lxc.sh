@@ -108,7 +108,7 @@ lxcConfigOld=$(cat $lxcConfigFile)
 source "$script_path/lxc/$containername/description.sh"
 
 desc="desc_${var_language}"
-if [ -z "${!desc}" ]; then desc="desc_en"; fi 
+if [ -z "${!desc}" ]; then desc="desc_en"; fi
 
 echo -e "#${!desc}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
 
