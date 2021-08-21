@@ -6,9 +6,9 @@ source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
 ctID=$1
-ctRootpw="$2"
-ctIP=$(lxc-info $ctID -iH | grep $networkIP)
-containername=$(pct list | grep $ctID | awk '{print $3}')
+ctIP=$2
+containername="$3"
+ctRootpw="$4"
 
 source "$script_path/lxc/$containername/generate.sh"
 
