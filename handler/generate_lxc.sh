@@ -131,7 +131,7 @@ for available_lxc in $lxc_available; do
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0070}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${available_lxc}\n\n${txt_0071}" 20 80
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0208}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${available_lxc}\n\n${txt_0209}" 20 80
     yesno=$?
     if [ $yesno -eq 0 ]; then
       pct destroy $ctID --force 1 --purge 1 > /dev/null 2>&1
@@ -139,6 +139,7 @@ for available_lxc in $lxc_available; do
       ############# Delete firewall rules of the container #############
       ##################################################################
       sleep 5
+      echo "- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
     fi
   fi
 done
