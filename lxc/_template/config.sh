@@ -10,6 +10,11 @@ ctRootpw=$2                                                # Rootpassword of Con
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)               # Container IP get via Container ID
 containername=$(pct list | grep $ctID | awk '{print $3}')  # Hostname of the Container
 
-source "$script_path/lxc/$containername/language/$var_language.sh"  # Load Container Language File
+# Load container language file if not exist load english language
+if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
+  source "$script_path/lxc/$containername/language/$var_language.sh"
+else
+  source "$script_path/lxc/$containername/language/en.sh"
+fi
 
 ### Start with Commands and functions

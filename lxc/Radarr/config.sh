@@ -10,7 +10,12 @@ ctRootpw=$2
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)
 containername=$(pct list | grep $ctID | awk '{print $3}')
 
-source "$script_path/lxc/$containername/language/$var_language.sh"
+# Load container language file if not exist load english language
+if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
+  source "$script_path/lxc/$containername/language/$var_language.sh"
+else
+  source "$script_path/lxc/$containername/language/en.sh"
+fi
 
 # get latest gitHub Tag of embyMediaserver
 ghTag=$(githubLatest Radarr/Radarr)
