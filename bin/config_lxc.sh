@@ -111,7 +111,7 @@ fi
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
-    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$networkIP.$ctIP"; else webguiAdress="${webguiProt[i]}://$networkIP.$ctIP:${webguiPort[i]}"; fi
+    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$ctIP"; else webguiAdress="${webguiProt[i]}://$ctIP:${webguiPort[i]}"; fi
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
@@ -130,7 +130,7 @@ if [ -n "$var_nasip" ] && $nasneeded; then
 fi
 
 if $sambaneeded; then
-  echo -e "#\n#>> Samba (smb) <<\n#Windows-$wrd_13:   \\\\\\$networkIP.$ctIP\n#Mac-$wrd_13:       smb://$networkIP.$ctIP\n#Linux-$wrd_13:     smb://$networkIP.$ctIP" >> $lxcConfigFile
+  echo -e "#\n#>> Samba (smb) <<\n#Windows-$wrd_13:   \\\\\\$ctIP\n#Mac-$wrd_13:       smb://$ctIP\n#Linux-$wrd_13:     smb://$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echo -e "$lxcConfigOld" >> $lxcConfigFile
