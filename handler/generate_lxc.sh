@@ -108,7 +108,7 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 10
-    if "$script_path/bin/config_lxc.sh" $ctID $ctRootpw; then
+    if "$script_path/bin/config_lxc.sh" $ctID $ctIP $containername $ctRootpw; then
       echo -e "- ${txt_0203}"
     else
       echo -e "- ${txt_0204}"
