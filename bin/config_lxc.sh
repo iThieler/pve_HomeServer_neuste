@@ -6,7 +6,7 @@ source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
 ctID=$1
-ctRootpw=$2
+ctRootpw="$2"
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)
 containername=$(pct list | grep $ctID | awk '{print $3}')
 
@@ -98,7 +98,7 @@ pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -
 
 # Execute config. in Container dir to config Container
 echo "-- $txt_0254"
-if ! "$script_path/lxc/$containername/config.sh" $ctID $ctRootPW; then exit 1; fi
+if ! "$script_path/lxc/$containername/config.sh" $ctID $ctRootpw; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
 echo "-- $txt_0256"
@@ -106,14 +106,14 @@ lxcConfigFile="/etc/pve/lxc/$ctID.conf"
 lxcConfigOld=$(cat $lxcConfigFile)
 
 if [ -n "$description" ]; then
-  echo -e "#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   $ctRootPW" > $lxcConfigFile
+  echo -e "#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
 else
-  echo -e "#${description}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   $ctRootPW" > $lxcConfigFile
+  echo -e "#${description}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
 fi
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
-    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$ctIP"; else webguiAdress="${webguiProt[i]}://$ctIP:${webguiPort[i]}"; fi
+    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://${ctIP}"; else webguiAdress="${webguiProt[i]}://${ctIP}:${webguiPort[i]}"; fi
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
@@ -132,7 +132,7 @@ if [ -n "$var_nasip" ] && $nasneeded; then
 fi
 
 if $sambaneeded; then
-  echo -e "#\n#>> Samba (smb) <<\n#Windows-$wrd_13:   \\\\\\$ctIP\n#Mac-$wrd_13:       smb://$ctIP\n#Linux-$wrd_13:     smb://$ctIP" >> $lxcConfigFile
+  echo -e "#\n#>> Samba (smb) <<\n#Windows-$wrd_13:   \\\\\\${ctIP}\n#Mac-$wrd_13:       smb://${ctIP}\n#Linux-$wrd_13:     smb://${ctIP}" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echo -e "$lxcConfigOld" >> $lxcConfigFile
