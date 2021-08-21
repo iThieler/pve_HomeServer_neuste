@@ -23,6 +23,7 @@ pct exec $ctID -- bash -ci "apt-key adv --keyserver hkp://keyserver.ubuntu.com:8
 pct exec $ctID -- bash -ci "echo \"deb https://download.mono-project.com/repo/ubuntu stable-focal main\" | tee /etc/apt/sources.list.d/mono-official-stable.list > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get install -y mono-devel mediainfo nzbdrone > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /media/Series/ > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "mkdir -p /root/.config/NzbDrone/ > /dev/null 2>&1"
 pct push $ctID "$script_path/lxc/$containername/sonarr.service" "/etc/systemd/system/sonarr.service"
 pct push $ctID "$script_path/lxc/$containername/config.xml" "/root/.config/NzbDrone/config.xml"
 pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#'"$ctIP"'#' /root/.config/NzbDrone/config.xml"
