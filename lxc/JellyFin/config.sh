@@ -17,9 +17,12 @@ else
   source "$script_path/lxc/$containername/language/en.sh"
 fi
 
+lsb=$(lsb_release -c -s)
+
 pct exec $ctID -- bash -ci "add-apt-repository universe"
 pct exec $ctID -- bash -ci "wget -qO - https://repo.jellyfin.org/ubuntu/jellyfin_team.gpg.key | apt-key add - > /dev/null 2>&1"
-pct exec $ctID -- bash -ci "echo \"deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/ubuntu $( lsb_release -c -s ) main\" | tee /etc/apt/sources.list.d/jellyfin.list > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "echo \"deb [arch=$( dpkg --print-architecture )] https://repo.jellyfin.org/ubuntu ${lsb} main\" | tee /etc/apt/sources.list.d/jellyfin.list > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get install -y jellyfin > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /media/Movies/"
 pct exec $ctID -- bash -ci "mkdir -p /media/Series/"
