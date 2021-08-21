@@ -7,7 +7,7 @@ hddsize=16
 cpucores=2
 memory=2048
 swap=2048
-unprivileged=1
+unprivileged=0
 features="nesting=1,mount=cifs;nfs"
 description="${desc_001}"
 
@@ -19,7 +19,7 @@ webguiPort=( "8081" "8082" )
 webguiPath=( "" "/vis/" )
 webguiUser=( "admin" "" )
 webguiPass=( "changeme" )
-webguiProt=( "changeme" "" )
+webguiProt=( "http" "http" )
 
 ################### Firewall Configuration ####################
 
