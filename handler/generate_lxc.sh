@@ -15,7 +15,7 @@ echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 desc="desc_${var_language}"
 if [ -z "${!desc}" ]; then desc="desc_en"; fi 
 for lxc in $available_lxc; do
-  source $script_path/lxc/${lxc}/description.sh
+  source "$script_path/lxc/${lxc}/description.sh"
   if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
