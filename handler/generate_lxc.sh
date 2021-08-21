@@ -49,6 +49,7 @@ fi
 
 function create() {
   containername=$1
+  ctRootpw=$2
   # Load container language file if not exist load english language
   if "$script_path/lxc/${containername}/language/$var_language.sh"; then
     source "$script_path/lxc/${containername}/language/$var_language.sh"
@@ -87,7 +88,7 @@ function create() {
   pctCreateCommand="$ctTemplateDisk:vztmpl/$lxcTemplateName \
                     --ostype "$osType" \
                     --hostname $containername \
-                    --password \"$ctRootPW\" \
+                    --password \"$ctRootpw\" \
                     --rootfs $rootfs:$hddsize \
                     --cores $cpucores \
                     --memory $memory \
@@ -107,7 +108,7 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 10
-    if "$script_path/bin/config_lxc.sh" $ctID $ctRootPW; then
+    if "$script_path/bin/config_lxc.sh" $ctID $ctRootpw; then
       echo -e "- ${txt_0203}"
     else
       echo -e "- ${txt_0204}"
