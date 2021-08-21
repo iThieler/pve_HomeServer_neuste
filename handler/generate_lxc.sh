@@ -139,7 +139,7 @@ for available_lxc in $lxc_available; do
       ############# Delete firewall rules of the container #############
       ##################################################################
       sleep 5
-      echo -e "- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: ${available_lxc}"
+      echo -e "-- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: ${available_lxc}"
     fi
   fi
 done
@@ -150,7 +150,7 @@ for choosed_lxc in $var_lxcchoice; do
     ctRootPW="$(generatePassword 12)"
     create $choosed_lxc $ctRootPW
   else
-    echo -e "- ${txt_0207}: ${wrd_6} \"$choosed_lxc\" "
+    echo -e "- ${txt_0207}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $choosed_lxc"
   fi
 done
 
