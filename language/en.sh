@@ -112,7 +112,7 @@ txt_0209="Are you sure you want to continue?"
 txt_0210="The following container was removed"
 
 # bin/config_lxc_sh.sh
-txt_0251="No NAS can be bound to the container as none is configured"
+txt_0251="No NAS can be bound to the container because none is configured or the container does not need one"
 txt_0252="The container is being updated"
 txt_0253="Container software is being installed"
 txt_0254="Container is being configured"
