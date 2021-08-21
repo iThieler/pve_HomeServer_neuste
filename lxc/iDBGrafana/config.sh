@@ -4,20 +4,22 @@ source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
-source "$script_path/lxc/$containername/language/$var_language.sh"
 
 ctID=$1
 ctRootpw=$2
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)
-containername=$(pct list | grep 100 | awk '{print $3}')
+containername=$(pct list | grep $ctID | awk '{print $3}')
+
+source "$script_path/lxc/$containername/language/$var_language.sh"
 
 pct exec $ctID -- bash -ci "wget -qO - https://repos.influxdata.com/influxdb.key | apt-key add - > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "wget -qO - https://packages.grafana.com/gpg.key | apt-key add - > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "echo \"deb https://repos.influxdata.com/debian buster stable\" > /etc/apt/sources.list.d/influxdb.list"
 pct exec $ctID -- bash -ci "echo \"deb https://packages.grafana.com/oss/deb stable main\" > /etc/apt/sources.list.d/grafana.list"
+pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get install -y influxdb grafana > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /var/lib/grafana/dashboards/"
-pct push $ctID "$script_path/lxc/iDBGrafana/proxmox.json" "/var/lib/grafana/dashboards/proxmox.json"
+pct push $ctID "$script_path/lxc/$containername/proxmox.json" "/var/lib/grafana/dashboards/proxmox.json"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/dashboards/proxmox.json"
 pct exec $ctID -- bash -ci "echo -e \"[[udp]]\n enabled = true\n bind-address = \"0.0.0.0:8089\"\n database = \"proxmox\"\n batch-size = 1000\n batch-timeout = \"1s\" >> /etc/influxdb/influxdb.conf"
 pct exec $ctID -- bash -ci "sed -i 's+;default_home_dashboard_path =+default_home_dashboard_path = /var/lib/grafana/dashboards/proxmox.json+g' /etc/grafana/grafana.ini"
