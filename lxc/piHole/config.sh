@@ -25,7 +25,7 @@ pct exec $ctID -- bash -ci "curl -sSL https://install.pi-hole.net | bash /dev/st
 pct exec $ctID -- bash -ci "/usr/local/bin/pihole -a -p changeme > /dev/null 2>&1"
 pct push $ctID "$script_path/lxc/$containername/updateAdlist.sh" "/root/updateAdlist.sh"
 pct exec $ctID -- bash -ci "chmod +x /root/updateAdlist.sh"
-pct exec $ctID -- bash -ci "bash /root/updateAdlist.sh"
-pct exec $ctID -- bash -ci "crontab -l | { cat; echo \"0 03 1,14 * *   root    /root/updateAdlist.sh\"; } | crontab -"
+pct exec $ctID -- bash -ci "bash /root/updateAdlist.sh > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "crontab -l | { cat; echo \"0 03 1,14 * *   root    /root/updateAdlist.sh\"; } | crontab - > /dev/null 2>&1"
 
 exit 0
