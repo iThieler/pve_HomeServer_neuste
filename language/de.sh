@@ -33,6 +33,7 @@ wrd_10="NAS"
 wrd_11="Medienverzeichnis"
 wrd_12="Backupverzeichnis"
 wrd_13="Freigabepfad"
+wrd_14="oder"
 
 # start.sh
 txt_0001="Skriptsprache geändert zu"
