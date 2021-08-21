@@ -12,6 +12,8 @@ else
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/tags/${gh_tag}.tar.gz"
 fi
 
+var_language="$1"
+
 clear
 source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_tag}/logo.sh)
 logo
@@ -64,6 +66,7 @@ if [ -z "$var_language" ]; then
 else
   source "$script_path/language/$var_language.sh"
 fi
+
 if [[ ${var_language} != "en" ]]; then
   echo -e "- ${txt_0001} \"${var_language}\""
 fi
