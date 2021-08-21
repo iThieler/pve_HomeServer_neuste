@@ -17,6 +17,7 @@ tit_4="VLAN"
 tit_5="MAILSERVER"
 tit_6="LXC-Konfiguration"
 tit_7="VM-Konfiguration"
+tit_8="WARNUNG"
 
 # Words
 wrd_1="Benutzername"
@@ -76,6 +77,8 @@ txt_0066="Wie lautet die Absendeadresse, von der deine E-Mails versendet werden 
 txt_0067="Nutzt Du eine NAS in deinem Netzwerk?"
 txt_0068="Wie lautet die IP-Adresse deiner NAS?"
 txt_0069="Sollen deine Passwörter unverschlüsselt im Klartext in der Konfigurationsdatei gespeichert werden?"
+txt_0070="Der folgende Container wird gelöscht."
+txt_0071="Bist Du sicher das Du fortsetzen möchtest?"
 
 # bin/config_pve6.sh
 txt_0101="Deine NAS wird in Proxmox eingebunden"
