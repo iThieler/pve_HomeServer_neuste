@@ -112,7 +112,7 @@ txt_0209="Bist Du sicher das Du fortsetzen möchtest?"
 txt_0210="Der folgende Container wurde entfernt"
 
 # bin/config_lxc_sh.sh
-txt_0251="Es kann keine NAS an den Container gebunden werden, da keine konfiguriert ist"
+txt_0251="Es kann keine NAS an den Container gebunden werden, da keine konfiguriert ist, oder der Container keine benötigt"
 txt_0252="Der Container wird aktualisiert"
 txt_0253="Containersoftware wird installiert"
 txt_0254="Container wird konfiguriert"
