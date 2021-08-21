@@ -23,6 +23,7 @@ pct exec $ctID -- bash -ci "echo \"deb https://repos.influxdata.com/debian buste
 pct exec $ctID -- bash -ci "echo \"deb https://packages.grafana.com/oss/deb stable main\" > /etc/apt/sources.list.d/grafana.list"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get install -y influxdb grafana > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "systemctl unmask influxdb.service && systemctl enable influxdb && systemctl start influxdb"
 pct exec $ctID -- bash -ci "mkdir -p /var/lib/grafana/dashboards/"
 pct push $ctID "$script_path/lxc/$containername/proxmox.json" "/var/lib/grafana/dashboards/proxmox.json"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/dashboards/proxmox.json"
@@ -38,7 +39,7 @@ pct exec $ctID -- bash -ci "grafana-cli admin reset-admin-password changeme > /d
 pct exec $ctID -- bash -ci "systemctl stop grafana-server"
 pct exec $ctID -- bash -ci "rm /var/log/grafana/grafana.log"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/*"
-pct exec $ctID -- bash -ci "systemctl unmask influxdb.service && systemctl start influxdb"
+pct exec $ctID -- bash -ci "systemctl restart influxdb"
 pct exec $ctID -- bash -ci "systemctl daemon-reload && systemctl enable grafana-server > /dev/null 2>&1 && systemctl start grafana-server"
 echo -e "influxdb: InfluxDB\n          port 8089\n          server $ctIP" > /etc/pve/status.cfg
 
