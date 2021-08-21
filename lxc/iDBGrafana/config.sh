@@ -26,7 +26,7 @@ pct exec $ctID -- bash -ci "apt-get install -y influxdb grafana > /dev/null 2>&1
 pct exec $ctID -- bash -ci "mkdir -p /var/lib/grafana/dashboards/"
 pct push $ctID "$script_path/lxc/$containername/proxmox.json" "/var/lib/grafana/dashboards/proxmox.json"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/dashboards/proxmox.json"
-pct exec $ctID -- bash -ci "echo -e \"[[udp]]\n enabled = true\n bind-address = \"0.0.0.0:8089\"\n database = \"proxmox\"\n batch-size = 1000\n batch-timeout = \"1s\" >> /etc/influxdb/influxdb.conf"
+pct exec $ctID -- bash -ci "echo -e \"[[udp]]\n enabled = true\n bind-address = \"0.0.0.0:8089\"\n database = \"proxmox\"\n batch-size = 1000\n batch-timeout = \"1s\"\" >> /etc/influxdb/influxdb.conf"
 pct exec $ctID -- bash -ci "sed -i 's+;default_home_dashboard_path =+default_home_dashboard_path = /var/lib/grafana/dashboards/proxmox.json+g' /etc/grafana/grafana.ini"
 pct exec $ctID -- bash -ci "sed -n -i '$!N; s/\# enable anonymous access\n\;enabled = false/\# enable anonymous access\n\enabled = true/g;p' /etc/grafana/grafana.ini"
 pct exec $ctID -- bash -ci "sed -i 's+;allow_embedding = false+allow_embedding = true+g' /etc/grafana/grafana.ini"
@@ -40,6 +40,6 @@ pct exec $ctID -- bash -ci "rm /var/log/grafana/grafana.log"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/*"
 pct exec $ctID -- bash -ci "systemctl unmask influxdb.service && systemctl start influxdb"
 pct exec $ctID -- bash -ci "systemctl daemon-reload && systemctl enable grafana-server > /dev/null 2>&1 && systemctl start grafana-server"
-echo -e "influxdb: InfluxDB\n        port 8089\n        server $ctIP" > /etc/pve/status.cfg
+echo -e "influxdb: InfluxDB\n          port 8089\n          server $ctIP" > /etc/pve/status.cfg
 
 exit 0
