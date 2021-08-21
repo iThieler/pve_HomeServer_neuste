@@ -123,11 +123,22 @@ var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome
 # delete available Container not choosen
 lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
 for available_lxc in $lxc_available; do
+  ctID=$(pct list | grep -w "$available_lxc" | awk '{print $1}')
   if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
-    pct destroy $(pct list | grep -w "$available_lxc" | awk '{print $1}') --force 1 --purge 1 > /dev/null 2>&1
-    ##################################################################
-    ############# Delete firewall rules of the container #############
-    ##################################################################
+    NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0070}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${available_lxc}\n\n${txt_0071}" 20 80
+    yesno=$?
+    if [ $yesno -eq 0 ]; then
+      pct destroy $ctID --force 1 --purge 1 > /dev/null 2>&1
+      ##################################################################
+      ############# Delete firewall rules of the container #############
+      ##################################################################
+    fi
   fi
 done
 
