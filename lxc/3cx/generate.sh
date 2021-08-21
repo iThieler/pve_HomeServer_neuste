@@ -14,11 +14,11 @@ description="${desc_001}"
 #################### WebGUI Configuration #####################
 
 webgui=true
-webguiName=( "WebGUI (Admin)" "WebGUI (${lng_wrd_user})" "WebGUI (${desc_002})" )
+webguiName=( "WebGUI (Admin)" "WebGUI ($(echo ${wrd_8}))" "WebGUI ($(echo ${desc_002}))" )
 webguiPort=( "5001" "5001/webclient" "5015?v=2" )
 webguiPath=( "" "" "" )
-webguiUser=( "" "${desc_003}" "" )
-webguiPass=( "" "${desc_004}" "" )
+webguiUser=( "" "$(echo ${desc_003})" "" )
+webguiPass=( "" "$(echo ${desc_004})" "" )
 webguiProt=( "http" "http" "http" )
 
 ################### Firewall Configuration ####################
