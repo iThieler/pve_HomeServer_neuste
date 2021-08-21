@@ -1,15 +1,15 @@
 #!/bin/bash
 
-ctID=$1
-ctRootPW=$2
-containername="$(pct list | grep $ctID | awk '{print $3}')"
-
 source "$script_path/bin/variables.sh"
 source "$script_path/bin/var_containerOS.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 source "$script_path/lxc/$containername/generate.sh"
+
+ctID=$1
+ctRootPW=$2
+containername="$(pct list | grep $ctID | awk '{print $3}')"
 
 # Load container language file if not exist load english language
 if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
@@ -53,6 +53,10 @@ sleep 10
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
 pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config > /dev/null 2>&1"
 
+# Install Container Standardsoftware
+echo "-- $txt_0253"
+pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools > /dev/null 2>&1"
+
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -n "$var_nasip" ] && $nasneeded; then
   pct exec $ctID -- bash -ci "mkdir -p /media"
@@ -90,10 +94,6 @@ fi
 # Update/Upgrade Container
 echo "-- $txt_0252"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
-
-# Install Container Standardsoftware
-echo "-- $txt_0253"
-pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-release gnupg2 net-tools > /dev/null 2>&1"
 
 # Execute config. in Container dir to config Container
 echo "-- $txt_0254"
@@ -169,4 +169,5 @@ pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history"
 pct exec $ctID -- bash -ci "history -c"
 pct exec $ctID -- bash -ci "history -w"
 pct reboot $ctID --timeout 5
+
 exit 0
