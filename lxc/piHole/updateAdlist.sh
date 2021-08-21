@@ -11,7 +11,7 @@ DELETE FROM 'adlist';
 DELETE FROM 'sqlite_sequence' WHERE name='adlist';
 EOF
     cat $list_url | while read url; do
-        echo "INSERT INTO 'adlist' (address, enabled, comment) VALUES('$url', 1, 'Added by script');"
+        echo "INSERT INTO 'adlist' (address, enabled, comment) VALUES('$url', 1, 'Added by SmartHome-IoT.net');"
     done >>"$sql_dump"
     echo 'COMMIT;' >>"$sql_dump"
 
@@ -38,6 +38,8 @@ if [ ! $? -eq 0 ]; then
 fi
 sqlite3 /etc/pihole/gravity.db < $TMP_SQL
 rm $TMP_SQL
+rm $list
+rm $nlist
 
 # Update gravity
 /usr/local/bin/pihole updateGravity >/var/log/pihole_updateGravity.log || cat /var/log/pihole_updateGravity.log
