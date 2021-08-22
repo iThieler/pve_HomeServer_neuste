@@ -31,6 +31,11 @@ if [ "$pve_majorversion" -lt 6 ]; then
   exit 1
 fi
 
+# configure Community Repository in Proxmox
+echo -"-- ${txt_0103}"
+echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
+echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
+
 # Performs a system update and installs software required for this script
 {
   apt-get update 2>&1 >/dev/null
