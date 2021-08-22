@@ -25,7 +25,8 @@ pct exec $ctID -- bash -ci "apt-get install -y sabnzbdplus > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/incomplete > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/complete > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /media/Downloads/manualNZB > /dev/null 2>&1"
-pct exec $ctID -- bash -ci "rm /root/.sabnzbd/sabnzbd.ini"
+pct exec $ctID -- bash -ci "mkdir -p /root/.sabnzbd > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "if [ -f /root/.sabnzbd/sabnzbd.ini ]; then rm /root/.sabnzbd/sabnzbd.ini; fi"
 pct push $ctID "$script_path/lxc/$containername/sabnzbd.ini" "/root/.sabnzbd/sabnzbd.ini"
 pct exec $ctID -- bash -ci "sed -i 's+IPADRESSTOCHANGE=+'"$ctIP"'+' /root/.sabnzbd/sabnzbd.ini"
 pct exec $ctID -- bash -ci "sed -i 's+APIKEYTOCHANGE=+'"$( generateAPIKey 32 )"'+' /root/.sabnzbd/sabnzbd.ini"
@@ -33,6 +34,6 @@ pct exec $ctID -- bash -ci "sed -i 's+NZBAPIKEYTOCHANGE=+'"$( generateAPIKey 32 
 pct exec $ctID -- bash -ci "sed -i 's+USER=+USER=root+' /etc/default/sabnzbdplus"
 pct exec $ctID -- bash -ci "sed -i 's+HOST=+HOST='"$ctIP"'+' /etc/default/sabnzbdplus"
 pct exec $ctID -- bash -ci "sed -i 's+PORT=+PORT=80+' /etc/default/sabnzbdplus"
-pct exec $ctID -- bash -ci "systemctl start sabnzbdplus && systemctl enable sabnzbdplu"
+pct exec $ctID -- bash -ci "systemctl start sabnzbdplus && systemctl enable sabnzbdplus > /dev/null 2>&1"
 
 exit 0
