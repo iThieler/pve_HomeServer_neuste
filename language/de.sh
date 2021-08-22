@@ -57,6 +57,9 @@ txt_0018="Möchtest Du virtuelle Maschinen in Proxmox installieren?"
 txt_0019="Virtuelle Maschinen erfolgreich erstellt"
 txt_0020="Konfiguration von virtuellen Maschinen nicht gewünscht"
 txt_0021="Der Shell Verlauf von Proxmox Verlauf wurde bereinigt"
+txt_0022="Du verwendest Proxmox in der Version 7.X. Diese Version von Proxmox wurde noch nicht ausgiebig getestet, und sollte von daher nicht für den Produktiveinsatz genutzt werden."
+txt_0023="!!! DIE FUNKTIONSWEISE DIESES SKRIPTS KANN NICHT GARANTIERT WERDEN !!!"
+txt_0024="Möchtest Du trotzdem fortfahren?"
 
 # handler/generate_config.sh
 txt_0051="Wie lautet der Benutzername, den Du deinem Netzwerkroboter zugewiesen hast?"
