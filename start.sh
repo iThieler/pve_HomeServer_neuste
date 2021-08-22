@@ -3,16 +3,16 @@
 export script_path="/root/pve_HomeServer"
 source "$script_path/handler/global_functions.sh"
 
+var_language=$1
+
 # check its master, call master with >> curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
-if [[ $1 == "master" ]]; then
+if [[ $2 == "master" ]]; then
   gh_tag="master"
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/heads/master.tar.gz"
 else
   gh_tag=$(githubLatest "shiot/pve_HomeServer")
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/tags/${gh_tag}.tar.gz"
 fi
-
-if [[ $1 != "master" ]]; then var_language="$1"; fi
 
 clear
 source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_tag}/logo.sh)
