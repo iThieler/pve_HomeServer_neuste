@@ -21,11 +21,6 @@ if [ -n "$var_nasip" ]; then
   echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
 fi
 
-# configure Community Repository in Proxmox
-echo -"-- ${txt_0103}"
-echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
-echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
-
 # Enable S.M.A.R.T. support on system hard drive
 echo "-- ${txt_0104}"
 if [ $(smartctl -a /dev/$rootDisk | grep -c "SMART support is: Enabled") -eq 0 ]; then
