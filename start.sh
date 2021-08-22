@@ -45,8 +45,8 @@ fi
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
-if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
-if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
+####################################################################################if [ -d "$script_path/" ]; then rm -rf "$script_path/"; fi
+#####################################################################################if [ -d "$script_path-${gh_tag}/" ]; then rm -rf "$script_path-${gh_tag}/"; fi
 #wget -qc $gh_download -O - | tar -xz
 #mv "$script_path-${gh_tag}/" "$script_path/"
 #find "$script_path/" -type f -iname "*.sh" -exec chmod +x {} \;
