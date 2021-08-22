@@ -26,8 +26,8 @@ fi
 
 # Checks the PVE MajorRelease
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
-if [ ${pve_majorversion} -ne 6 ]; then
-  echo "- This script currently works only for Proxmox version 6.X"
+if [ ${pve_majorversion} -ne 6 ] || [ ${pve_majorversion} -ne 7 ]; then
+  echo "- This script currently works only for Proxmox version 6.X or version 7.X"
   exit 1
 fi
 
@@ -104,7 +104,20 @@ fi
 
 # Start and wait for Proxmox Basic configuration if it's not already done
 if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
-  if bash "$script_path/bin/config_pve${pve_majorversion}.sh"; then
+  if [ ${pve_majorversion} -eq 7 ]; then
+    NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+    whiptail --yesno --yes-button " ${btn_5} " --no-button " ${btn_6} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_1} " "\n${txt_0002}" 20 80
+    yesno=$?
+    if [ $yesno -eq 1 ]; then
+      exit 1
+    fi
+  fi
+  if bash "$script_path/bin/config_pve.sh"; then
     echo "- ${txt_0013}"
     echo "PVE config OK" >> "$shiot_configPath/helper"
   else
