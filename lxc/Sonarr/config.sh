@@ -28,6 +28,6 @@ pct push $ctID "$script_path/lxc/$containername/sonarr.service" "/etc/systemd/sy
 pct push $ctID "$script_path/lxc/$containername/config.xml" "/root/.config/NzbDrone/config.xml"
 pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#'"$ctIP"'#' /root/.config/NzbDrone/config.xml"
 pct exec $ctID -- bash -ci "sed -i 's#APIKEYTOCHANGE#'"$( generateAPIKey 32 )"'#' /root/.config/NzbDrone/config.xml"
-pct exec $ctID -- bash -ci "systemctl start sonarr && systemctl enable sonarr"
+pct exec $ctID -- bash -ci "systemctl start sonarr && systemctl enable sonarr > /dev/null 2>&1"
 
 exit 0
