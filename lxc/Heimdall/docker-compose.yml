@@ -9,6 +9,7 @@ services:
       - TZ=TIMEZONETOCHANGE
     volumes:
       - ./heimdall:/config
+      - ./heimdall/www/img:/var/www/localhost/heimdall/public/img
     ports:
       - 80:80
       - 443:443
