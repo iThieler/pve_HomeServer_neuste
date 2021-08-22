@@ -98,7 +98,7 @@ if [ ! -d "$shiot_configPath/" ]; then
     rm -d /mnt/cfg_temp > /dev/null 2>&1
     echo "- ${txt_0010}"
   else
-    if bash "$script_path/handler/generate_config.sh" $var_language $cfg_nasIP; then
+    if bash "$script_path/handler/generate_config.sh" $var_language; then
       echo "- ${txt_0011}"
     else
       echo "- ${txt_0012}"
