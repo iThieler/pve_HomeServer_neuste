@@ -23,15 +23,8 @@ fi
 
 # configure Community Repository in Proxmox
 echo -"-- ${txt_0103}"
-if [ -f "/etc/apt/sources.list.d/pve-enterprise.list" ]; then
-  rm /etc/apt/sources.list.d/pve-enterprise.list
-fi
-if [ ! -f "/etc/apt/sources.list.d/pve-community.list" ]; then
-  echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" >> /etc/apt/sources.list.d/pve-community.list 2>&1 >/dev/null
-fi
-if [ ! -f "/etc/apt/sources.list.d/ceph.list" ]; then
-  echo "deb http://download.proxmox.com/debian/ceph-octopus $pve_osname main" >> /etc/apt/sources.list.d/ceph.list 2>&1 >/dev/null
-fi
+echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
+echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
 
 # Enable S.M.A.R.T. support on system hard drive
 echo "-- ${txt_0104}"
