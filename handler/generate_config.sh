@@ -1,7 +1,6 @@
 #!/bin/bash
 
 var_language="$1"
-var_nasip="$2"
 
 source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
