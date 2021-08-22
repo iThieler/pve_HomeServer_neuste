@@ -23,6 +23,7 @@ pct exec $ctID -- bash -ci "echo \"deb https://repos.influxdata.com/ubuntu focal
 pct exec $ctID -- bash -ci "echo \"deb https://packages.grafana.com/oss/deb stable main\" > /etc/apt/sources.list.d/grafana.list"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get install -y influxdb=1.6.4-1build1 grafana > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "apt-mark hold influxdb"
 #pct exec $ctID -- bash -ci "systemctl unmask influxdb.service && systemctl enable influxdb && systemctl start influxdb"
 pct exec $ctID -- bash -ci "mkdir -p /var/lib/grafana/dashboards/"
 pct push $ctID "$script_path/lxc/$containername/proxmox.json" "/var/lib/grafana/dashboards/proxmox.json"
