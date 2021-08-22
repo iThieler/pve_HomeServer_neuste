@@ -12,7 +12,7 @@ else
   gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/tags/${gh_tag}.tar.gz"
 fi
 
-var_language="$1"
+if [[ $1 != "master" ]]; then var_language="$1"; fi
 
 clear
 source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_tag}/logo.sh)
