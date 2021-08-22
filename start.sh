@@ -41,7 +41,7 @@ fi
   apt-get autoremove -y 2>&1 >/dev/null
   pveam update 2>&1 >/dev/null
   echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-} | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "\nSystem will be updated, required software will be installed ..." 6 80 0
+} | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
 echo "- System updated and required software is installed"
 
 # Cloning gitHub Repository to lacal HDD
