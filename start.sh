@@ -2,6 +2,7 @@
 
 export script_path="/root/pve_HomeServer"
 source "$script_path/handler/global_functions.sh"
+source "$script_path/bin/variables.sh"
 
 var_language=$1
 
@@ -53,7 +54,6 @@ echo "- System updated and required software is installed"
 echo -e "- GitHub Repository Version \"${gh_tag}\" downloaded to local disk"
 
 # Load required files
-source "$script_path/bin/variables.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
