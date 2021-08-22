@@ -23,5 +23,7 @@ pct exec $ctID -- bash -ci "mkdir -p /root/heimdall/"
 pct push $ctID "$script_path/lxc/$containername/docker-compose.yml" "/root/heimdall/docker-compose.yml"
 pct exec $ctID -- bash -ci "sed -i 's#TIMEZONETOCHANGE#'"$timezone"'#' /root/heimdall/docker-compose.yml"
 pct exec $ctID -- bash -ci "cd /root/heimdall && docker-compose up -d --quiet-pull > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "rm /root/heimdall/heimdall/www/img/bg1.jpg"
+pct push $ctID "$script_path/lxc/$containername/bg1.jpg" "/root/heimdall/heimdall/www/img/bg1.jpg"
 
 exit 0
