@@ -57,6 +57,9 @@ txt_0018="Do you want to install virtual machines in Proxmox?"
 txt_0019="Virtual machines created successfully"
 txt_0020="Virtual machine configuration is not desired"
 txt_0021="The shell history of Proxmox history has been cleaned"
+txt_0022="You are using Proxmox version 7.X. This version of Proxmox has not been extensively tested, and therefore should not be used for production use."
+txt_0023="!!! THE FUNCTIONALITY OF THIS SCRIPT CAN NOT BE GUARANTEED !!!"
+txt_0024="Do you still want to continue?"
 
 # handler/generate_config.sh
 txt_0051="What is the username you assigned to your network robot?"
