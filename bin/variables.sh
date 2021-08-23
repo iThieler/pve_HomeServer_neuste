@@ -2,7 +2,7 @@
 
 # General Variables
 shiot_configPath="/opt/smarthome-iot_net"
-shiot_configFile=".config.sh"
+shiot_configFile="config.sh"
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
 pve_version=$(pveversion | cut -d/ -f2 | cut -d- -f1)
 
