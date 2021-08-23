@@ -110,30 +110,30 @@ source "$script_path/lxc/$containername/description.sh"
 desc="desc_${var_language}"
 if [ -z "${!desc}" ]; then desc="desc_en"; fi
 
-echo -e "#${!desc}\n#\n#>> Shell <<\n#$wrd_8:   root\n#$wrd_2:   ${ctRootpw}" > $lxcConfigFile
+echo -e "## ${!desc} ##\n###### Shell #####\n#%09$wrd_8%3A   root\n#%09$wrd_2%3A   ${ctRootpw}\n#" > $lxcConfigFile
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
-    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}://$networkIP.$ctIP"; else webguiAdress="${webguiProt[i]}://$networkIP.$ctIP:${webguiPort[i]}"; fi
+    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}%3A%2F%2F$networkIP.$ctIP"; else webguiAdress="${webguiProt[i]}%3A%2F%2F$networkIP.$ctIP:${webguiPort[i]}"; fi
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
-        echo -e "#\n#>> ${webguiName[i]} <<\n#$wrd_9:   $webguiAdress" >> $lxcConfigFile
+        echo -e "#\n###### ${webguiName[i]} #####\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
       else
-        echo -e "#>> ${webguiName[i]} <<\n#$wrd_9:   $webguiAdress" >> $lxcConfigFile
+        echo -e "###### ${webguiName[i]} #####\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
       fi
     fi
-    if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#$wrd_8:   ${webguiUser[i]}" >> $lxcConfigFile; fi
-    if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#$wrd_2:   ${webguiPass[i]}" >> $lxcConfigFile; fi
+    if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#%09$wrd_8%3A   ${webguiUser[i]}" >> $lxcConfigFile; fi
+    if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#%09$wrd_2%3A   ${webguiPass[i]}" >> $lxcConfigFile; fi
   done
 fi
 
 if [ -n "$var_nasip" ] && $nasneeded; then
-  echo -e "#\n#>> $wrd_10 <<\n#$wrd_11:   /media\n#$wrd_12:   /mnt/backup" >> $lxcConfigFile
+  echo -e "#\n###### $wrd_10 #####\n#%09$wrd_11%3A   %2Fmedia\n#%09$wrd_12%3A   %2Fmnt%2Fbackup" >> $lxcConfigFile
 fi
 
 if $sambaneeded; then
-  echo -e "#\n#>> Samba (smb) <<\n#Windows-$wrd_13:   \\\\\\$networkIP.$ctIP\n#Mac-$wrd_13:       smb://$networkIP.$ctIP\n#Linux-$wrd_13:     smb://$networkIP.$ctIP" >> $lxcConfigFile
+  echo -e "#\n###### Samba (smb) #####\n#%09Windows-$wrd_13%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_13%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_13%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echo -e "$lxcConfigOld" >> $lxcConfigFile
