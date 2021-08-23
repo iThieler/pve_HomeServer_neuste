@@ -101,6 +101,7 @@ echo "-- $txt_0254"
 if ! "$script_path/lxc/$containername/config.sh" $ctID $ctRootpw; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
+# Find ASCII URL-Encoding at https://www.key-shortcut.com/zeichentabellen/ascii-url-kodierung
 echo "-- $txt_0256"
 lxcConfigFile="/etc/pve/lxc/$ctID.conf"
 lxcConfigOld=$(cat $lxcConfigFile)
