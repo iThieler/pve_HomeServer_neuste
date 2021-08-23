@@ -16,7 +16,7 @@ webgui=true
 webguiName=( "WebGUI ($(echo ${wrd_16}))" "WebGUI ($(echo ${wrd_8}))" "WebGUI ($(echo ${wrd_15}))" )
 webguiPort=( "5001" "5001/webclient" "5015?v=2" )
 webguiPath=( "" "" "" )
-webguiUser=( "" "Extension" "" )
+webguiUser=( "" " " "" )
 webguiPass=( "" "$(echo ${desc_1})" "" )
 webguiProt=( "http" "http" "http" )
 
