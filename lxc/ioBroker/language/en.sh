@@ -1,9 +1,5 @@
 #!/bin/bash
 
-################### Container ##################
-desc_001="SmartHome System - Automate your life"
-
-#################### Config ####################
 lxc_txt_001="How do you want your ioBroker configured?"
 lxc_txt_002="Reinstall"
 lxc_txt_003="Restore backup"

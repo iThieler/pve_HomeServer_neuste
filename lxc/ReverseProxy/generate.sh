@@ -9,7 +9,6 @@ memory=512
 swap=512
 unprivileged=1
 features="keyctl=1,nesting=1"
-description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 

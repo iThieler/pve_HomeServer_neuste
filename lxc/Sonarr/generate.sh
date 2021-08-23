@@ -9,7 +9,6 @@ memory=256
 swap=256
 unprivileged=0
 features="mount=cifs"
-description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 

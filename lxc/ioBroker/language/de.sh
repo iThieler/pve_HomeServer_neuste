@@ -1,11 +1,5 @@
 #!/bin/bash
 
-################### Container ###################
-desc_001="SmartHome System - Steuere dein SmartHome"
-
-################### Firewall ###################
-
-################### Functions ##################
 lxc_txt_001="Wie soll dein ioBroker konfiguriert werden?"
 lxc_txt_002="Neuinstallation"
 lxc_txt_003="Backup wiederherstellen"

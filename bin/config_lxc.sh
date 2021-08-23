@@ -12,11 +12,13 @@ ctRootpw="$4"
 
 source "$script_path/lxc/$containername/generate.sh"
 
-# Load container language file if not exist load english language
-if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
-  source "$script_path/lxc/$containername/language/$var_language.sh"
-else
-  source "$script_path/lxc/$containername/language/en.sh"
+# If Container Language Folder exist, load container language file if, not exist load english language
+if [ -d "$script_path/lxc/$containername/language" ]; then
+  if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
+    source "$script_path/lxc/$containername/language/$var_language.sh"
+  else
+    source "$script_path/lxc/$containername/language/en.sh"
+  fi
 fi
 
 # Ask for SMTP-Password if SMTP is needed and Passwort is not save in shiot_configFile

@@ -10,13 +10,6 @@ ctRootpw=$2
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)
 containername=$(pct list | grep $ctID | awk '{print $3}')
 
-# Load container language file if not exist load english language
-if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
-  source "$script_path/lxc/$containername/language/$var_language.sh"
-else
-  source "$script_path/lxc/$containername/language/en.sh"
-fi
-
 standardAdapter="parser javascript web vis vis-inventwo vis-icontwo influxdb proxmox"
 restoreAdapter="parser javascript web vis"
 
@@ -33,8 +26,8 @@ gw=(\
   "none" "  ${lxc_txt_009}" off \
 )
 
-variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 15 "${todo[@]}" 3>&1 1>&2 2>&3)
-gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 15 "${gw[@]}" 3>&1 1>&2 2>&3)
+variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 10 "${todo[@]}" 3>&1 1>&2 2>&3)
+gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 10 "${gw[@]}" 3>&1 1>&2 2>&3)
 if [[ $variation == "2" ]]; then
   restorevariation=$(whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_004" 20 80 3>&1 1>&2 2>&3)
   yesno=$?

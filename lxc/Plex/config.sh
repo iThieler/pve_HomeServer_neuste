@@ -10,13 +10,6 @@ ctRootpw=$2
 ctIP=$(lxc-info $ctID -iH | grep $networkIP)
 containername=$(pct list | grep $ctID | awk '{print $3}')
 
-# Load container language file if not exist load english language
-if [ -f "$script_path/lxc/$containername/language/$var_language.sh" ]; then
-  source "$script_path/lxc/$containername/language/$var_language.sh"
-else
-  source "$script_path/lxc/$containername/language/en.sh"
-fi
-
 pct exec $ctID -- bash -ci "wget -q https://downloads.plex.tv/plex-keys/PlexSign.key -O - | apt-key add - > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "echo \"deb https://downloads.plex.tv/repo/deb/ public main\" | tee /etc/apt/sources.list.d/plexmediaserver.list > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"

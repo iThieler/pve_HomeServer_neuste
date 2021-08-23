@@ -9,7 +9,6 @@ memory=512
 swap=512
 unprivileged=1
 features=""
-description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 

@@ -9,7 +9,6 @@ memory=2048
 swap=2048
 unprivileged=0
 features="nesting=1,mount=cifs;nfs"
-description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 

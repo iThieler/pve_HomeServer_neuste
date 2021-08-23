@@ -9,7 +9,6 @@ memory=512
 swap=512
 unprivileged=0
 features="mount=cifs"
-description="${desc_001}"
 
 #################### WebGUI Configuration #####################
 
