@@ -140,10 +140,10 @@ fi
 echo -e "$lxcConfigOld" >> $lxcConfigFile
 
 # Send an email to the user when he needs to complete tasks manually 
-if [ -n $commandsAfterCFG ]; then
+if [ -n "$commandsAfterCFG" ]; then
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
-  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[pve] ${!desc}" "$var_rootmail"
+  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[SHIoT] ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
