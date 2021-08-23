@@ -34,6 +34,11 @@ wrd_11="Medienverzeichnis"
 wrd_12="Backupverzeichnis"
 wrd_13="Freigabepfad"
 wrd_14="oder"
+wrd_15="Einrichtung"
+wrd_16="Verwaltung"
+
+# Descriptions
+desc_1="per E-Mail versendet"
 
 # start.sh
 txt_0001="Skriptsprache geändert zu"
