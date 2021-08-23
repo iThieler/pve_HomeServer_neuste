@@ -100,14 +100,17 @@ function create() {
                     --start 1"
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
-
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
-  sleep 10
+  sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     echo -e "- ${txt_0202}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+    if [[ $osType == "debian" ]]; then
+      pct exec $ctID -- bash -ci "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+' /etc/ssh/sshd_config > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "service sshd restart"
+    fi
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
-    sleep 10
+    sleep 5
     if "$script_path/bin/config_lxc.sh" $ctID $ctIP $containername $ctRootpw; then
       echo -e "- ${txt_0203}"
     else
