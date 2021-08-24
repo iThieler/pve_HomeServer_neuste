@@ -141,7 +141,7 @@ echo -e "$lxcConfigOld" >> $lxcConfigFile
 if [ -n "$commandsAfterCFG" ]; then
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
-  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[SHIoT] ${$containername} - ${!desc}" "$var_rootmail"
+  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
