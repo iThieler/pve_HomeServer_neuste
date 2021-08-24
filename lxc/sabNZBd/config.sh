@@ -1,14 +1,14 @@
 #!/bin/bash
 
+ctID=$1
+ctIP=$2
+ctRootpw="$3"
+containername="$4"
+
 source "$script_path/bin/variables.sh"
 source "$script_path/handler/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
-
-ctID=$1
-ctRootpw=$2
-ctIP=$(lxc-info $ctID -iH | grep $networkIP)
-containername=$(pct list | grep $ctID | awk '{print $3}')
 
 pct exec $ctID -- bash -ci "add-apt-repository multiverse > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "add-apt-repository universe > /dev/null 2>&1"
