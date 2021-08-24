@@ -36,7 +36,6 @@ if [ "$pve_majorversion" -lt 6 ]; then
 fi
 
 function update() {
-  echo "function update mit parameter: $1"
   if [[ $1 == "server" ]]; then
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
@@ -220,7 +219,6 @@ function menu() {
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
   if [[ $sel_menu == "1" ]]; then
-    echo "update \"server\""
     update "server"
   elif [[ $sel_menu == "2" ]]; then
     update "all"
