@@ -6,9 +6,9 @@ source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
 ctID=$1
-ctRootpw="$2"
-ctIP=$(lxc-info $ctID -iH | grep $networkIP)
-containername=$(pct list | grep $ctID | awk '{print $3}')
+ctIP=$2
+ctRootpw="$3"
+containername="$4"
 
 source "$script_path/lxc/$containername/generate.sh"
 
@@ -96,7 +96,7 @@ pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -
 
 # Execute config. in Container dir to config Container
 echo "-- $txt_0254"
-if ! "$script_path/lxc/$containername/config.sh" $ctID $ctRootpw; then exit 1; fi
+if ! "$script_path/lxc/$containername/config.sh" ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
 # Find ASCII URL-Encoding at https://www.key-shortcut.com/zeichentabellen/ascii-url-kodierung
@@ -141,7 +141,7 @@ echo -e "$lxcConfigOld" >> $lxcConfigFile
 if [ -n "$commandsAfterCFG" ]; then
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
-  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[SHIoT] ${!desc}" "$var_rootmail"
+  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -s "[SHIoT] ${$containername} - ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
