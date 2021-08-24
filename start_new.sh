@@ -36,7 +36,8 @@ if [ "$pve_majorversion" -lt 6 ]; then
 fi
 
 function update() {
-  if [[ $1 == "server" ]]; then
+  parm="$1"
+  if [[ $parm == "server" ]]; then
     # Performs a system update
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
@@ -50,7 +51,7 @@ function update() {
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
     } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
     return 0
-  elif [[ $1 == "all" ]]; then
+  elif [[ $parm == "all" ]]; then
     available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
     for ctID in $available_lxc; do
       lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
