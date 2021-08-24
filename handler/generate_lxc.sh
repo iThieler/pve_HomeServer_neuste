@@ -105,6 +105,9 @@ function create() {
       pct exec $ctID -- bash -ci "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+' /etc/ssh/sshd_config > /dev/null 2>&1"
       pct exec $ctID -- bash -ci "service sshd restart"
     fi
+    # Install Container Standardsoftware
+    echo "-- $txt_0253"
+    pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
     if "$script_path/bin/config_lxc.sh" $ctID $ctRootpw; then
