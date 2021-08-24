@@ -36,8 +36,8 @@ if [ "$pve_majorversion" -lt 6 ]; then
 fi
 
 function update() {
+  echo "function update mit parameter: $1"
   if [[ $1 == "server" ]]; then
-    # Performs a system update
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
       apt-get update 2>&1 >/dev/null
