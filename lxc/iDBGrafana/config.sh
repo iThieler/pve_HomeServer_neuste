@@ -34,6 +34,6 @@ pct exec $ctID -- bash -ci "rm /var/log/grafana/grafana.log"
 pct exec $ctID -- bash -ci "chown grafana:grafana /var/lib/grafana/*"
 pct exec $ctID -- bash -ci "systemctl restart influxdb"
 pct exec $ctID -- bash -ci "systemctl daemon-reload && systemctl enable grafana-server > /dev/null 2>&1 && systemctl start grafana-server"
-echo -e "influxdb: InfluxDB\n          port 8089\n          server $ctIP" > /etc/pve/status.cfg
+echo -e "influxdb: InfluxDB\n          port 8089\n          server $networkIP.$ctIP" > /etc/pve/status.cfg
 
 exit 0
