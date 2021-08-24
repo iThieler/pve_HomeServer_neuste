@@ -49,7 +49,6 @@ function update() {
       pveam update 2>&1 >/dev/null
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
     } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
-    return 0
   elif [[ $1 == "all" ]]; then
     available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
     for ctID in $available_lxc; do
@@ -58,7 +57,6 @@ function update() {
         bash "$script_path/lxc/${lxc}/update.sh"
       fi
     done
-    return 0
   fi
 }
 
