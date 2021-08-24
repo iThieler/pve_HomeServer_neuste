@@ -56,10 +56,6 @@ sleep 10
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
 pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config > /dev/null 2>&1"
 
-# Install Container Standardsoftware
-echo "-- $txt_0253"
-pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
-
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -n "$var_nasip" ] && $nasneeded; then
   pct exec $ctID -- bash -ci "mkdir -p /media"
@@ -113,7 +109,7 @@ source "$script_path/lxc/$containername/description.sh"
 desc="desc_${var_language}"
 if [ -z "${!desc}" ]; then desc="desc_en"; fi
 
-echo -e "## ${!desc} ##\n###### Shell #####\n#%09$wrd_8%3A   root\n#%09$wrd_2%3A   ${ctRootpw}\n#" > $lxcConfigFile
+echo -e "#### ${!desc} ###\n####### Shell ######\n#%09$wrd_8%3A   root\n#%09$wrd_2%3A   ${ctRootpw}\n#" > $lxcConfigFile
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
@@ -121,9 +117,9 @@ if $webgui; then
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
-        echo -e "#\n###### ${webguiName[i]} #####\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
+        echo -e "#\n####### ${webguiName[i]} ######\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
       else
-        echo -e "###### ${webguiName[i]} #####\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
+        echo -e "####### ${webguiName[i]} ######\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
       fi
     fi
     if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#%09$wrd_8%3A   ${webguiUser[i]}" >> $lxcConfigFile; fi
@@ -132,11 +128,11 @@ if $webgui; then
 fi
 
 if [ -n "$var_nasip" ] && $nasneeded; then
-  echo -e "#\n###### $wrd_10 #####\n#%09$wrd_11%3A   %2Fmedia\n#%09$wrd_12%3A   %2Fmnt%2Fbackup" >> $lxcConfigFile
+  echo -e "#\n####### $wrd_10 ######\n#%09$wrd_11%3A   %2Fmedia\n#%09$wrd_12%3A   %2Fmnt%2Fbackup" >> $lxcConfigFile
 fi
 
 if $sambaneeded; then
-  echo -e "#\n###### Samba (smb) #####\n#%09Windows-$wrd_13%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_13%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_13%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
+  echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_13%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_13%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_13%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echo -e "$lxcConfigOld" >> $lxcConfigFile
