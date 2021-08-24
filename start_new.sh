@@ -58,6 +58,7 @@ function update() {
       fi
     done
   fi
+  menu
 }
 
 function fristRun() {
@@ -153,6 +154,7 @@ function install() {
       return 1
     fi
   fi
+  menu
 }
 
 function recover() {
@@ -169,6 +171,7 @@ function recover() {
       return 1
     fi
   fi
+  menu
 }
 
 function delete() {
@@ -185,6 +188,7 @@ function delete() {
       return 1
     fi
   fi
+  menu
 }
 
 function finish() {
@@ -217,52 +221,20 @@ function menu() {
 
   if [[ $choose == "1" ]]; then
     update "server"
-    menu
   elif [[ $choose == "2" ]]; then
     update "all"
-    menu
   elif [[ $choose == "3" ]]; then
-    if install "LXC"; then
-      echo "-- Containerinstallation erfolgreich"
-    else
-      echo "-- Containerinstallation nicht erfolgreich"
-    fi
-    menu
+    install "LXC"
   elif [[ $choose == "4" ]]; then
-    if install "VM"; then
-      echo "-- Installation der virtuellen Maschine erfolgreich"
-    else
-      echo "-- Installation der virtuellen Maschine nicht erfolgreich"
-    fi
-    menu
+    install "VM"
   elif [[ $choose == "5" ]]; then
-    if recover "LXC"; then
-      echo "-- Containerwiederherstellung erfolgreich"
-    else
-      echo "-- Containerwiederherstellung nicht erfolgreich"
-    fi
-    menu
+    recover "LXC"
   elif [[ $choose == "6" ]]; then
-    if recover "VM"; then
-      echo "-- Serverupdate erfolgreich"
-    else
-      echo "-- Serverupdate nicht erfolgreich"
-    fi
-    menu
+    recover "VM"
   elif [[ $choose == "7" ]]; then
-    if delete "LXC"; then
-      echo "-- Serverupdate erfolgreich"
-    else
-      echo "-- Serverupdate nicht erfolgreich"
-    fi
-    menu
+    delete "LXC"
   elif [[ $choose == "8" ]]; then
-    if delete "VM"; then
-      echo "-- Serverupdate erfolgreich"
-    else
-      echo "-- Serverupdate nicht erfolgreich"
-    fi
-    menu
+    delete "VM"
   elif [[ $choose == "Q" ]]; then
     finish
     exit 0
