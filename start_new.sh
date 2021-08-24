@@ -219,24 +219,24 @@ function menu() {
       "Q" "Beenden und zurück zur Skriptauswahl")
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
-  if [[ $choose == "1" ]]; then
+  if [[ $sel_menu == "1" ]]; then
     echo "update \"server\""
     update "server"
-  elif [[ $choose == "2" ]]; then
+  elif [[ $sel_menu == "2" ]]; then
     update "all"
-  elif [[ $choose == "3" ]]; then
+  elif [[ $sel_menu == "3" ]]; then
     install "LXC"
-  elif [[ $choose == "4" ]]; then
+  elif [[ $sel_menu == "4" ]]; then
     install "VM"
-  elif [[ $choose == "5" ]]; then
+  elif [[ $sel_menu == "5" ]]; then
     recover "LXC"
-  elif [[ $choose == "6" ]]; then
+  elif [[ $sel_menu == "6" ]]; then
     recover "VM"
-  elif [[ $choose == "7" ]]; then
+  elif [[ $sel_menu == "7" ]]; then
     delete "LXC"
-  elif [[ $choose == "8" ]]; then
+  elif [[ $sel_menu == "8" ]]; then
     delete "VM"
-  elif [[ $choose == "Q" ]]; then
+  elif [[ $sel_menu == "Q" ]]; then
     finish
     exit 0
   fi
