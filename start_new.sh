@@ -55,7 +55,7 @@ function update() {
     server
     available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
     for ctID in $available_lxc; do
-      lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
+      lxc=$(pct list | grep -w ${ctID} | awk '{print $3}')
       if [ -f "$script_path/lxc/${lxc}/update.sh" ]; then
         bash "$script_path/lxc/${lxc}/update.sh"
       fi
