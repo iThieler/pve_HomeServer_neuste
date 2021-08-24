@@ -31,7 +31,7 @@ for choosed_lxc in $var_lxcchoice; do
     textbox=white,red
     button=black,yellow
   ' \
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0208}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${choosed_lxc}\n\n${txt_0209}" 10 80
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0208}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${choosed_lxc}\n\n${txt_0209}" 15 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
     pct destroy $ctID --force 1 --purge 1 > /dev/null 2>&1
