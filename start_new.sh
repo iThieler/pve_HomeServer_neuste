@@ -237,6 +237,8 @@ function menu() {
   elif [[ $sel_menu == "Q" ]]; then
     finish
     exit 0
+  else
+    menu
   fi
 }
 
