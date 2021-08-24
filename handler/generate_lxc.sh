@@ -19,20 +19,14 @@ for lxc in $available_lxc; do
   if [ -z "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
-    else
-      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && ! $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
-    else
-      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   elif [ -n "$var_nasip" ] && $nasonly; then
     if [[ $(pct list | grep -cw "${lxc}") -eq 0 ]]; then
       echo -e "\"${lxc}\" \""${!desc}  "\" off \\" >> /tmp/lxclist.sh
-    else
-      echo -e "\"${lxc}\" \""${!desc}  "\" on \\" >> /tmp/lxclist.sh
     fi
   fi
 done
@@ -123,31 +117,6 @@ function create() {
 
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0206}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
-# delete available Container not choosen
-lxc_available=$(pct list | awk -F ' ' '{print $NF}' | tail -n +2 | while IFS= read -r d; do echo -e "$d"; done | sed ':M;N;$!bM;s#\n# #g')
-for available_lxc in $lxc_available; do
-  ctID=$(pct list | grep -w "$available_lxc" | awk '{print $1}')
-  if [[ ! "$available_lxc" =~ ^($var_lxcchoice)$ ]]; then
-    NEWT_COLORS='
-      window=black,red
-      border=white,red
-      textbox=white,red
-      button=black,yellow
-    ' \
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_8} " "\n${txt_0208}\n\n${wrd_7}: ${ctID}\n${wrd_6}: ${available_lxc}\n\n${txt_0209}" 20 80
-    yesno=$?
-    if [ $yesno -eq 0 ]; then
-      pct destroy $ctID --force 1 --purge 1 > /dev/null 2>&1
-      ##################################################################
-      ############# Delete firewall rules of the container #############
-      ##################################################################
-      sleep 5
-      echo -e "- ${txt_0210}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: ${available_lxc}"
-    fi
-  fi
-done
-
-# create choosen Container
 for choosed_lxc in $var_lxcchoice; do
   if [ $(pct list | grep -cw "$choosed_lxc") -eq 0 ]; then
     ctRootPW="$(generatePassword 12)"
