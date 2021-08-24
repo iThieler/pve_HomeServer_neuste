@@ -107,7 +107,7 @@ function create() {
     fi
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
-    if "$script_path/bin/config_lxc.sh" $ctID $ctIP $containername $ctRootpw; then
+    if "$script_path/bin/config_lxc.sh" $ctID $ctRootpw; then
       echo -e "- ${txt_0203}"
     else
       echo -e "- ${txt_0204}"
