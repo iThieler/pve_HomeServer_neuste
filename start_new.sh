@@ -61,7 +61,6 @@ function update() {
       fi
     done
   fi
-  menu
 }
 
 function fristRun() {
@@ -140,7 +139,6 @@ function fristRun() {
     echo "- ${txt_0014}"
     echo "PVE config not OK" >> "$shiot_configPath/helper"
   fi
-  menu
 }
 
 function install() {
@@ -157,7 +155,6 @@ function install() {
       return 1
     fi
   fi
-  menu
 }
 
 function recover() {
@@ -174,7 +171,6 @@ function recover() {
       return 1
     fi
   fi
-  menu
 }
 
 function delete() {
@@ -191,7 +187,6 @@ function delete() {
       return 1
     fi
   fi
-  menu
 }
 
 function finish() {
@@ -224,20 +219,28 @@ function menu() {
 
   if [[ $sel_menu == "1" ]]; then
     update "server"
+    menu
   elif [[ $sel_menu == "2" ]]; then
     update "all"
+    menu
   elif [[ $sel_menu == "3" ]]; then
     install "LXC"
+    menu
   elif [[ $sel_menu == "4" ]]; then
     install "VM"
+    menu
   elif [[ $sel_menu == "5" ]]; then
     recover "LXC"
+    menu
   elif [[ $sel_menu == "6" ]]; then
     recover "VM"
+    menu
   elif [[ $sel_menu == "7" ]]; then
     delete "LXC"
+    menu
   elif [[ $sel_menu == "8" ]]; then
     delete "VM"
+    menu
   elif [[ $sel_menu == "Q" ]]; then
     finish
     exit 0
