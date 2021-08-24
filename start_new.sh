@@ -220,6 +220,7 @@ function menu() {
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
   if [[ $choose == "1" ]]; then
+    echo "update \"server\""
     update "server"
   elif [[ $choose == "2" ]]; then
     update "all"
