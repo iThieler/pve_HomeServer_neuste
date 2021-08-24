@@ -103,7 +103,7 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
     if [[ $osType == "debian" ]]; then
       pct exec $ctID -- bash -ci "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+' /etc/ssh/sshd_config > /dev/null 2>&1"
-      pct exec $ctID -- bash -ci "service sshd restart"
+      #pct exec $ctID -- bash -ci "service sshd restart"
     fi
     # Install Container Standardsoftware
     echo "-- $txt_0253"
