@@ -45,10 +45,12 @@ function create() {
   containername=$1
   ctRootpw="$2"
   # Load container language file if not exist load english language
-  if "$script_path/lxc/${containername}/language/$var_language.sh"; then
-    source "$script_path/lxc/${containername}/language/$var_language.sh"
-  else
-    source "$script_path/lxc/${containername}/language/en.sh"
+  if [ -d "$script_path/lxc/${containername}/language/"]; then
+    if "$script_path/lxc/${containername}/language/$var_language.sh"; then
+      source "$script_path/lxc/${containername}/language/$var_language.sh"
+    else
+      source "$script_path/lxc/${containername}/language/en.sh"
+    fi
   fi
 
   # Load Container generate Variables
