@@ -218,18 +218,10 @@ function menu() {
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
   if [[ $choose == "1" ]]; then
-    if update "server"; then
-      echo "-- Serverupdate erfolgreich"
-    else
-      echo "-- Serverupdate nicht erfolgreich"
-    fi
+    update "server"
     menu
   elif [[ $choose == "2" ]]; then
-    if update "all"; then
-      echo "-- Server und Containerupdate erfolgreich"
-    else
-      echo "-- Server und Containerupdate nicht erfolgreich"
-    fi
+    update "all"
     menu
   elif [[ $choose == "3" ]]; then
     if install "LXC"; then
