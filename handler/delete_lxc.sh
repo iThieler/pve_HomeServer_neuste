@@ -23,8 +23,8 @@ source /tmp/lxclist.sh
 
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_6} " "\n${txt_0206}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
-for delete_lxc in $var_lxcchoice; do
-  ctID=$(pct list | grep -w "$delete_lxc" | awk '{print $1}')
+for choosed_lxc in $var_lxcchoice; do
+  ctID=$(pct list | grep -w "$choosed_lxc" | awk '{print $1}')
   NEWT_COLORS='
     window=black,red
     border=white,red
