@@ -18,17 +18,8 @@ if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
 
-# check its master, call master with >> curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
-if [[ $2 == "master" ]]; then
-  gh_tag="master"
-  gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/heads/master.tar.gz"
-else
-  gh_tag=$(githubLatest "shiot/pve_HomeServer")
-  gh_download="https://github.com/shiot/pve_HomeServer/archive/refs/tags/${gh_tag}.tar.gz"
-fi
-
 clear
-source <(curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/${gh_tag}/logo.sh)
+source "$script_path/logo.sh"
 logo
 
 # Checks if Proxmox ist installed
@@ -43,11 +34,6 @@ if [ "$pve_majorversion" -lt 6 ]; then
   echo "- This script currently works only for Proxmox version 6.X or version 7.X"
   exit 1
 fi
-
-# configure Community Repository in Proxmox
-echo -"-- ${txt_0103}"
-echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
-echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
 
 function update() {
   if [[ $1 == "server" ]]; then
@@ -65,14 +51,23 @@ function update() {
     } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
     return 0
   elif [[ $1 == "all" ]]; then
-
+    available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
+    for ctID in $available_lxc; do
+      lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
+      if [ -f "$script_path/lxc/${lxc}/update.sh" ]; then
+        bash "$script_path/lxc/${lxc}/update.sh"
+      fi
+    done
     return 0
-  else
-    return 1
   fi
 }
 
 function fristRun() {
+  # configure Community Repository in Proxmox
+  echo -"-- ${txt_0103}"
+  echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
+  echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
+
   # Performs a system update and installs software required for this script
   {
     apt-get update 2>&1 >/dev/null
@@ -149,14 +144,12 @@ function fristRun() {
 function install() {
   if [[ $1 == "LXC" ]]; then
     if bash "$script_path/handler/generate_lxc.sh"; then
-      echo "- ${txt_0016}"
       return 0
     else
       return 1
     fi
   elif [[ $1 == "VM" ]]; then
     if bash "$script_path/handler/generate_vm.sh"; then
-      echo "- ${txt_0019}"
       return 0
     else
       return 1
@@ -167,14 +160,12 @@ function install() {
 function recover() {
   if [[ $1 == "LXC" ]]; then
     if bash "$script_path/handler/recover_lxc.sh"; then
-      echo "- ${txt_0016}"
       return 0
     else
       return 1
     fi
   elif [[ $1 == "VM" ]]; then
     if bash "$script_path/handler/recover_vm.sh"; then
-      echo "- ${txt_0016}"
       return 0
     else
       return 1
@@ -185,14 +176,12 @@ function recover() {
 function delete() {
   if [[ $1 == "LXC" ]]; then
     if bash "$script_path/handler/delete_lxc.sh"; then
-      echo "- ${txt_0016}"
       return 0
     else
       return 1
     fi
   elif [[ $1 == "LXC" ]]; then
     if bash "$script_path/handler/delete_vm.sh"; then
-      echo "- ${txt_0016}"
       return 0
     else
       return 1
@@ -209,87 +198,85 @@ function finish() {
   cat /dev/null > ~/.bash_history
   history -c
   history -w
-  echo "- ${txt_0021}"
-  clear
   exit 0
 }
 
 function menu() {
-sel=("1"  "Server updaten" \
-     "2" "Server und alle Container aktualisieren" \
-     "" "" \
-     "3" "Container installieren und konfigurieren" \
-     "4" "virtuelle Maschinen installieren und Image einbinden" \
-     "" "" \
-     "5" "Container aus Backups wiederherstellen" \
-     "6" "virtuelle Maschinen aus Backup wiederherstellen" \
-     "" "" \
-     "7" "Container löschen" \
-     "8" "virtuelle Maschine löschen" \
-     "" "" \
-     "Q" "Beenden und zurück zur Skriptauswahl")
-sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
+  sel=("1"  "Server updaten" \
+      "2" "Server und alle Container aktualisieren" \
+      "" "" \
+      "3" "Container installieren und konfigurieren" \
+      "4" "virtuelle Maschinen installieren und Image einbinden" \
+      "" "" \
+      "5" "Container aus Backups wiederherstellen" \
+      "6" "virtuelle Maschinen aus Backup wiederherstellen" \
+      "" "" \
+      "7" "Container löschen" \
+      "8" "virtuelle Maschine löschen" \
+      "" "" \
+      "Q" "Beenden und zurück zur Skriptauswahl")
+  sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
-if [[ $choose == "1" ]]; then
-  if update "server"; then
-    echo "-- Serverupdate erfolgreich"
-  else
-    echo "-- Serverupdate nicht erfolgreich"
+  if [[ $choose == "1" ]]; then
+    if update "server"; then
+      echo "-- Serverupdate erfolgreich"
+    else
+      echo "-- Serverupdate nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "2" ]]; then
+    if update "all"; then
+      echo "-- Server und Containerupdate erfolgreich"
+    else
+      echo "-- Server und Containerupdate nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "3" ]]; then
+    if install "LXC"; then
+      echo "-- Containerinstallation erfolgreich"
+    else
+      echo "-- Containerinstallation nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "4" ]]; then
+    if install "VM"; then
+      echo "-- Installation der virtuellen Maschine erfolgreich"
+    else
+      echo "-- Installation der virtuellen Maschine nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "5" ]]; then
+    if recover "LXC"; then
+      echo "-- Containerwiederherstellung erfolgreich"
+    else
+      echo "-- Containerwiederherstellung nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "6" ]]; then
+    if recover "VM"; then
+      echo "-- Serverupdate erfolgreich"
+    else
+      echo "-- Serverupdate nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "7" ]]; then
+    if delete "LXC"; then
+      echo "-- Serverupdate erfolgreich"
+    else
+      echo "-- Serverupdate nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "8" ]]; then
+    if delete "VM"; then
+      echo "-- Serverupdate erfolgreich"
+    else
+      echo "-- Serverupdate nicht erfolgreich"
+    fi
+    menu
+  elif [[ $choose == "Q" ]]; then
+    finish
+    exit 0
   fi
-  menu
-elif [[ $choose == "2" ]]; then
-  if update "all"; then
-    echo "-- Server und Containerupdate erfolgreich"
-  else
-    echo "-- Server und Containerupdate nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "3" ]]; then
-  if install "LXC"; then
-    echo "-- Containerinstallation erfolgreich"
-  else
-    echo "-- Containerinstallation nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "4" ]]; then
-  if install "VM"; then
-    echo "-- Installation der virtuellen Maschine erfolgreich"
-  else
-    echo "-- Installation der virtuellen Maschine nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "5" ]]; then
-  if recover "LXC"; then
-    echo "-- Containerwiederherstellung erfolgreich"
-  else
-    echo "-- Containerwiederherstellung nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "6" ]]; then
-  if recover "VM"; then
-    echo "-- Serverupdate erfolgreich"
-  else
-    echo "-- Serverupdate nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "7" ]]; then
-  if delete "LXC"; then
-    echo "-- Serverupdate erfolgreich"
-  else
-    echo "-- Serverupdate nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "8" ]]; then
-  if delete "VM"; then
-    echo "-- Serverupdate erfolgreich"
-  else
-    echo "-- Serverupdate nicht erfolgreich"
-  fi
-  menu
-elif [[ $choose == "Q" ]]; then
-  finish
-  exit 0
-fi
 }
 
 if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then fristRun; else menu; fi
