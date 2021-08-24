@@ -36,7 +36,7 @@ if [ "$pve_majorversion" -lt 6 ]; then
 fi
 
 function update() {
-  if [[ $1 == "server" ]]; then
+  function server() {
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
       apt-get update 2>&1 >/dev/null
@@ -48,7 +48,11 @@ function update() {
       pveam update 2>&1 >/dev/null
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
     } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
+  }
+  if [[ $1 == "server" ]]; then
+    server
   elif [[ $1 == "all" ]]; then
+    server
     available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
     for ctID in $available_lxc; do
       lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
@@ -203,19 +207,19 @@ function finish() {
 }
 
 function menu() {
-  sel=("1"  "Server updaten" \
-      "2" "Server und alle Container aktualisieren" \
-      "" "" \
-      "3" "Container installieren und konfigurieren" \
-      "4" "virtuelle Maschinen installieren und Image einbinden" \
-      "" "" \
-      "5" "Container aus Backups wiederherstellen" \
-      "6" "virtuelle Maschinen aus Backup wiederherstellen" \
-      "" "" \
-      "7" "Container löschen" \
-      "8" "virtuelle Maschine löschen" \
-      "" "" \
-      "Q" "Beenden und zurück zur Skriptauswahl")
+  sel=("1" "... meinen Server updaten" \
+       "2" "... meinen Server und alle Container aktualisieren" \
+       "" "" \
+       "3" "... Container installieren und konfigurieren" \
+       "4" "... virtuelle Maschinen installieren und Image einbinden" \
+       "" "" \
+       "5" "... Container aus Backups wiederherstellen" \
+       "6" "... virtuelle Maschinen aus Backup wiederherstellen" \
+       "" "" \
+       "7" "... Container löschen" \
+       "8" "... virtuelle Maschine löschen" \
+       "" "" \
+       "Q" "... beenden und zurück zur Skriptauswahl")
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
   if [[ $sel_menu == "1" ]]; then
