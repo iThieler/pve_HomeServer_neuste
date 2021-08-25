@@ -128,20 +128,19 @@ function fristRun() {
     else
       if bash "$script_path/handler/generate_config.sh" $var_language; then
         echo "- ${txt_0011}"
+        # Start and wait for Proxmox Basic configuration if it's not already done
+        if bash "$script_path/bin/config_pve.sh"; then
+          echo "- ${txt_0013}"
+          echo "PVE config OK" >> "$shiot_configPath/helper"
+        else
+          echo "- ${txt_0014}"
+          echo "PVE config not OK" >> "$shiot_configPath/helper"
+        fi
       else
         echo "- ${txt_0012}"
         exit
       fi
     fi
-  fi
-
-  # Start and wait for Proxmox Basic configuration if it's not already done
-  if bash "$script_path/bin/config_pve.sh"; then
-    echo "- ${txt_0013}"
-    echo "PVE config OK" >> "$shiot_configPath/helper"
-  else
-    echo "- ${txt_0014}"
-    echo "PVE config not OK" >> "$shiot_configPath/helper"
   fi
 }
 
@@ -253,6 +252,11 @@ function menu() {
   fi
 }
 
-if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then fristRun; else menu; fi
+if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
+  fristRun
+  menu
+else
+  menu
+fi
 
 exit
