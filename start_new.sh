@@ -50,14 +50,16 @@ fi
 function update() {
   function server() {
     {
-      echo -e "XXX\n22\nSystem will be updated ...\nXXX"
-      apt-get update 2>&1 >/dev/null
+      echo -e "XXX\n12\nSystem will be updated ...\nXXX"
+      apt-get update
+      echo -e "XXX\n25\nSystem will be updated ...\nXXX"
+      apt-get upgrade -y
       echo -e "XXX\n47\nSystem will be updated ...\nXXX"
-      apt-get dist-upgrade -y 2>&1 >/dev/null
+      apt-get dist-upgrade -y
       echo -e "XXX\n64\nSystem will be updated ...\nXXX"
-      apt-get autoremove -y 2>&1 >/dev/null
+      apt-get autoremove -y
       echo -e "XXX\n79\nSystem will be updated ...\nXXX"
-      pveam update 2>&1 >/dev/null
+      pveam update 2>&1
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
     } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
   }
@@ -134,19 +136,6 @@ function fristRun() {
   fi
 
   # Start and wait for Proxmox Basic configuration if it's not already done
-  if [ ${pve_majorversion} -eq 7 ]; then
-    NEWT_COLORS='
-      window=black,red
-      border=white,red
-      textbox=white,red
-      button=black,yellow
-    ' \
-    whiptail --yesno --yes-button " ${btn_5} " --no-button " ${btn_6} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_1} " "\n${txt_0002}" 20 80
-    yesno=$?
-    if [ $yesno -eq 1 ]; then
-      exit 1
-    fi
-  fi
   if bash "$script_path/bin/config_pve.sh"; then
     echo "- ${txt_0013}"
     echo "PVE config OK" >> "$shiot_configPath/helper"
