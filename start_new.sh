@@ -38,12 +38,12 @@ fi
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
 if [ "$pve_majorversion" -lt 6 ]; then
   NEWT_COLORS='
-    window=black,red
-    border=white,red
-    textbox=white,red
-    button=black,yellow
-  ' \
-  whiptail --textbox "Dieses Skript funktioniert nur auf Servern mit Proxmox Version 6.X oder 7.X" 10 80
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+    whiptail --textbox "Dieses Skript funktioniert nur auf Servern mit Proxmox Version 6.X oder 7.X" 10 80
   exit 1
 fi
 
@@ -52,14 +52,10 @@ function update() {
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
       apt-get update 2>&1 >/dev/null
-      apt-mark hold keyboard-configuration
-      echo -e "XXX\n47\nSystem will be updated ...\nXXX"
-      apt-get upgrade -y 2>&1 >/dev/null
       echo -e "XXX\n47\nSystem will be updated ...\nXXX"
       apt-get dist-upgrade -y 2>&1 >/dev/null
       echo -e "XXX\n64\nSystem will be updated ...\nXXX"
       apt-get autoremove -y 2>&1 >/dev/null
-      apt-mark unhold keyboard-configuration
       echo -e "XXX\n79\nSystem will be updated ...\nXXX"
       pveam update 2>&1 >/dev/null
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
@@ -91,8 +87,10 @@ function fristRun() {
     echo -e "XXX\n29\nInstalliere benötigte Software ...\nXXX"
     apt-get install -y parted smartmontools libsasl2-modules lxc-pve 2>&1 >/dev/null
     echo -e "XXX\n87\nSystemupdate läuft ...\nXXX"
+    apt-mark hold keyboard-configuration
     apt-get dist-upgrade -y 2>&1 >/dev/null
     apt-get autoremove -y 2>&1 >/dev/null
+    apt-mark unhold keyboard-configuration
     pveam update 2>&1 >/dev/null
     echo -e "XXX\n98\nVorbereitung wird abgeschlossen ...\nXXX"
   } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "HomeServer vorbereitung" "System wird upgedatet, benötigte Software wird installiert ..." 6 80 0
