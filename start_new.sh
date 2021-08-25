@@ -24,14 +24,26 @@ logo
 
 # Checks if Proxmox ist installed
 if [ ! -d "/etc/pve/" ]; then
-  echo "- No Proxmox installation was found. This script can be executed only on Proxmox servers!"
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+    whiptail --textbox "Es wurde keine Proxmox installation gefunden. Dieses Skript kann nur auf Servern mit Proxmox ausgeführt werden!" 10 80
   exit 1
 fi
 
 # Checks the PVE MajorRelease
 pve_majorversion=$(pveversion | cut -d/ -f2 | cut -d. -f1)
 if [ "$pve_majorversion" -lt 6 ]; then
-  echo "- This script currently works only for Proxmox version 6.X or version 7.X"
+  NEWT_COLORS='
+    window=black,red
+    border=white,red
+    textbox=white,red
+    button=black,yellow
+  ' \
+  whiptail --textbox "Dieses Skript funktioniert nur auf Servern mit Proxmox Version 6.X oder 7.X" 10 80
   exit 1
 fi
 
@@ -40,10 +52,14 @@ function update() {
     {
       echo -e "XXX\n22\nSystem will be updated ...\nXXX"
       apt-get update 2>&1 >/dev/null
+      apt-mark hold keyboard-configuration
+      echo -e "XXX\n47\nSystem will be updated ...\nXXX"
+      apt-get upgrade -y 2>&1 >/dev/null
       echo -e "XXX\n47\nSystem will be updated ...\nXXX"
       apt-get dist-upgrade -y 2>&1 >/dev/null
       echo -e "XXX\n64\nSystem will be updated ...\nXXX"
       apt-get autoremove -y 2>&1 >/dev/null
+      apt-mark unhold keyboard-configuration
       echo -e "XXX\n79\nSystem will be updated ...\nXXX"
       pveam update 2>&1 >/dev/null
       echo -e "XXX\n98\nSystem will be updated ...\nXXX"
@@ -72,14 +88,14 @@ function fristRun() {
   # Performs a system update and installs software required for this script
   {
     apt-get update 2>&1 >/dev/null
-    echo -e "XXX\n29\nInstall required software ...\nXXX"
+    echo -e "XXX\n29\nInstalliere benötigte Software ...\nXXX"
     apt-get install -y parted smartmontools libsasl2-modules lxc-pve 2>&1 >/dev/null
-    echo -e "XXX\n87\nSystem will be updated ...\nXXX"
+    echo -e "XXX\n87\nSystemupdate läuft ...\nXXX"
     apt-get dist-upgrade -y 2>&1 >/dev/null
     apt-get autoremove -y 2>&1 >/dev/null
     pveam update 2>&1 >/dev/null
-    echo -e "XXX\n98\nCopy gitHub repository ...\nXXX"
-  } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
+    echo -e "XXX\n98\nVorbereitung wird abgeschlossen ...\nXXX"
+  } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "HomeServer vorbereitung" "System wird upgedatet, benötigte Software wird installiert ..." 6 80 0
   echo "- System updated and required software is installed"
 
   # If no Config Path is found, ask User to recover or to make a new Configuration
