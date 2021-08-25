@@ -4,7 +4,7 @@ nasonly=false
 
 ################## Descriptions ###################
 desc_en="SmartHome System - Automate your life"
-desc_de="SmartHome System - Steuere dein SmartHome"
+desc_de="SmartHome System - Automatisiere dein Leben"
 
 ################### Info E-Mail ###################
 commandsAfterCFG=""
