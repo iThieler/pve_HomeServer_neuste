@@ -117,9 +117,9 @@ if $webgui; then
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
-        echo -e "#\n####### ${webguiName[i]} ######\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
+        echo -e "#\n####### ${webguiName[i]} ######\n#%09$wrd_9%3A $webguiAdress" >> $lxcConfigFile
       else
-        echo -e "####### ${webguiName[i]} ######\n#%09$wrd_9%3A   $webguiAdress" >> $lxcConfigFile
+        echo -e "####### ${webguiName[i]} ######\n#%09$wrd_9%3A $webguiAdress" >> $lxcConfigFile
       fi
     fi
     if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#%09$wrd_8%3A   ${webguiUser[i]}" >> $lxcConfigFile; fi
