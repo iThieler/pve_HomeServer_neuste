@@ -18,7 +18,7 @@ function githubLatest() {
 
 # Function generates a random secure Linux password
 function generatePassword() {
-  chars=({0..9} {a..z} {A..Z} "_" "%" "&" "+" "-")
+  chars=({0..9} {a..z} {A..Z} "_" "%" "+" "-")
   for i in $(eval echo "{1..$1}"); do
     echo -n "${chars[$(($RANDOM % ${#chars[@]}))]}"
   done 
