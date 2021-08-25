@@ -88,6 +88,7 @@ function fristRun() {
     apt-get install -y parted smartmontools libsasl2-modules lxc-pve 2>&1 >/dev/null
     echo -e "XXX\n87\nSystemupdate läuft ...\nXXX"
     apt-mark hold keyboard-configuration
+    apt-get upgrade -y 2>&1 >/dev/null
     apt-get dist-upgrade -y 2>&1 >/dev/null
     apt-get autoremove -y 2>&1 >/dev/null
     apt-mark unhold keyboard-configuration
