@@ -100,7 +100,7 @@ function create() {
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     echo -e "- ${txt_0202}:\n  ${wrd_7}: $ctID\n  ${wrd_6}: $containername"
-    pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1 && apt-get dist-upgrade -y > /dev/null 2>&1"
     if [[ $osType == "debian" ]]; then
       pct exec $ctID -- bash -ci "systemctl stop sshd"
       pct exec $ctID -- bash -ci "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+' /etc/ssh/sshd_config > /dev/null 2>&1"
