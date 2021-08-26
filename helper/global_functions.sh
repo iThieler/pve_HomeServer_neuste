@@ -37,6 +37,31 @@ function cleanupHistory() {
   cat /dev/null > ~/.bash_history && history -c && history -w
 }
 
+function echoLOG() {
+  typ=$1
+  text=$2
+  shiotlogfile=/tmp/shiot_log.txt
+  nc='\033[0m'
+  red='\033[1;31m'
+  green='\033[1;32m'
+  yellow='\033[1;33m'
+  blue='\033[1;34m'
+
+  if [[ $typ == "r" ]]; then
+    echo -e "$(date +'%Y-%m-%d  %T')  [${red}ERROR${nc}]  $text"
+    echo -e "$(date +'%Y-%m-%d  %T')  [ERROR]  $text" >> $shiotlogfile
+  elif [[ $typ == "g" ]]; then
+    echo -e "$(date +'%Y-%m-%d  %T')  [${green}OK${nc}]     $text"
+    echo -e "$(date +'%Y-%m-%d  %T')  [OK]     $text" >> $shiotlogfile
+  elif [[ $typ == "y" ]]; then
+    echo -e "$(date +'%Y-%m-%d  %T')  [${yellow}WAIT${nc}]   $text"
+    echo -e "$(date +'%Y-%m-%d  %T')  [WARTE]   $text" >> $shiotlogfile
+  elif [[ $typ == "b" ]]; then
+    echo -e "$(date +'%Y-%m-%d  %T')  [${blue}INFO${nc}]   $text"
+    echo -e "$(date +'%Y-%m-%d  %T')  [INFO]   $text" >> $shiotlogfile
+  fi
+}
+
 function lxc_mountNAS() {
   ############################################################
   echo "- Funktion lxc_mountNAS"
