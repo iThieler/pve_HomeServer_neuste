@@ -36,6 +36,7 @@ wrd_13="Freigabepfad"
 wrd_14="oder"
 wrd_15="Einrichtung"
 wrd_16="Verwaltung"
+wrd_17="HomeServer"
 
 # Descriptions
 desc_1="per E-Mail versendet"
