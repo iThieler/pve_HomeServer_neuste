@@ -36,6 +36,7 @@ wrd_13="Share path"
 wrd_14="or"
 wrd_15="Setup"
 wrd_16="Admin"
+wrd_17="HomeServer"
 
 # Descriptions
 desc_1="sent by e-mail"
