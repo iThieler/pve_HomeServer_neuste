@@ -5,9 +5,10 @@ ctIP=$2
 ctRootpw="$3"
 containername="$4"
 configFile="cfg_ioBroker.sh"
+script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
-source "$script_path/bin/variables.sh"
-source "$script_path/handler/global_functions.sh"
+source "$script_path/helper/variables.sh"
+source "$script_path/helper/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 if [ -f "$shiot_configPath/$configFile" ]; then source "$shiot_configPath/$configFile"; fi
@@ -60,7 +61,7 @@ if [[ $variation == "1" ]]; then
   for adp in $standardAdapter; do
     pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
   done
-  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pveIP --name $var_robotname --select-options-225a0870-9529-3d5e-9970-0bbdb092c4d21 true --pwd $var_robotpw > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pve_ip --name $var_robotname --select-options-225a0870-9529-3d5e-9970-0bbdb092c4d21 true --pwd $var_robotpw > /dev/null 2>&1"
   if [ -z "$var_nasip" ]; then javamirrorpath=" --mirrorPath \"/mnt/backup/$containername/javascript/\""; fi
   pct exec $ctID -- bash -ci "iobroker set javascript.0$javamirrorpath --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
   if [ -z "$vislicensecode" ]; then

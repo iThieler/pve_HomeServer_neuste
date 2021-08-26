@@ -1,8 +1,9 @@
 #!/bin/bash
 
-export script_path="/root/pve_HomeServer"
-source "$script_path/bin/variables.sh"
-source "$script_path/handler/global_functions.sh"
+script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
+
+source "$script_path/helper/variables.sh"
+source "$script_path/helper/global_functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 
 # ask User for Script Language

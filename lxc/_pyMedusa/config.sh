@@ -4,9 +4,10 @@ ctID=$1                                                    # ID of Container
 ctRootpw=$2                                                # Rootpassword of Container generated thru the creation process
 ctIP="$3"                                                  # Container IP get via Container ID
 containername="$4"                                         # Hostname of the Container
+script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
-source "$script_path/bin/variables.sh"                     # Load varibale File
-source "$script_path/handler/global_functions.sh"          # Load global Functions File
+source "$script_path/helper/variables.sh"                  # Load varibale File
+source "$script_path/helper/global_functions.sh"           # Load global Functions File
 source "$shiot_configPath/$shiot_configFile"               # Load saved configuration variables
 source "$script_path/language/$var_language.sh"            # Load global Language File
 

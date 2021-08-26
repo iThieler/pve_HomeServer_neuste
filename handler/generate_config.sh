@@ -1,10 +1,10 @@
 #!/bin/bash
 
 var_language="$1"
+script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
-export script_path="/root/pve_HomeServer"
-source "$script_path/bin/variables.sh"
-source "$script_path/handler/global_functions.sh"
+source "$script_path/helper/variables.sh"
+source "$script_path/helper/global_functions.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
