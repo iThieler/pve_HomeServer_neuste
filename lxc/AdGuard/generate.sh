@@ -13,12 +13,12 @@ features=""
 #################### WebGUI Configuration #####################
 
 webgui=true
-webguiName=( "WebGUI" )
-webguiPort=( "" )
+webguiName=( "WebGUI" "WebGUI ($(echo ${wrd_15}))" )
+webguiPort=( "" "3000" )
 webguiPath=( "" )
-webguiUser=( "admin" )
-webguiPass=( "changeme" )
-webguiProt=( "http" )
+webguiUser=( "" )
+webguiPass=( "" )
+webguiProt=( "http" "http" )
 
 ################### Firewall Configuration ####################
 
