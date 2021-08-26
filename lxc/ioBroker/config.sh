@@ -44,11 +44,11 @@ if [[ $variation == "1" ]]; then
     gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 10 "${gw[@]}" 3>&1 1>&2 2>&3)
   fi
   if [ -z "$vislicensecode" ]; then
-    vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_005" 20 80 3>&1 1>&2 2>&3)
+    vislicensecode=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_005" 10 80 3>&1 1>&2 2>&3)
   fi
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
-      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "Wie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 20 80 3>&1 1>&2 2>&3)
+      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\nWie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 10 80 3>&1 1>&2 2>&3)
       if [ -n "$grafanaPW" ]; then grafanaPW="changeme"; fi
     fi
     grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
@@ -71,37 +71,37 @@ if [[ $variation == "1" ]]; then
   fi
   if [[ $gateway == "avm" ]]; then
     pct exec $ctID -- bash -ci "iobroker add iobroker.fb-checkpresence --enabled > /dev/null 2>&1"
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_006" 20 80
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_006" 10 80
     gwnetrobot=$?
     if [[ $gwnetrobot == 0 ]]; then
       pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $var_robotname --password $var_robotpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
     else
       if [ -z "$vargwadmin" ]; then
-        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_007" 20 80 3>&1 1>&2 2>&3)
+        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
       fi
       if [ -z "$vargwadminpw" ]; then
-        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_008" 20 80 3>&1 1>&2 2>&3)
+        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
       fi
       pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $vargwadmin --password $vargwadminpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
     fi
   elif [[ $gateway == "unifi" ]]; then
     pct exec $ctID -- bash -ci "iobroker add iobroker.unifi --enabled > /dev/null 2>&1"
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_006" 20 80
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_006" 10 80
     yesno=$?
     if [[ $yesno == 0 ]]; then
       pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $var_robotname --controllerPassword $var_robotpw > /dev/null 2>&1"
     else
       if [ -z "$vargwadmin" ]; then
-        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_007" 20 80 3>&1 1>&2 2>&3)
+        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
       fi
       if [ -z "$vargwadminpw" ]; then
-        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_008" 20 80 3>&1 1>&2 2>&3)
+        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
       fi
       pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $vargwadmin --controllerPassword $vargwadminpw > /dev/null 2>&1"
     fi
   fi
   if [ -z "$var_nasip" ]; then
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "$lxc_txt_011" 20 80
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_011" 10 80
     yesno=$?
     if [[ $yesno == 0 ]]; then
       synology=true
@@ -114,7 +114,7 @@ if [[ $variation == "1" ]]; then
 elif [[ $variation == "2" ]]; then
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
-      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "Wie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 20 80 3>&1 1>&2 2>&3)
+      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\Wie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 10 80 3>&1 1>&2 2>&3)
       if [ -z "$grafanaPW" ]; then grafanaPW="changeme"; fi
     fi
     grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
