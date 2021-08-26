@@ -21,6 +21,7 @@ fi
 
 clear
 source "$script_path/logo.sh"
+logo > /tmp/shiot_log.txt
 logo
 
 # Checks if Proxmox ist installed
