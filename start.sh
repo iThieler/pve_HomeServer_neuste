@@ -4,7 +4,7 @@
 export var_language=$1
 export script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
-source "$script_path/handler/global_functions.sh"
+source "$script_path/helper/functions.sh"
 source "$script_path/language/_languages.sh"
 if [ -n ${var_language} ]; then
   source "$script_path/language/$var_language.sh"
@@ -14,13 +14,13 @@ else
   source "$script_path/language/$var_language.sh"
   if [[ ${var_language} != "en" ]]; then echo -e "- ${txt_0001} \"${var_language}\""; fi
 fi
-source "$script_path/bin/variables.sh"
+source "$script_path/helper/variables.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
 
 clear
-source "$script_path/logo.sh"
+source "$script_path/images/shell_logo.sh"
 logo > /tmp/shiot_log.txt
 logo
 
