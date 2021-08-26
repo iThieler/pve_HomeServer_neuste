@@ -7,7 +7,7 @@ containername="$4"                                         # Hostname of the Con
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"                  # Load varibale File
-source "$script_path/helper/global_functions.sh"           # Load global Functions File
+source "$script_path/helper/functions.sh"           # Load global Functions File
 source "$shiot_configPath/$shiot_configFile"               # Load saved configuration variables
 source "$script_path/language/$var_language.sh"            # Load global Language File
 
