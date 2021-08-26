@@ -44,7 +44,7 @@ echo "-- ${txt_0106}"
 mkdir -p /etc/pve/firewall
 mkdir -p /etc/pve/nodes/$pve_hostname
 # Cluster level firewall
-echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_3}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0107}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +network -p tcp -dport 8006 -log nolog\n\n" > $clusterfileFW
+echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_3}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0107}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
 # Host level Firewall
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
 
