@@ -40,6 +40,7 @@ gw=(\
 if [ -z "$var_nasip" ]; then pct exec $ctID -- bash -ci "mkdir -p /mnt/backup/$containername/javascript/"; fi
 
 variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 10 "${todo[@]}" 3>&1 1>&2 2>&3)
+pveRootPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\nFür den Proxmox Adapter wird dein Proxmox Passwort benötigt, dieses Skript speichert dieses nicht!" 10 80 3>&1 1>&2 2>&3)
 if [[ $variation == "1" ]]; then
   if [ -z "$gateway" ]; then
     gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 10 "${gw[@]}" 3>&1 1>&2 2>&3)
@@ -61,7 +62,7 @@ if [[ $variation == "1" ]]; then
   for adp in $standardAdapter; do
     pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
   done
-  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pve_ip --name $var_robotname --select-options-225a0870-9529-3d5e-9970-0bbdb092c4d21 true --pwd $var_robotpw > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pve_ip --name root --pwd $pveRootPW > /dev/null 2>&1"
   if [ -z "$var_nasip" ]; then javamirrorpath=" --mirrorPath \"/mnt/backup/$containername/javascript/\""; fi
   pct exec $ctID -- bash -ci "iobroker set javascript.0$javamirrorpath --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
   if [ -z "$vislicensecode" ]; then
