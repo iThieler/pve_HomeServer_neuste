@@ -1,0 +1,8 @@
+https://nixvsevil.com/posts/wireguard-in-proxmox-lxc/
+https://apfelcast.com/die-einfachste-opensource-vpn-wireguard-installation-auf-proxmox-lxc/
+https://github.com/ngoduykhanh/wireguard-ui
+https://github.com/subspacecloud/subspace
+https://github.com/perara/wg-manager
+https://github.com/Nyr/wireguard-install    Installskript #################################
+https://www.youtube.com/watch?v=D1zp6n7ushM
+https://www.ivpn.net/knowledgebase/linux/linux-autostart-wireguard-in-systemd/

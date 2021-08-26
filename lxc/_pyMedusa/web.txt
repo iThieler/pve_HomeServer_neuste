@@ -1,0 +1,2 @@
+https://pymedusa.com/
+https://github.com/pymedusa/Medusa
