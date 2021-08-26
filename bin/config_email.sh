@@ -47,7 +47,7 @@ systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/nul
 rm -rf "/etc/postfix/sasl_passwd"
 
 # test email settings
-echo -e "${txt_0151}\n\n${txt_0152}" | mail -s "[pve] ${txt_0153}" "$var_rootmail"
+echo -e "${txt_0151}\n\n${txt_0152}" | mail -a "From: \"${wrd_17}\" <${var_mailserver}>" -s "[pve] ${txt_0153}" "$var_rootmail"
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" 20 80
 yesno=$?
 if [[ $yesno == 1 ]]; then
