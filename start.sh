@@ -21,7 +21,7 @@ fi
 
 clear
 source "$script_path/images/shell_logo.sh"
-logo > /tmp/shiot_log.txt
+logo > $shiot_configPath/$shiot_logfile
 logo
 
 # Checks if Proxmox ist installed
@@ -122,7 +122,7 @@ function fristRun() {
           cfg_IP=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0014}" 10 80 $networkIP. 3>&1 1>&2 2>&3)
         done
         cfg_dir=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0015}" 10 80 Path/to/File 3>&1 1>&2 2>&3)
-        cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+        cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 SHIoT_configuration.txt 3>&1 1>&2 2>&3)
         cfg_mountUser=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0017}" 10 80 netrobot 3>&1 1>&2 2>&3)
         cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0018} \"${cfg_mountUser}\"?" 10 80 3>&1 1>&2 2>&3)
         mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_IP/$cfg_dir /mnt/cfg_temp > /dev/null 2>&1
@@ -135,14 +135,14 @@ function fristRun() {
         if [ $yesno -eq 0 ]; then # Mount USB Media and copy File
           cfg_disk=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0021}" 10 80 /dev/ 3>&1 1>&2 2>&3)
           cfg_dir=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0015}" 10 80 Path/to/File 3>&1 1>&2 2>&3)
-          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 SHIoT_configuration.txt 3>&1 1>&2 2>&3)
           mount $cfg_disk /mnt/cfg_temp
           cp "/mnt/cfg_temp/$cfg_dir/$cfg_filename" "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
           umount $cfg_disk
           echoLOG g "${txt_0019}: $cfg_disk/$cfg_dir"
         elif [ $yesno -eq 1 ]; then # copy File
           cfg_path=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0022}" 10 80 /dev/ 3>&1 1>&2 2>&3)
-          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 SHIoT_configuration.txt 3>&1 1>&2 2>&3)
           cp "/$cfg_path/$cfg_filename" "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
           echoLOG g "${txt_0019}: $cfg_path"
         fi
@@ -217,6 +217,7 @@ function delete() {
 }
 
 function finish() {
+  echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "$shiot_configPath/$shiot_logfile"
   unset script_path
   unset var_language
   if [ -f "/tmp/lxclist.*" ]; then rm /tmp/lxclist.*; fi
