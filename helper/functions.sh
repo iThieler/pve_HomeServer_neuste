@@ -40,7 +40,7 @@ function cleanupHistory() {
 function echoLOG() {
   typ=$1
   text=$2
-  shiotlogfile=/tmp/shiot_log.txt
+  logfile=/opt/smarthome-iot_net/shiot_log.txt
   nc='\033[0m'
   red='\033[1;31m'
   green='\033[1;32m'
@@ -49,16 +49,16 @@ function echoLOG() {
 
   if [[ $typ == "r" ]]; then
     echo -e "$(date +'%Y-%m-%d  %T')  [${red}ERROR${nc}]  $text"
-    echo -e "$(date +'%Y-%m-%d  %T')  [ERROR]  $text" >> $shiotlogfile
+    echo -e "$(date +'%Y-%m-%d  %T')  [ERROR]  $text" >> $logfile
   elif [[ $typ == "g" ]]; then
     echo -e "$(date +'%Y-%m-%d  %T')  [${green}OK${nc}]     $text"
-    echo -e "$(date +'%Y-%m-%d  %T')  [OK]     $text" >> $shiotlogfile
+    echo -e "$(date +'%Y-%m-%d  %T')  [OK]     $text" >> $logfile
   elif [[ $typ == "y" ]]; then
     echo -e "$(date +'%Y-%m-%d  %T')  [${yellow}WAIT${nc}]   $text"
-    echo -e "$(date +'%Y-%m-%d  %T')  [WARTE]   $text" >> $shiotlogfile
+    echo -e "$(date +'%Y-%m-%d  %T')  [WARTE]   $text" >> $logfile
   elif [[ $typ == "b" ]]; then
     echo -e "$(date +'%Y-%m-%d  %T')  [${blue}INFO${nc}]   $text"
-    echo -e "$(date +'%Y-%m-%d  %T')  [INFO]   $text" >> $shiotlogfile
+    echo -e "$(date +'%Y-%m-%d  %T')  [INFO]   $text" >> $logfile
   fi
 }
 
