@@ -1,6 +1,6 @@
 #!/bin/bash
 
-var_language="$1"
+var_language=$1
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"
@@ -8,57 +8,77 @@ source "$script_path/helper/functions.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
+source "$script_path/language/$var_language.sh"
 
-# ask User for Script Language
-if [ -z "$var_language" ]; then
-  source "$script_path/language/_languages.sh"
-  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  source "$script_path/language/$var_language.sh"
-else
-  source "$script_path/language/$var_language.sh"
-fi
+function setNAS() {
+  i=0
+  repeat=$1
+  while ! pingIP $var_nasip && [ $i != 6 ]; do
+    if [ $i -ge 1 ] || [ -n "$repeat" ]; then
+      txt="${txt_0817}\n\n!!! ${txt_0818} !!!"
+    else
+      txt="${txt_0817}"
+    fi
+    var_nasip=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt}?" 10 80 $networkIP. 3>&1 1>&2 2>&3)
+    i=$(( $i + 1 ))
+  done
+
+  if [ $i -lt 6 ]; then
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0819}\n\nbackups\nmedia" 10 80
+  else
+    NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0820}\n\n${txt_0821}" 10 80
+    yesno=$?
+    if [ $yesno -eq 0 ]; then setNAS 1; fi
+  fi
+}
 
 # config Netrobot
 if [ -z "$var_robotname" ]; then
-  var_robotname=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0051}" 10 80 netrobot 3>&1 1>&2 2>&3)
+  var_robotname=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0801}" 10 80 netrobot 3>&1 1>&2 2>&3)
   if [ -z "$var_robotpw" ]; then
-    var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0052}\n${txt_0053}" 10 80 3>&1 1>&2 2>&3)
+    var_robotpw=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0802}\n${txt_0803}" 10 80 3>&1 1>&2 2>&3)
     if [[ $var_robotpw = "" ]]; then
       var_robotpw=$(generatePassword 26)
-      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0054}\n\n${wrd_1}: ${var_robotname}\n${wrd_2}: ${var_robotpw}" 10 80
+      whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0007}" "\n${txt_0804}\n\n${wrd_0003}: ${var_robotname}\n${wrd_0004}: ${var_robotpw}" 10 80
     fi
   fi
 fi
 
 # config VLAN
 if [ -z "$var_vlan" ]; then
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_4} " "\n${txt_0056}" 10 80
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0805}" 10 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
     if [ -z "$var_servervlan" ]; then
-      var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_4} " "\n${txt_0057}" 10 80 100 3>&1 1>&2 2>&3)
+      var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0806}" 10 80 100 3>&1 1>&2 2>&3)
     fi
     if [ -z "$var_smarthomevlan" ]; then
-      var_smarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_4} " "\n${txt_0058}" 10 80 200 3>&1 1>&2 2>&3)
+      var_smarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 200 3>&1 1>&2 2>&3)
     fi
     if [ -z "$var_guestvlan" ]; then
-      var_guestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_4} " "\n${txt_0059}" 10 80 300 3>&1 1>&2 2>&3)
+      var_guestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 300 3>&1 1>&2 2>&3)
     fi
   fi
 fi
 
 # config SMTP server for email notification
 if [ -z "$var_rootmail" ]; then
-  var_rootmail=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0060}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
+  var_rootmail=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0809}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailserver" ]; then
-  var_mailserver=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0061}" 10 80 smtp.$(echo "$var_rootmail" | cut -d\@ -f2) 3>&1 1>&2 2>&3)
+  var_mailserver=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0810}" 10 80 smtp.$(echo "$var_rootmail" | cut -d\@ -f2) 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailport" ]; then
-  var_mailport=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0062}" 10 80 587 3>&1 1>&2 2>&3)
+  var_mailport=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0811}" 10 80 587 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailtls" ]; then
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0063}" 10 80
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0812}" 10 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
     var_mailtls=yes
@@ -67,24 +87,21 @@ if [ -z "$var_mailtls" ]; then
   fi
 fi
 if [ -z "$var_mailusername" ]; then
-  var_mailusername=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0064}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
+  var_mailusername=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0813}" 10 80 $(pveum user list | grep "root@pam" | awk '{print $5}') 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_mailpassword" ]; then
-  var_mailpassword=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0065}" 10 80 3>&1 1>&2 2>&3)
+  var_mailpassword=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0814}" 10 80 3>&1 1>&2 2>&3)
 fi
 if [ -z "$var_senderaddress" ]; then
-  var_senderaddress=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0066}" 10 80 "notify@$(echo "$var_rootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
+  var_senderaddress=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0815}" 10 80 "notify@$(echo "$var_rootmail" | cut -d\@ -f2)" 3>&1 1>&2 2>&3)
 fi
 
 # config NAS
 if [ -z "$var_nasip" ]; then
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "${txt_0067}" 10 80
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0816}" 10 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
-    while ! pingIP $var_nasip; do
-      var_nasip=$(whiptail --inputbox --ok-button " ${btn_7} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0068}?" 10 80 $networkIP. 3>&1 1>&2 2>&3)
-    done
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_3}" "\n${txt_0055}\n\nbackups\nmedia" 10 80
+    setNAS
   fi
 fi
 
@@ -97,7 +114,7 @@ else
 fi
 
 # ask the user if the passwords should be saved in the configuration file
-whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net"  "\n${txt_0069}" 10 80
+whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0822}" 10 80
 pws=$?
 
 # create config File
@@ -136,5 +153,10 @@ echo -e "var_synologynas=\"$var_synologynas\"" >> $shiot_configPath/$shiot_confi
 
 echo -e "\n\0043 Host-/ System-/ Proxmox variables" >> $shiot_configPath/$shiot_configFile
 echo -e "ctTemplateDisk=\"$ctTemplateDisk\"" >> $shiot_configPath/$shiot_configFile
+
+if [ -f "$shiot_configPath/$shiot_configFile" ]; then
+  echoLOG g "${txt_0823}"
+else
+  echoLOG r "${txt_0824}"
 
 exit 0
