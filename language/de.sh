@@ -29,6 +29,7 @@ wrd_0004="Passwort"
 wrd_0005="Heimnetzwerk"
 wrd_0006="HomeServer"
 wrd_0007="Testnachricht"
+wrd_0008="Konfigurationsskript"
 
 # start.sh
 txt_0001="Skriptsprache geändert zu"
@@ -67,6 +68,7 @@ txt_0033="Container löschen"
 txt_0034="virtuelle Maschine löschen"
 txt_0035="beenden und zurück zur Skriptauswahl"
 txt_0036="Was möchtest Du tun?"
+txt_0037="Im Anhang die aktuelle Log-Datei"
 
 # /bin/config_email.sh
 txt_0101="Dein E-Mailserver wird in Proxmox zum versenden von Nachrichten konfiguriert"
@@ -105,8 +107,12 @@ txt_0307="Alle privaten Netzwerke, wichtig für VPN"
 txt_0308="Die zweite SSD wird als Datenlaufwerk für Gastdatenträger/Images und ISO-Dateien an Proxmox gebunden"
 txt_0309="Mailserver erfolgreich konfiguriert"
 txt_0310="Mailserver konfiguration nicht erfolgreich"
-txt_0311="E-Mailserver erfolgreich konfiguriert"
-txt_0312="E-Mailserver NICHT erfolgreich konfiguriert"
+txt_0311="Die Konfigurationsdatei wird auf der NAS gesichert"
+txt_0312="Die Konfigurationsdatei wird dir per E-Mail zugesendet, Passwörter wurden aus Sicherheitsgründen entfernt"
+txt_0313="Im Anhang findest du die Datei"
+txt_0314="Diese solltest du Sichern, um das Konfigurationsskript beim nächstenmal im Wiederherstellungsmodus starten zu können"
+txt_0315="E-Mailserver erfolgreich konfiguriert"
+txt_0316="E-Mailserver NICHT erfolgreich konfiguriert"
 
 # /bin/config_vm.sh
 txt_0401=""
