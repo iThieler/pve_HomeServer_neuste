@@ -19,7 +19,7 @@ function setNAS() {
     else
       txt="${txt_0817}"
     fi
-    var_nasip=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt}?" 10 80 $networkIP. 3>&1 1>&2 2>&3)
+    var_nasip=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt}" 10 80 $networkIP. 3>&1 1>&2 2>&3)
     i=$(( $i + 1 ))
   done
 
@@ -158,5 +158,6 @@ if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   echoLOG g "${txt_0823}"
 else
   echoLOG r "${txt_0824}"
+fi
 
 exit 0
