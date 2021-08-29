@@ -1,36 +1,31 @@
 #!/bin/bash
 
+var_language=$1
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"
 source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
+source "$script_path/language/$var_language.sh"
 
-# ask User for Script Language
-if [ -z "$var_language" ]; then
-  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  source "$script_path/language/$var_language.sh"
-else
-  source "$script_path/language/$var_language.sh"
-fi
-
-sleep 5
-# if available, mount NAS in Proxmox
+echoLOG y "${txt_0301}"
+sleep 1
+# if available, mount NAS in Proxmox and configure backups
+pvesh create /pools --poolid BackupPool --comment "${txt_0302}"
 if [ -n "$var_nasip" ]; then
-  echo "-- ${txt_0101}"
+  echoLOG b "${txt_0303}"
   pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup
-  pvesh create /pools --poolid BackupPool --comment "${txt_0102}"
   echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
 fi
 
 # Enable S.M.A.R.T. support on system hard drive
-echo "-- ${txt_0104}"
+echoLOG b "${txt_0304}"
 if [ $(smartctl -a /dev/$rootDisk | grep -c "SMART support is: Enabled") -eq 0 ]; then
   smartctl -s on -a /dev/$rootDisk
 fi
 
 # Set email notification about system hard disk errors, check every 12 hours
-echo "-- ${txt_0105}"
+echoLOG b "${txt_0305}"
 sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
 sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
 echo "start_smartd=yes" >> /etc/default/smartmontools
@@ -40,17 +35,17 @@ sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../..
 systemctl start smartmontools
 
 # configure Firewall in Proxmox
-echo "-- ${txt_0106}"
+echoLOG b "${txt_0306}"
 mkdir -p /etc/pve/firewall
 mkdir -p /etc/pve/nodes/$pve_hostname
 # Cluster level firewall
-echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_3}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0107}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
+echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_0005}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0307}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
 # Host level Firewall
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
 
 # configure the second hard disk if exists and is an SSD
 if [ -z $secondDisk ]; then
-  echo "-- ${txt_0108}"
+  echoLOG b "${txt_0308}"
   parted -s /dev/$secondDisk "mklabel gpt" > /dev/null 2>&1
   parted -s -a opt /dev/$secondDisk mkpart primary ext4 0% 100% > /dev/null 2>&1
   mkfs.ext4 -Fq -L data /dev/"$secondDisk"1 > /dev/null 2>&1
@@ -68,9 +63,9 @@ if [ -z $secondDisk ]; then
 fi
 
 if bash $script_path/bin/config_email.sh; then
-  echo "- ${txt_0109}"
+  echoLOG g "${txt_0311}"
 else
-  echo "- ${txt_0110}"
+  echoLOG r "${txt_0312}"
 fi
 
 exit 0
