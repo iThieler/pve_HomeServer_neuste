@@ -64,13 +64,13 @@ function create() {
   # Generates ID and IP-Address for the container to be created if is not the first
   if [ $(pct list | grep -cw 100) -eq 0 ]; then
     ctID=100
-    ctIPLast=$(echo $pve_ip | cut -d. -f4)
-    ctIP=$(( $ctIPLast +5 ))
+    ctIP=$(( $(echo $pve_ip | cut -d. -f4) + 5 ))
   else
-    ctIDLast=$(pct list | tail -n1 | awk '{print $1}')
-    ctIPLast=$(lxc-info $ctIDLast -iH | grep $networkIP | cut -d. -f4)
-    ctID=$(( $ctIDLast +1 ))
-    ctIP=$(( $ctIPLast +1 ))
+    ctID=100
+    while [ $(pct list | grep -c $ctID ) -eq 1 ]; do
+      ctID=$(( $ctID + 1 ))
+    done
+    ctIP=$(( $(lxc-info $(pct list | awk '{print $1}' | tail -n1) -iH | grep $networkIP | cut -d. -f4) + 1 ))
   fi
 
   # Create Container from Template File download Template OS if not exist
@@ -94,7 +94,7 @@ function create() {
                     --cores $cpucores \
                     --memory $memory \
                     --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$networkIP.$ctIP/$cidr,ip6=dhcp \
+                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$networkIP.$ctIP/$cidr \
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
