@@ -101,7 +101,7 @@ if $sambaneeded; then
 fi
 
 # Update/Upgrade Container
-echoLOG b "${0209}"
+echoLOG b "${txt_0209}"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
 
 # Execute config. in Container dir to config Container
