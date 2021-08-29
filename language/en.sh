@@ -24,11 +24,12 @@ tit_0007="HOMESERVER CONFIGURATION"
 # Words
 wrd_0001="ID"
 wrd_0002="Name"
-wrd_0003="Benutzername"
+wrd_0003="Username"
 wrd_0004="Password"
-wrd_0005="Heimnetzwerk"
+wrd_0005="Home network"
 wrd_0006="HomeServer"
-wrd_0007="Testnachricht"
+wrd_0007="Test message"
+wrd_0008="Configuration script"
 
 # start.sh
 txt_0001="Script language changed to"
@@ -67,6 +68,7 @@ txt_0033="Delete Containers"
 txt_0034="delete virtual machine"
 txt_0035="quit and return to script selection"
 txt_0036="What do you want to do?"
+txt_0037="Attached is the current log file"
 
 # /bin/config_email.sh
 txt_0101="Your mail server will be configured in proxmox to send messages"
@@ -105,8 +107,12 @@ txt_0307="All private networks, important for VPN"
 txt_0308="The second SSD is bound to Proxmox as a data drive for guest disks/images and ISO files"
 txt_0309="Mailserver successfully configured"
 txt_0310="Mailserver configuration not successful"
-txt_0311="Mailserver successfully configured"
-txt_0312="Mailserver NOT configured successfully"
+txt_0311="The configuration file will be backed up on the NAS".
+txt_0312="The configuration file will be sent to you by email, passwords have been removed for security reasons"
+txt_0313="In the attachment you find the file"
+txt_0314="You should save this, in order to be able to start the configuration script with the next time in the recovery mode"
+txt_0315="Email server successfully configured"
+txt_0316="Email server NOT configured successfully"
 
 # /bin/config_vm.sh
 txt_0401=""
