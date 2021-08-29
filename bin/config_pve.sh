@@ -62,10 +62,23 @@ if [ -z $secondDisk ]; then
   systemctl restart smartmontools
 fi
 
+# save Configfile to NAS
+if [ -n "$var_nasip" ]; then
+  echoLOG p "${txt_0311}"
+  cp $shiot_configPath/$shiot_configFile /mnt/pve/backups/SHIoT_configuration.txt > /dev/null 2>&1
+fi
+
+# mail Configfile to root
+echoLOG p "${txt_0312}"
+cp $shiot_configPath/$shiot_configFile /tmp/SHIoT_configuration.txt
+sed -i 's/var_robotpw=".*"/var_robotpw=""/g' /tmp/SHIoT_configuration.txt
+sed -i 's/var_mailpassword=".*"/var_mailpassword=""/g' /tmp/SHIoT_configuration.txt
+echo -e "${txt_0313} \"SHIoT_configuration.txt\". ${txt_0314}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_configuration.txt"
+
 if bash $script_path/bin/config_email.sh; then
-  echoLOG g "${txt_0311}"
+  echoLOG g "${txt_0315}"
 else
-  echoLOG r "${txt_0312}"
+  echoLOG r "${txt_0316}"
 fi
 
 exit 0
