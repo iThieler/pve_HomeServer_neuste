@@ -1,5 +1,6 @@
 #!/bin/bash
 
+var_language=$1
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"
@@ -7,10 +8,10 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
-ctID=$1
-ctIP=$2
-ctRootpw="$3"
-containername="$4"
+ctID=$2
+ctIP=$3
+ctRootpw="$4"
+containername="$5"
 
 source "$script_path/lxc/$containername/generate.sh"
 
@@ -23,10 +24,12 @@ if [ -d "$script_path/lxc/$containername/language" ]; then
   fi
 fi
 
+echoLOG y "${txt_0201}"
+
 # Ask for SMTP-Password if SMTP is needed and Passwort is not save in shiot_configFile
 if $smtpneeded; then
   if [ -z "$var_mailpassword" ]; then
-    var_mailpassword=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "\n${txt_0065}" 10 80 3>&1 1>&2 2>&3)
+    var_mailpassword=$(whiptail --passwordbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0202}" 10 80 3>&1 1>&2 2>&3)
   fi
 fi
 
@@ -37,21 +40,25 @@ fi
 
 # Mounted the DVB-TV-Card to container if exist and is needed
 if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
+  echoLOG b "${txt_0203}"
   echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dvb/adapter0 | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
   echo "lxc.mount.entry: /dev/dvb dev/dvb none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
 fi
 
 # Mounted the VGA-Card to container if exist and is needed
 if [ $(ls -la /dev/dri/card0 | grep -c video) -eq 1 ] && $vganeeded; then
+  echoLOG b "${txt_0204}"
   echo "lxc.cgroup.devices.allow: c $(ls -la /dev/dri | grep video | head -n1 | awk '{print $5}' | cut -d, -f1):* rwm" >> /etc/pve/lxc/$ctID.conf
   echo "lxc.mount.entry: /dev/dri/card0 dev/dri/card0 none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
   echo "lxc.mount.entry: /dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) dev/dri/render$(ls -la /dev/dri | grep render | head -n1 | awk '{print $10}' | cut -d'r' -f3) none bind,optional,create=dir" >> /etc/pve/lxc/$ctID.conf
 fi
 
 # Insert created Container in Backup Pool
+echoLOG b "${txt_0205}"
 pvesh set /pools/BackupPool -vms $ctID
 
 # Start Container
+echoLOG b "${txt_0206}"
 pct start $ctID
 sleep 10
 
@@ -60,6 +67,7 @@ pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -n "$var_nasip" ] && $nasneeded; then
+  echoLOG b "${txt_0207}"
   pct exec $ctID -- bash -ci "mkdir -p /media"
   pct exec $ctID -- bash -ci "mkdir -p /mnt/backup"
   pct exec $ctID -- bash -ci "echo \"//$var_nasip/media  /media  cifs  credentials=/home/.smbmedia,uid=1000,gid=1000  0  0\" >> /etc/fstab"
@@ -67,12 +75,12 @@ if [ -n "$var_nasip" ] && $nasneeded; then
   pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbmedia"
   pct exec $ctID -- bash -ci "echo -e \"username=$var_robotname\npassword=$var_robotpw\" > /home/.smbbackup"
   pct exec $ctID -- bash -ci "mount -a"
-else
-  echo "-- $txt_0251"
 fi
+if [ -z "$var_nasip" ] && $nasneeded; then echoLOG r "${txt_0208}"; fi
 
 # Install Samba to Container if sambaneeded Variable is true
 if $sambaneeded; then
+  echoLOG b "${txt_0208}"
   smbuserdesc=""
   pct exec $ctID -- bash -ci "apt-get install -y samba samba-common-bin > /dev/null 2>&1"
   for user in $sambaUser; do
@@ -93,16 +101,16 @@ if $sambaneeded; then
 fi
 
 # Update/Upgrade Container
-echo "-- $txt_0252"
+echoLOG b "${0209}"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1"
 
 # Execute config. in Container dir to config Container
-echo "-- $txt_0254"
+echoLOG "${txt_0210}"
 if ! "$script_path/lxc/$containername/config.sh" ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then exit 1; fi
 
 # Create Container description, you can find it on Proxmox WebGUI
 # Find ASCII URL-Encoding at https://www.key-shortcut.com/zeichentabellen/ascii-url-kodierung
-echo "-- $txt_0256"
+echoLOG "${txt_0211}"
 lxcConfigFile="/etc/pve/lxc/$ctID.conf"
 lxcConfigOld=$(cat $lxcConfigFile)
 
@@ -137,17 +145,19 @@ if $sambaneeded; then
   echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_13%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_13%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_13%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
+echoLOG b "${txt_0212}"
 echo -e "$lxcConfigOld" >> $lxcConfigFile
 
 # Send an email to the user when he needs to complete tasks manually 
 if [ -n "$commandsAfterCFG" ]; then
+  echoLOG r "${txt_0213}"
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
   echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -a "From: \"${wrd_17}\" <${var_mailserver}>" -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
-echo "-- $txt_0257"
+echoLOG b "${txt_0214}"
 clusterfileFW="/etc/pve/firewall/cluster.fw"
 if [ $(cat $clusterfileFW | grep -cw fwsg_$containername) -eq 0 ]; then
   echo -e "\n[group $(echo fwsg_$containername | tr "[:upper:]" "[:lower:]")]" >> $clusterfileFW    # This Line will create the Firewall Goup Containername - don't change it
@@ -174,7 +184,7 @@ if [ $(cat /etc/pve/firewall/$ctID.fw | grep -cw fwsg_$containername) -eq 0 ]; t
 fi
 
 # Cleanup Container History an reboot
-echo "-- $txt_0258"
+echoLOG "${txt_0215}"
 pct exec $ctID -- bash -ci "cat /dev/null > ~/.bash_history"
 pct exec $ctID -- bash -ci "history -c"
 pct exec $ctID -- bash -ci "history -w"
