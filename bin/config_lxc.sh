@@ -153,7 +153,7 @@ if [ -n "$commandsAfterCFG" ]; then
   echoLOG r "${txt_0213}"
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
-  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -a "From: \"${wrd_17}\" <${var_mailserver}>" -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
+  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -a "From: \"${wrd_17}\" <${var_senderaddress}>" -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
