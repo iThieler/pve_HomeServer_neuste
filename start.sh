@@ -8,11 +8,11 @@ source "$script_path/helper/functions.sh"
 source "$script_path/language/_languages.sh"
 if [ -n ${var_language} ]; then
   source "$script_path/language/$var_language.sh"
-  if [[ ${var_language} != "en" ]]; then echo -e "- ${txt_0001} \"${var_language}\""; fi
+  if [[ ${var_language} != "en" ]]; then echoLOG b "${txt_0001} \"${var_language}\""; fi
 else
-  export var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
+  export var_language=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" "\nSelect your Language" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
   source "$script_path/language/$var_language.sh"
-  if [[ ${var_language} != "en" ]]; then echo -e "- ${txt_0001} \"${var_language}\""; fi
+  if [[ ${var_language} != "en" ]]; then echoLOG b "${txt_0001} \"${var_language}\""; fi
 fi
 source "$script_path/helper/variables.sh"
 if [ -f "$shiot_configPath/$shiot_configFile" ]; then
@@ -32,7 +32,7 @@ if [ ! -d "/etc/pve/" ]; then
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --textbox "Es wurde keine Proxmox installation gefunden. Dieses Skript kann nur auf Servern mit Proxmox ausgeführt werden!" 10 80
+    whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0001}" "\n${txt_0002}" 10 80
   exit 1
 fi
 
@@ -45,25 +45,25 @@ if [ "$pve_majorversion" -lt 6 ]; then
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --textbox "Dieses Skript funktioniert nur auf Servern mit Proxmox Version 6.X oder 7.X" 10 80
+    whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0001}" "\n${txt_0003}" 10 80
   exit 1
 fi
 
 function update() {
   function server() {
     {
-      echo -e "XXX\n12\nSystem will be updated ...\nXXX"
+      echo -e "XXX\n12\n${txt_0005} ...\nXXX"
       apt-get update
-      echo -e "XXX\n25\nSystem will be updated ...\nXXX"
+      echo -e "XXX\n25\n${txt_0005} ...\nXXX"
       apt-get upgrade -y
-      echo -e "XXX\n47\nSystem will be updated ...\nXXX"
+      echo -e "XXX\n47\n${txt_0005} ...\nXXX"
       apt-get dist-upgrade -y
-      echo -e "XXX\n64\nSystem will be updated ...\nXXX"
+      echo -e "XXX\n64\n${txt_0005} ...\nXXX"
       apt-get autoremove -y
-      echo -e "XXX\n79\nSystem will be updated ...\nXXX"
+      echo -e "XXX\n79\n${txt_0005} ...\nXXX"
       pveam update 2>&1
-      echo -e "XXX\n98\nSystem will be updated ...\nXXX"
-    } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "System preparation" "System will be updated, required software will be installed ..." 6 80 0
+      echo -e "XXX\n98\n${txt_0005} ...\nXXX"
+    } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0002} " "\n${txt_0004} ..." 10 80 0
   }
   if [[ $1 == "server" ]]; then
     server
@@ -73,7 +73,7 @@ function update() {
     for ctID in $available_lxc; do
       lxc=$(pct list | grep -w ${ctID} | awk '{print $3}')
       if [ -f "$script_path/lxc/${lxc}/update.sh" ]; then
-        bash "$script_path/lxc/${lxc}/update.sh"
+        bash "$script_path/lxc/${lxc}/update.sh" $var_language
       fi
     done
   fi
@@ -81,25 +81,25 @@ function update() {
 
 function fristRun() {
   # configure Community Repository in Proxmox
-  echo -"-- ${txt_0103}"
+  echoLOG b "${txt_0006}"
   echo "#deb https://enterprise.proxmox.com/debian/pve $pve_osname pve-enterprise" > /etc/apt/sources.list.d/pve-enterprise.list
   echo "deb http://download.proxmox.com/debian/pve $pve_osname pve-no-subscription" > /etc/apt/sources.list.d/pve-community.list
 
-  # Performs a system update and installs software required for this script
   {
+  # Performs a system update and installs software required for this script
     apt-get update 2>&1 >/dev/null
-    echo -e "XXX\n29\nInstalliere benötigte Software ...\nXXX"
+    echo -e "XXX\n29\n${txt_0008} ...\nXXX"
     apt-get install -y parted smartmontools libsasl2-modules mailutils lxc-pve 2>&1 >/dev/null
-    echo -e "XXX\n87\nSystemupdate läuft ...\nXXX"
+    echo -e "XXX\n87\n${txt_0005} ...\nXXX"
     apt-mark hold keyboard-configuration
     apt-get upgrade -y 2>&1 >/dev/null
     apt-get dist-upgrade -y 2>&1 >/dev/null
     apt-get autoremove -y 2>&1 >/dev/null
     apt-mark unhold keyboard-configuration
     pveam update 2>&1 >/dev/null
-    echo -e "XXX\n98\nVorbereitung wird abgeschlossen ...\nXXX"
-  } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title "HomeServer vorbereitung" "System wird upgedatet, benötigte Software wird installiert ..." 6 80 0
-  echo "- System updated and required software is installed"
+    echo -e "XXX\n98\n${txt_0009} ...\nXXX"
+  } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0002} " "\n${txt_0007} ..." 10 80 0
+  echoLOG g "${txt_0010}"
 
   # If no Config Path is found, ask User to recover or to make a new Configuration
   if [ ! -d "$shiot_configPath/" ]; then
@@ -110,37 +110,59 @@ function fristRun() {
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --yesno --yes-button " ${btn_5} " --no-button " ${btn_6} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_1} " "\n${txt_0002}\n\n${txt_0003}\n\n${txt_0004}" 20 80
+    whiptail --yesno --yes-button " ${btn_5} " --no-button " ${btn_6} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0001} " "\n${txt_0011}\n\n${txt_0012}" 20 80
     yesno=$?
-    if [ $yesno -eq 0 ]; then
-      cfg_nasIP=
-      while ! pingIP $cfg_nasIP; do
-        cfg_nasIP=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0005}" 6 80 $networkIP. 3>&1 1>&2 2>&3)
-      done
+    if [ $yesno -eq 0 ]; then # Recovery
       if [ ! -d "/mnt/cfg_temp" ]; then mkdir -p /mnt/cfg_temp; fi
-      cfg_dir=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0006}" 6 80 Path/to/File 3>&1 1>&2 2>&3)
-      cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0007}" 6 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
-      cfg_mountUser=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0008}" 6 80 netrobot 3>&1 1>&2 2>&3)
-      cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_2} " "\n${txt_0009} \"${cfg_mountUser}\"?" 6 80 3>&1 1>&2 2>&3)
-      mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_nasIP/$cfg_dir /mnt/cfg_temp > /dev/null 2>&1
-      cp /mnt/cfg_temp/$cfg_filename "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
-      umount /mnt/cfg_temp > /dev/null 2>&1
-      rm -d /mnt/cfg_temp > /dev/null 2>&1
-      echo "- ${txt_0010}"
+      whiptail --yesno --yes-button " ${btn_7} " --no-button " ${btn_8} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0013}" 10 80
+      yesno=$?
+      if [ $yesno -eq 0 ]; then # Mount Network Share and copy File
+        cfg_IP=
+        while ! pingIP $cfg_IP; do
+          cfg_IP=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0014}" 10 80 $networkIP. 3>&1 1>&2 2>&3)
+        done
+        cfg_dir=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0015}" 10 80 Path/to/File 3>&1 1>&2 2>&3)
+        cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+        cfg_mountUser=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0017}" 10 80 netrobot 3>&1 1>&2 2>&3)
+        cfg_mountPass=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0018} \"${cfg_mountUser}\"?" 10 80 3>&1 1>&2 2>&3)
+        mount -t cifs -o user="$cfg_mountUser",password="$cfg_mountPass",rw,file_mode=0777,dir_mode=0777 //$cfg_IP/$cfg_dir /mnt/cfg_temp > /dev/null 2>&1
+        cp "/mnt/cfg_temp/$cfg_filename" "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
+        umount /mnt/cfg_temp > /dev/null 2>&1
+        echoLOG g "${txt_0019}: //$cfg_IP/$cfg_dir"
+      elif [ $yesno -eq 1 ]; then # ask for local or external file
+        whiptail --yesno --yes-button " ${btn_9} " --no-button " ${btn_10} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0020}" 10 80
+        yesno=$?
+        if [ $yesno -eq 0 ]; then # Mount USB Media and copy File
+          cfg_disk=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0021}" 10 80 /dev/ 3>&1 1>&2 2>&3)
+          cfg_dir=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0015}" 10 80 Path/to/File 3>&1 1>&2 2>&3)
+          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+          mount $cfg_disk /mnt/cfg_temp
+          cp "/mnt/cfg_temp/$cfg_dir/$cfg_filename" "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
+          umount $cfg_disk
+          echoLOG g "${txt_0019}: $cfg_disk/$cfg_dir"
+        elif [ $yesno -eq 1 ]; then # copy File
+          cfg_path=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0022}" 10 80 /dev/ 3>&1 1>&2 2>&3)
+          cfg_filename=$(whiptail --inputbox --ok-button " ${btn_1} " --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0003} " "\n${txt_0016}" 10 80 Proxmox_Configuration.txt 3>&1 1>&2 2>&3)
+          cp "/$cfg_path/$cfg_filename" "$shiot_configPath/$shiot_configFile" > /dev/null 2>&1
+          echoLOG g "${txt_0019}: $cfg_path"
+        fi
+      fi
+      rm "/mnt/cfg_temp/" > /dev/null 2>&1
     else
       if bash "$script_path/handler/generate_config.sh" $var_language; then
-        echo "- ${txt_0011}"
+        echoLOG g "${txt_0023}"
         # Start and wait for Proxmox Basic configuration if it's not already done
-        if bash "$script_path/bin/config_pve.sh"; then
-          echo "- ${txt_0013}"
+        if bash "$script_path/bin/config_pve.sh" $var_language; then
+          echo g "${txt_0024}"
           echo "PVE config OK" >> "$shiot_configPath/helper"
         else
-          echo "- ${txt_0014}"
+          echo r "${txt_0025}"
           echo "PVE config not OK" >> "$shiot_configPath/helper"
+          exit 1
         fi
       else
-        echo "- ${txt_0012}"
-        exit
+        echo r "${txt_0026}"
+        exit 1
       fi
     fi
   fi
@@ -148,13 +170,13 @@ function fristRun() {
 
 function install() {
   if [[ $1 == "LXC" ]]; then
-    if bash "$script_path/handler/generate_lxc.sh"; then
+    if bash "$script_path/handler/generate_lxc.sh" $var_language; then
       return 0
     else
       return 1
     fi
   elif [[ $1 == "VM" ]]; then
-    if bash "$script_path/handler/generate_vm.sh"; then
+    if bash "$script_path/handler/generate_vm.sh" $var_language; then
       return 0
     else
       return 1
@@ -164,13 +186,13 @@ function install() {
 
 function recover() {
   if [[ $1 == "LXC" ]]; then
-    if bash "$script_path/handler/recover_lxc.sh"; then
+    if bash "$script_path/handler/recover_lxc.sh" $var_language; then
       return 0
     else
       return 1
     fi
   elif [[ $1 == "VM" ]]; then
-    if bash "$script_path/handler/recover_vm.sh"; then
+    if bash "$script_path/handler/recover_vm.sh" $var_language; then
       return 0
     else
       return 1
@@ -180,13 +202,13 @@ function recover() {
 
 function delete() {
   if [[ $1 == "LXC" ]]; then
-    if bash "$script_path/handler/delete_lxc.sh"; then
+    if bash "$script_path/handler/delete_lxc.sh" $var_language; then
       return 0
     else
       return 1
     fi
   elif [[ $1 == "LXC" ]]; then
-    if bash "$script_path/handler/delete_vm.sh"; then
+    if bash "$script_path/handler/delete_vm.sh" $var_language; then
       return 0
     else
       return 1
@@ -197,9 +219,7 @@ function delete() {
 function finish() {
   unset script_path
   unset var_language
-  if [ -f "/tmp/lxclist.*" ]; then
-    rm /tmp/lxclist.*
-  fi
+  if [ -f "/tmp/lxclist.*" ]; then rm /tmp/lxclist.*; fi
   cat /dev/null > ~/.bash_history
   history -c
   history -w
@@ -207,20 +227,20 @@ function finish() {
 }
 
 function menu() {
-  sel=("1" "... meinen Server updaten" \
-       "2" "... meinen Server und alle Container aktualisieren" \
+  sel=("1" "... ${txt_0027}" \
+       "2" "... ${txt_0028}" \
        "" "" \
-       "3" "... Container installieren und konfigurieren" \
-       "4" "... virtuelle Maschinen installieren und Image einbinden" \
+       "3" "... ${txt_0029}" \
+       "4" "... ${txt_0030}" \
        "" "" \
-       "5" "... Container aus Backups wiederherstellen" \
-       "6" "... virtuelle Maschinen aus Backup wiederherstellen" \
+       "5" "... ${txt_0031}" \
+       "6" "... ${txt_0032}" \
        "" "" \
-       "7" "... Container löschen" \
-       "8" "... virtuelle Maschine löschen" \
+       "7" "... ${txt_0033}" \
+       "8" "... ${txt_0034}" \
        "" "" \
-       "Q" "... beenden und zurück zur Skriptauswahl")
-  sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " Proxmox HomeServer konfigurieren " "\nWas möchtest Du tun?" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
+       "Q" "... ${txt_0035}")
+  sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0004} " "\n${txt_0036}" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)
 
   if [[ $sel_menu == "1" ]]; then
     update "server"
