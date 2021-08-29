@@ -20,6 +20,7 @@ if [ -f "$shiot_configPath/$shiot_configFile" ]; then
 fi
 
 clear
+if [ ! -d "$shiot_configPath/" ]; then mkdir -p $shiot_configPath; fi
 source "$script_path/images/shell_logo.sh"
 logo > "$shiot_configPath/$shiot_logfile"
 logo
@@ -101,9 +102,8 @@ function fristRun() {
   } | whiptail --gauge --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0002} " "\n${txt_0007} ..." 10 80 0
   echoLOG g "${txt_0010}"
 
-  # If no Config Path is found, ask User to recover or to make a new Configuration
-  if [ ! -d "$shiot_configPath/" ]; then
-    mkdir -p $shiot_configPath
+  # If no Config File is found, ask User to recover or to make a new Configuration
+  if [ ! -f "$shiot_configPath/$shiot_configFile" ]; then
     NEWT_COLORS='
       window=black,red
       border=white,red
