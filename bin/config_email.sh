@@ -1,20 +1,15 @@
 #!/bin/bash
 
+var_language=$1
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"
 source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
-
-# ask User for Script Language
-if [ -z "$var_language" ]; then
-  var_language=$(whiptail --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --menu "" 20 80 10 "${lng[@]}" 3>&1 1>&2 2>&3)
-  source "$script_path/language/$var_language.sh"
-else
-  source "$script_path/language/$var_language.sh"
-fi
+source "$script_path/language/$var_language.sh"
 
 # config email notification
+echoLOG b "${txt_0101}"
 if grep "root:" /etc/aliases; then
   sed -i "s/^root:.*$/root: $var_rootmail/" /etc/aliases
 else
@@ -47,36 +42,36 @@ systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/nul
 rm -rf "/etc/postfix/sasl_passwd"
 
 # test email settings
-echo -e "${txt_0151}\n\n${txt_0152}" | mail -a "From: \"${wrd_17}\" <${var_mailserver}>" -s "[pve] ${txt_0153}" "$var_rootmail"
-whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" 20 80
+echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_mailserver}>" -s "[SHIoT] ${wrd_0007}" "$var_rootmail"
+whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0103}\n\n$var_rootmail\n\n${txt_0104}" 20 80
 yesno=$?
 if [[ $yesno == 1 ]]; then
   NEWT_COLORS='
-    window=,red
+    window=black,red
     border=white,red
     textbox=white,red
     button=black,yellow
   ' \
-  whiptail --msgbox --ok-button " ${btn_1} " --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_5}" "${txt_0156}" 10 80
+  whiptail --msgbox --ok-button " ${btn_1} " --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0007}" "${txt_0105}" 10 80
   if grep "SMTPUTF8 is required" "/var/log/mail.log"; then
     if ! grep "smtputf8_enable = no" /etc/postfix/main.cf; then
       postconf smtputf8_enable=no
       postfix reload
     fi
   fi
-  echo -e "${txt_0151}\n\n${txt_0152}" | mail -s "[pve] ${txt_0153}" "$var_rootmail"
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0154}\n\n$var_rootmail\n\n${txt_0155}" 20 80
+  echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_mailserver}>" -s "[SHIoT] ${wrd_0007} 2" "$var_rootmail"
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0103}\n\n$var_rootmail\n\n${txt_0104}" 20 80
   yesno=$?
   if [[ $yesno == 1 ]]; then
     NEWT_COLORS='
-      window=,red
+      window=black,red
       border=white,red
       textbox=white,red
       button=black,yellow
     ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_5} " "${txt_0157}\n\n/var/log/mail.log" 10 80
+    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0106}\n\n/var/log/mail.log\n\n${txt_0107}" 10 80
+    exit 1
   fi
-  exit 1
-else
-  exit 0
 fi
+
+exit 0
