@@ -42,7 +42,7 @@ systemctl restart postfix  &> /dev/null && systemctl enable postfix  &> /dev/nul
 rm -rf "/etc/postfix/sasl_passwd"
 
 # test email settings
-echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_mailserver}>" -s "[SHIoT] ${wrd_0007}" "$var_rootmail"
+echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0007}" "$var_rootmail"
 whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0103}\n\n$var_rootmail\n\n${txt_0104}" 20 80
 yesno=$?
 if [[ $yesno == 1 ]]; then
@@ -59,7 +59,7 @@ if [[ $yesno == 1 ]]; then
       postfix reload
     fi
   fi
-  echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_mailserver}>" -s "[SHIoT] ${wrd_0007} 2" "$var_rootmail"
+  echo -e "${txt_0102} https://SmartHome-IoT.net\n\n${txt_0152}" | mail -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0007} 2" "$var_rootmail"
   whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "${txt_0103}\n\n$var_rootmail\n\n${txt_0104}" 20 80
   yesno=$?
   if [[ $yesno == 1 ]]; then
