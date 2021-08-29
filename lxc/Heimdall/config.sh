@@ -18,6 +18,10 @@ pct push $ctID "$script_path/lxc/$containername/docker-compose.yml" "/root/heimd
 pct exec $ctID -- bash -ci "sed -i 's#TIMEZONETOCHANGE#'"$timezone"'#' /root/heimdall/docker-compose.yml"
 pct exec $ctID -- bash -ci "cd /root/heimdall && docker-compose up -d --quiet-pull > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "rm /root/heimdall/heimdall/www/img/bg1.jpg"
-pct push $ctID "$script_path/images/shiot_wallpaper_1920x1080.jpg" "/root/heimdall/heimdall/www/img/bg1.jpg"
+if [ -f "$script_path/images/${var_language}_shiot_wallpaper_1920x1080.jpg"]; then
+  pct push $ctID "$script_path/images/${var_language}_shiot_wallpaper_1920x1080.jpg" "/root/heimdall/heimdall/www/img/bg1.jpg"
+else
+  pct push $ctID "$script_path/images/en_shiot_wallpaper_1920x1080.jpg" "/root/heimdall/heimdall/www/img/bg1.jpg"
+fi
 
 exit 0
