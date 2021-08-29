@@ -37,7 +37,7 @@ for choosed_guest in $var_guestchoice; do
   if [ $(pct list | grep -cw "$choosed_guest") -eq 1 ]; then guestID=$(pct list | grep -w "$choosed_guest" | awk '{print $1}'); fi
   if [ $(qm list | grep -cw "$choosed_guest") -eq 1 ]; then guestID=$(qm list | grep -w $choosed_guest | awk '{print $1}'); fi
   echo b "${txt_0703} >> ${wrd_0001}: $guestID  ${wrd_0002}: ${choosed_guest}"
-  vzdump $guestID --compress zstd --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --maxfiles 6 --storage backups
+  vzdump $guestID --compress zstd --mailto root --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --maxfiles 6 --storage backups
   if [ $? -eq 0 ]; then echo g "${txt_0704}"; else echo r "${txt_0705}"; fi
 done
 
