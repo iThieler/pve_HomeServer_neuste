@@ -36,6 +36,12 @@ function setNAS() {
     yesno=$?
     if [ $yesno -eq 0 ]; then setNAS 1; fi
   fi
+
+  if [ -n "$var_nasip" ]; then
+    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0825}" 10 80
+    yesno=$?
+    if [ $yesno -eq 0 ]; then var_synologynas=true; fi
+  fi
 }
 
 # config Netrobot
