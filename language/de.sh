@@ -212,6 +212,7 @@ txt_0821="Möchtest du nochmal versuchen deine NAS anzugeben?"
 txt_0822="Sollen deine Passwörter unverschlüsselt im Klartext in der Konfigurationsdatei gespeichert werden (Sicherheit beachten)?"
 txt_0823="Konfigurationsdatei erfolgreich erstellt"
 txt_0824="Die Konfigurationsdatei konnte nicht erstellt werden"
+txt_0825="Benutzt Du eine NAS von Synology?"
 
 # /handler/generate_lxc.sh
 txt_0901="Erstelle eine Liste mit verfügbaren Containern"

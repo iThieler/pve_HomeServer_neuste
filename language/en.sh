@@ -212,6 +212,7 @@ txt_0821="Do you want to try again to specify your NAS?"
 txt_0822="Do you want to store your passwords unencrypted in plain text in the configuration file (consider security)?"
 txt_0823="Configuration file successfully created"
 txt_0824="The configuration file could not be created"
+txt_0825="Do you use a NAS from Synology?"
 
 # /handler/generate_lxc.sh
 txt_0901="Create a list of available containers"
