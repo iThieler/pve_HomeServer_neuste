@@ -123,7 +123,7 @@ function create() {
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
-    echoLOG g "${txt_0904} >> ${wrd_0001}: $ctID  ${wrd_0002}: $containername"
+    echoLOG g "${txt_0904} >> ${wrd_0001}: ${LIGHTPURPLE}$ctID${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$containername${NOCOLOR}"
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1 && apt-get dist-upgrade -y > /dev/null 2>&1"
     if [[ $osType == "debian" ]]; then
       pct exec $ctID -- bash -ci "systemctl stop sshd"
