@@ -90,9 +90,9 @@ if $sambaneeded; then
     pct exec $ctID -- bash -ci "mkdir -p /root/sambashare/$user"
     pct exec $ctID -- bash -ci "echo -e \"\n[$user]\ncomment = Sambashare\npath = /root/sambashare/$user\nwrite list = $user\nvalid users = $user\nforce user = smb\" >> /etc/samba/smb.conf"
     if [ -z "$smbuserdesc" ]; then
-      smbuserdesc="#$wrd_8:   $user\n#$wrd_2:   $smbpasswd"
+      smbuserdesc="#$wrd_0011:   $user\n#$wrd_0004:   $smbpasswd"
     else
-      smbuserdesc="${smbuserdesc}\n#$wrd_8:   $user\n#$wrd_2:   $smbpasswd"
+      smbuserdesc="${smbuserdesc}\n#$wrd_0011:   $user\n#$wrd_0004:   $smbpasswd"
     fi
   done
   pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf > /dev/null 2>&1"
@@ -119,7 +119,7 @@ source "$script_path/lxc/$containername/description.sh"
 desc="desc_${var_language}"
 if [ -z "${!desc}" ]; then desc="desc_en"; fi
 
-echo -e "#### ${!desc} ###\n####### Shell ######\n#%09$wrd_8%3A   root\n#%09$wrd_2%3A   ${ctRootpw}\n#" > $lxcConfigFile
+echo -e "#### ${!desc} ###\n####### Shell ######\n#%09$wrd_0011%3A   root\n#%09$wrd_0004%3A   ${ctRootpw}\n#" > $lxcConfigFile
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
@@ -127,22 +127,22 @@ if $webgui; then
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
-        echo -e "#\n####### ${webguiName[i]} ######\n#%09$wrd_9%3A $webguiAdress" >> $lxcConfigFile
+        echo -e "#\n####### ${webguiName[i]} ######\n#%09$wrd_0012%3A $webguiAdress" >> $lxcConfigFile
       else
-        echo -e "####### ${webguiName[i]} ######\n#%09$wrd_9%3A $webguiAdress" >> $lxcConfigFile
+        echo -e "####### ${webguiName[i]} ######\n#%09$wrd_0012%3A $webguiAdress" >> $lxcConfigFile
       fi
     fi
-    if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#%09$wrd_8%3A   ${webguiUser[i]}" >> $lxcConfigFile; fi
-    if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#%09$wrd_2%3A   ${webguiPass[i]}" >> $lxcConfigFile; fi
+    if [[ ! ${webguiUser[i]} == "" ]]; then echo -e "#%09$wrd_0011%3A   ${webguiUser[i]}" >> $lxcConfigFile; fi
+    if [[ ! ${webguiPass[i]} == "" ]]; then echo -e "#%09$wrd_0004%3A   ${webguiPass[i]}" >> $lxcConfigFile; fi
   done
 fi
 
 if [ -n "$var_nasip" ] && $nasneeded; then
-  echo -e "#\n####### $wrd_10 ######\n#%09$wrd_11%3A   %2Fmedia\n#%09$wrd_12%3A   %2Fmnt%2Fbackup" >> $lxcConfigFile
+  echo -e "#\n####### $wrd_0013 ######\n#%09$wrd_0014%3A   %2Fmedia\n#%09$wrd_0015%3A   %2Fmnt%2Fbackup" >> $lxcConfigFile
 fi
 
 if $sambaneeded; then
-  echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_13%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_13%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_13%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
+  echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_0016%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_0016%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_0016%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echoLOG b "${txt_0212}"
@@ -153,7 +153,7 @@ if [ -n "$commandsAfterCFG" ]; then
   echoLOG r "${txt_0213}"
   mailbody="mail_${var_language}"
   if [ -z "${!mailbody}" ]; then mailbody="mailbody_en"; fi
-  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -a "From: \"${wrd_17}\" <${var_senderaddress}>" -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
+  echo -e "${!mailbody}\n\n${commandsAfterCFG}" | mail -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${containername} - ${!desc}" "$var_rootmail"
 fi
 
 # Create Firewall Group and Rules for Container
