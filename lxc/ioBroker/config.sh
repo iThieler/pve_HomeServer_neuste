@@ -131,6 +131,19 @@ if [[ $variation == "1" ]]; then
     echo -e "gwadmin=\"$gwadmin\"" >> "$shiot_configPath/$configFile"
     echo -e "gwadminpw=\"$gwadminpw\"" >> "$shiot_configPath/$configFile"
   fi
+
+  # save Configfile to NAS
+  if [ -n "$var_nasip" ]; then
+    echoLOG p "${lxc_txt_013}"
+    cp "$shiot_configPath/$configFile" "/mnt/backup/SHIoT_cfg_ioBroker.txt" > /dev/null 2>&1
+  fi
+
+  # mail Configfile to root
+  echoLOG p "${lxc_txt_014}"
+  cp "$shiot_configPath/$configFile" "/tmp/SHIoT_cfg_ioBroker.txt"
+  sed -i 's/grafanaPW=".*"/grafanaPW=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
+  sed -i 's/gwadminpw=".*"/gwadminpw=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
+  echo -e "${lxc_txt_015} \"SHIoT_cfg_ioBroker\"." | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_cfg_ioBroker.txt"
 elif [[ $variation == "2" ]]; then
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
@@ -144,19 +157,5 @@ elif [[ $variation == "2" ]]; then
   fi
   pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true${nas}${grafana} > /dev/null 2>&1"
 fi
-
-# save Configfile to NAS
-if [ -n "$var_nasip" ]; then
-  echoLOG p "${lxc_txt_013}"
-  cp "$shiot_configPath/$configFile" "/mnt/backup/SHIoT_cfg_ioBroker.txt" > /dev/null 2>&1
-fi
-
-# mail Configfile to root
-echoLOG p "${lxc_txt_014}"
-cp "$shiot_configPath/$configFile" "/tmp/SHIoT_cfg_ioBroker.txt"
-sed -i 's/grafanaPW=".*"/grafanaPW=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
-sed -i 's/gwadminpw=".*"/gwadminpw=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
-echo -e "${lxc_txt_015} \"SHIoT_cfg_ioBroker\"." | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_cfg_ioBroker.txt"
-
 
 exit 0
