@@ -162,6 +162,7 @@ function fristRun() {
     if bash "$script_path/bin/config_pve.sh" $var_language; then
       echoLOG g "${txt_0024}"
       echo "PVE config OK" >> "$shiot_configPath/helper"
+      source "$shiot_configPath/$shiot_configFile"
       menu
     else
       echoLOG r "${txt_0025}"
