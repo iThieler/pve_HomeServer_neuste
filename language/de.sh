@@ -41,6 +41,7 @@ wrd_0016="Freigabepfad"
 wrd_0017="oder"
 wrd_0018="Einrichtung"
 wrd_0019="Verwaltung"
+wrd_0020="Logdatei"
 
 # Descriptions
 des_0001="per E-Mail versendet"

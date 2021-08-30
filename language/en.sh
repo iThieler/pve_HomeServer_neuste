@@ -41,6 +41,7 @@ wrd_0016="Share path"
 wrd_0017="or"
 wrd_0018="Setup"
 wrd_0019="Administration"
+wrd_0020="Logfile"
 
 # Descriptions
 des_0001="sent by email"

@@ -1,5 +1,4 @@
 #!/bin/bash
-#curl -sSL https://raw.githubusercontent.com/shiot/pve_HomeServer/master/start.sh | bash /dev/stdin master
 
 export var_language=$1
 export script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
@@ -221,7 +220,7 @@ function delete() {
 }
 
 function finish() {
-  echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "${var_rootmail}" -A "$shiot_configPath/$shiot_logfile"
+  echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0020}" "${var_rootmail}" -A "$shiot_configPath/$shiot_logfile"
   unset script_path
   unset var_language
   if [ -f "/tmp/lxclist.*" ]; then rm /tmp/lxclist.*; fi
