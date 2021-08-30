@@ -30,6 +30,20 @@ wrd_0005="Home network"
 wrd_0006="HomeServer"
 wrd_0007="Test message"
 wrd_0008="Configuration script"
+wrd_0009="Basic configuration"
+wrd_0010="Preparation"
+wrd_0011="User"
+wrd_0012="Web address"
+wrd_0013="NAS"
+wrd_0014="Media Directory"
+wrd_0015="Backup directory"
+wrd_0016="Share path"
+wrd_0017="or"
+wrd_0018="Setup"
+wrd_0019="Administration"
+
+# Descriptions
+des_0001="sent by email"
 
 # start.sh
 txt_0001="Script language changed to"
