@@ -129,8 +129,9 @@ function create() {
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0909}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
 # Check if user input is required, if yes inform user
-input=""
+input=
 for choosed_lxc in $var_lxcchoice; do
+  source "$script_path/lxc/$choosed_lxc/description.sh"
   if $userinput; then
     if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input, $choosed_lxc"; fi
   fi
