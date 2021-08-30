@@ -38,7 +38,7 @@ echo -e ")" >> /tmp/lxclist.sh
 source /tmp/lxclist.sh
 
 # Check if user input is required, if yes inform user
-input=
+input=""
 for choosed_lxc in $var_lxcchoice; do
   source "$script_path/lxc/${choosed_lxc}/description.sh" 
   if $userinput; then
@@ -52,7 +52,7 @@ if [ -n "$input"]; then
       textbox=white,red
       button=black,yellow
     ' \
-  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}\: $input" 10 80
+  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}\: ${input}" 10 80
   echoLOG r "${txt_0902}\: $input"
 fi
 
