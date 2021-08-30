@@ -30,6 +30,20 @@ wrd_0005="Heimnetzwerk"
 wrd_0006="HomeServer"
 wrd_0007="Testnachricht"
 wrd_0008="Konfigurationsskript"
+wrd_0009="Basiskonfiguration"
+wrd_0010="Vorbereitung"
+wrd_0011="Benutzer"
+wrd_0012="Webadresse"
+wrd_0013="NAS"
+wrd_0014="Medienverzeichnis"
+wrd_0015="Backupverzeichnis"
+wrd_0016="Freigabepfad"
+wrd_0017="oder"
+wrd_0018="Einrichtung"
+wrd_0019="Verwaltung"
+
+# Descriptions
+des_0001="per E-Mail versendet"
 
 # start.sh
 txt_0001="Skriptsprache geändert zu"
