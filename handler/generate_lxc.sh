@@ -42,7 +42,7 @@ input=
 for choosed_lxc in $var_lxcchoice; do
   source "$script_path/lxc/${choosed_lxc}/description.sh" 
   if $userinput; then
-    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input, $choosed_lxc"; fi
+    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input\, $choosed_lxc"; fi
   fi
 done
 if [ -n "$input"]; then
@@ -52,7 +52,8 @@ if [ -n "$input"]; then
       textbox=white,red
       button=black,yellow
     ' \
-  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}: $input" 10 80
+  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}\: $input" 10 80
+  echoLOG r "${txt_0902}\: $input"
 fi
 
 # Get Container rootfs
