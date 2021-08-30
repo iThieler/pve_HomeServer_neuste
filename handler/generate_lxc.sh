@@ -37,6 +37,24 @@ echo -e ")" >> /tmp/lxclist.sh
 
 source /tmp/lxclist.sh
 
+# Check if user input is required, if yes inform user
+input=
+for choosed_lxc in $var_lxcchoice; do
+  source "$script_path/lxc/${choosed_lxc}/description.sh" 
+  if $userinput; then
+    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input, $choosed_lxc"; fi
+  fi
+done
+if [ -n "$input"]; then
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}: $input" 10 80
+fi
+
 # Get Container rootfs
 if [[ $ctTemplateDisk == "local" ]]; then
   rootfs="local-lvm"
@@ -48,7 +66,7 @@ function create() {
   containername=$1
   ctRootpw="$2"
 
-  echoLOG y "${txt_0902}"
+  echoLOG y "${txt_0903}"
   # Load container language file if not exist load english language
   if [ -d "$script_path/lxc/${containername}/language/" ]; then
     if "$script_path/lxc/${containername}/language/$var_language.sh"; then
@@ -104,7 +122,7 @@ function create() {
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
-    echoLOG g "${txt_0903} >> ${wrd_0001}: $ctID  ${wrd_0002}: $containername"
+    echoLOG g "${txt_0904} >> ${wrd_0001}: $ctID  ${wrd_0002}: $containername"
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1 && apt-get dist-upgrade -y > /dev/null 2>&1"
     if [[ $osType == "debian" ]]; then
       pct exec $ctID -- bash -ci "systemctl stop sshd"
@@ -112,28 +130,28 @@ function create() {
       pct exec $ctID -- bash -ci "systemctl start sshd"
     fi
     # Install Container Standardsoftware
-    echoLOG y "${txt_0904}"
+    echoLOG y "${txt_0905}"
     pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
     if "$script_path/bin/config_lxc.sh" ${var_language} ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then
-      echoLOG g "${txt_0905}"
+      echoLOG g "${txt_0906}"
     else
-      echoLOG r "${txt_0906}"
+      echoLOG r "${txt_0907}"
     fi
   else
-    echoLOG r "${txt_0907}"
+    echoLOG r "${txt_0908}"
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0908}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0909}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
 for choosed_lxc in $var_lxcchoice; do
   if [ $(pct list | grep -cw "$choosed_lxc") -eq 0 ]; then
     ctRootPW="$(generatePassword 12)"
     create $choosed_lxc $ctRootPW
   else
-    echoLOG r "${txt_0909} >> ${wrd_0002}: $choosed_lxc"
+    echoLOG r "${txt_0910} >> ${wrd_0002}: $choosed_lxc"
   fi
 done
 
