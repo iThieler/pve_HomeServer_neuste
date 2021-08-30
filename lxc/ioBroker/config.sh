@@ -32,7 +32,7 @@ todo=(\
 )
 
 gw=(\
-    "unifi" "  Ubiquiti/UniFi DreamMachine Pro ${wrd_14} CloudKey" off \
+    "unifi" "  Ubiquiti/UniFi DreamMachine Pro ${wrd_0017} CloudKey" off \
     "avm" "  AVM FRITZ!Box" off \
     "none" "  ${lxc_txt_009}" off \
 )
@@ -78,13 +78,13 @@ if [[ $variation == "1" ]]; then
     if [[ $gwnetrobot == 0 ]]; then
       pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $var_robotname --password $var_robotpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
     else
-      if [ -z "$vargwadmin" ]; then
-        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
+      if [ -z "$gwadmin" ]; then
+        gwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
       fi
-      if [ -z "$vargwadminpw" ]; then
-        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
+      if [ -z "$gwadminpw" ]; then
+        gwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
       fi
-      pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $vargwadmin --password $vargwadminpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "iobroker set fb-checkpresence.0 --ipaddress $gatewayIP --username $gwadmin --password $gwadminpw --select-options-0060129c-6cb9-01e2-39c5-1449a75d940c1 true --dateformat \"dd.mm.yyyy HH:MM\" > /dev/null 2>&1"
     fi
   elif [[ $gateway == "unifi" ]]; then
     pct exec $ctID -- bash -ci "iobroker add iobroker.unifi --enabled > /dev/null 2>&1"
@@ -93,13 +93,13 @@ if [[ $variation == "1" ]]; then
     if [[ $yesno == 0 ]]; then
       pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $var_robotname --controllerPassword $var_robotpw > /dev/null 2>&1"
     else
-      if [ -z "$vargwadmin" ]; then
-        vargwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
+      if [ -z "$gwadmin" ]; then
+        gwadmin=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_007" 10 80 3>&1 1>&2 2>&3)
       fi
-      if [ -z "$vargwadminpw" ]; then
-        vargwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
+      if [ -z "$gwadminpw" ]; then
+        gwadminpw=$(whiptail --inputbox --nocancel --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_008" 10 80 3>&1 1>&2 2>&3)
       fi
-      pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $vargwadmin --controllerPassword $vargwadminpw > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $gwadmin --controllerPassword $gwadminpw > /dev/null 2>&1"
     fi
   fi
   if [ -z "$var_nasip" ]; then
@@ -116,7 +116,7 @@ if [[ $variation == "1" ]]; then
 elif [[ $variation == "2" ]]; then
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
-      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\Wie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 10 80 3>&1 1>&2 2>&3)
+      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n${lxc_txt_012}" 10 80 3>&1 1>&2 2>&3)
       if [ -z "$grafanaPW" ]; then grafanaPW="changeme"; fi
     fi
     grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
@@ -136,15 +136,29 @@ elif [[ $variation == "2" ]]; then
   echo -e "grafanaPW=\"$grafanaPW\"" >> $shiot_configPath/$configFile
 
   echo -e "\n\0043 Network Hardware configuration" >> $shiot_configPath/$configFile
-  echo -e "gateway=\"$gateway\"" >> $shiot_configPath/$configFile
   echo -e "synology=\"$synology\"" >> $shiot_configPath/$configFile
+  echo -e "gateway=\"$gateway\"" >> $shiot_configPath/$configFile
   if [[ $gwnetrobot == 0 ]]; then
-    echo -e "vargwadmin=\"$var_robotname\"" >> $shiot_configPath/$configFile
-    echo -e "vargwadminpw=\"$var_robotpw\"" >> $shiot_configPath/$configFile
+    echo -e "gwadmin=\"$var_robotname\"" >> $shiot_configPath/$configFile
+    echo -e "gwadminpw=\"$var_robotpw\"" >> $shiot_configPath/$configFile
   else
-    echo -e "vargwadmin=\"$vargwadmin\"" >> $shiot_configPath/$configFile
-    echo -e "vargwadminpw=\"$vargwadminpw\"" >> $shiot_configPath/$configFile
+    echo -e "gwadmin=\"$gwadmin\"" >> $shiot_configPath/$configFile
+    echo -e "gwadminpw=\"$gwadminpw\"" >> $shiot_configPath/$configFile
   fi
 fi
+
+# save Configfile to NAS
+if [ -n "$var_nasip" ]; then
+  echoLOG p "${lxc_txt_013}"
+  cp $shiot_configPath/$configFile /mnt/pve/backups/$containername/SHIoT_cfg_ioBroker.txt > /dev/null 2>&1
+fi
+
+# mail Configfile to root
+echoLOG p "${lxc_txt_014}"
+cp $shiot_configPath/$configFile /tmp/SHIoT_cfg_ioBroker.txt
+sed -i 's/grafanaPW=".*"/grafanaPW=""/g' /tmp/SHIoT_cfg_ioBroker.txt
+sed -i 's/gwadminpw=".*"/gwadminpw=""/g' /tmp/SHIoT_cfg_ioBroker.txt
+echo -e "${lxc_txt_015} \"SHIoT_cfg_ioBroker\"." | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_cfg_ioBroker.txt"
+
 
 exit 0
