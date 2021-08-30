@@ -2,7 +2,7 @@
 
 lxc_txt_001="Wie soll dein ioBroker konfiguriert werden?"
 lxc_txt_002="... ich möchte eine Neuinstallation"
-lxc_txt_003="... ich möchte eine Neuinstallation und ein Backup wiederherstellen"
+lxc_txt_003="... ich möchte ein Backup mit dem backitup Adapter wiederherstellen"
 lxc_txt_004="Willst Du den ioBroker mit BackItUp wiederherstellen?"
 lxc_txt_005="Für die ioBroker Visualisierung wird eine Lizenzbenötigt.\nDie Lizenz ist kostenlos für die private Nutzung.\nDu bekommst einen Lizenzschlüssel auf \"iobroker.net\" nach der Registrierung."
 lxc_txt_006="Hat dein Netzwerkroboter Superadminrechte auf deinem Gateway/Router?"

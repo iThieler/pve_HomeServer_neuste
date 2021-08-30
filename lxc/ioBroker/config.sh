@@ -111,18 +111,6 @@ if [[ $variation == "1" ]]; then
   fi
   pct exec $ctID -- bash -ci "iobroker passwd admin --password changeme > /dev/null 2>&1"
   pct exec $ctID -- bash -ci "iobroker set admin.0 --auth true > /dev/null 2>&1"
-elif [[ $variation == "2" ]]; then
-  if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
-    if [ -z "$grafanaPW" ]; then
-      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n${lxc_txt_012}" 10 80 3>&1 1>&2 2>&3)
-      if [ -z "$grafanaPW" ]; then grafanaPW="changeme"; fi
-    fi
-    grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
-  fi
-  if [ -n "$var_nasip" ]; then
-    nas=" --cifsEnabled true --cifsMount $var_nasip --cifsUser $var_robotname --cifsPassword $var_robotpw --cifsDir \"/mnt/backup/$containername/\" --javascriptsPath \"/mnt/backup/$containername/javascript/\""
-  fi
-  pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true${nas}${grafana} > /dev/null 2>&1"
 
   # create config File
   echo -e "\0043\0041/bin/bash" > "$shiot_configPath/$configFile"
@@ -143,6 +131,18 @@ elif [[ $variation == "2" ]]; then
     echo -e "gwadmin=\"$gwadmin\"" >> "$shiot_configPath/$configFile"
     echo -e "gwadminpw=\"$gwadminpw\"" >> "$shiot_configPath/$configFile"
   fi
+elif [[ $variation == "2" ]]; then
+  if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
+    if [ -z "$grafanaPW" ]; then
+      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n${lxc_txt_012}" 10 80 3>&1 1>&2 2>&3)
+      if [ -z "$grafanaPW" ]; then grafanaPW="changeme"; fi
+    fi
+    grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
+  fi
+  if [ -n "$var_nasip" ]; then
+    nas=" --cifsEnabled true --cifsMount $var_nasip --cifsUser $var_robotname --cifsPassword $var_robotpw --cifsDir \"/mnt/backup/$containername/\" --javascriptsPath \"/mnt/backup/$containername/javascript/\""
+  fi
+  pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true${nas}${grafana} > /dev/null 2>&1"
 fi
 
 # save Configfile to NAS
