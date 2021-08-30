@@ -13,11 +13,11 @@ features="mount=cifs;nfs"
 #################### WebGUI Configuration #####################
 
 webgui=true
-webguiName=( "WebGUI ($(echo ${wrd_16}))" "WebGUI ($(echo ${wrd_8}))" "WebGUI ($(echo ${wrd_15}))" )
-webguiPort=( "5001" "5001/webclient" "5015?v=2" )
-webguiPath=( "" "" "" )
+webguiName=( "WebGUI ($(echo ${wrd_0019}))" "WebGUI ($(echo ${wrd_0011}))" "WebGUI ($(echo ${wrd_0018}))" )
+webguiPort=( "5001" "5001" "5015" )
+webguiPath=( "" "/webclient" "?v=2" )
 webguiUser=( "" " " "" )
-webguiPass=( "" "$(echo ${desc_1})" "" )
+webguiPass=( "" "$(echo ${des_0001})" "" )
 webguiProt=( "http" "http" "http" )
 
 ################### Firewall Configuration ####################

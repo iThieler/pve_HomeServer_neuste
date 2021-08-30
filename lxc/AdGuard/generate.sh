@@ -13,7 +13,7 @@ features=""
 #################### WebGUI Configuration #####################
 
 webgui=true
-webguiName=( "WebGUI" "WebGUI ($(echo ${wrd_15}))" )
+webguiName=( "WebGUI" "WebGUI ($(echo ${wrd_0018}))" )
 webguiPort=( "" "3000" )
 webguiPath=( "" )
 webguiUser=( "" )
