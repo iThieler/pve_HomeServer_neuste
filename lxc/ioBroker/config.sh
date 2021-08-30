@@ -37,8 +37,6 @@ gw=(\
     "none" "  ${lxc_txt_009}" off \
 )
 
-if [ -z "$var_nasip" ]; then pct exec $ctID -- bash -ci "mkdir -p /mnt/backup/$containername/javascript/"; fi
-
 variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 10 "${todo[@]}" 3>&1 1>&2 2>&3)
 pveRootPW=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_016!" 10 80 3>&1 1>&2 2>&3)
 if [[ $variation == "1" ]]; then
@@ -127,37 +125,37 @@ elif [[ $variation == "2" ]]; then
   pct exec $ctID -- bash -ci "iobroker set backitup.0 --minimalEnabled true --javascriptsEnabled true --minimalTime \"00:00\" --minimalDeleteAfter \"6\" --select-options-abad7d88-51a8-8592-4f1f-5d1f89c614311 true${nas}${grafana} > /dev/null 2>&1"
 
   # create config File
-  echo -e "\0043\0041/bin/bash" > $shiot_configPath/$configFile
-  echo -e "\0043 NOTICE: Backup ioBroker Configuration Script from SmartHome-IoT.net" >> $shiot_configPath/$configFile
-  echo -e "\0043 Created on $(date)" >> $shiot_configPath/$configFile
+  echo -e "\0043\0041/bin/bash" > "$shiot_configPath/$configFile"
+  echo -e "\0043 NOTICE: Backup ioBroker Configuration Script from SmartHome-IoT.net" >> "$shiot_configPath/$configFile"
+  echo -e "\0043 Created on $(date)" >> "$shiot_configPath/$configFile"
 
-  echo -e "\n\0043 ioBroker Adapter configuration" >> $shiot_configPath/$configFile
-  echo -e "vislicensecode=\"$vislicensecode\"" >> $shiot_configPath/$configFile
-  echo -e "grafanaPW=\"$grafanaPW\"" >> $shiot_configPath/$configFile
+  echo -e "\n\0043 ioBroker Adapter configuration" >> "$shiot_configPath/$configFile"
+  echo -e "vislicensecode=\"$vislicensecode\"" >> "$shiot_configPath/$configFile"
+  echo -e "grafanaPW=\"$grafanaPW\"" >> "$shiot_configPath/$configFile"
 
-  echo -e "\n\0043 Network Hardware configuration" >> $shiot_configPath/$configFile
-  echo -e "synology=\"$synology\"" >> $shiot_configPath/$configFile
-  echo -e "gateway=\"$gateway\"" >> $shiot_configPath/$configFile
+  echo -e "\n\0043 Network Hardware configuration" >> "$shiot_configPath/$configFile"
+  echo -e "synology=\"$synology\"" >> "$shiot_configPath/$configFile"
+  echo -e "gateway=\"$gateway\"" >> "$shiot_configPath/$configFile"
   if [[ $gwnetrobot == 0 ]]; then
-    echo -e "gwadmin=\"$var_robotname\"" >> $shiot_configPath/$configFile
-    echo -e "gwadminpw=\"$var_robotpw\"" >> $shiot_configPath/$configFile
+    echo -e "gwadmin=\"$var_robotname\"" >> "$shiot_configPath/$configFile"
+    echo -e "gwadminpw=\"$var_robotpw\"" >> "$shiot_configPath/$configFile"
   else
-    echo -e "gwadmin=\"$gwadmin\"" >> $shiot_configPath/$configFile
-    echo -e "gwadminpw=\"$gwadminpw\"" >> $shiot_configPath/$configFile
+    echo -e "gwadmin=\"$gwadmin\"" >> "$shiot_configPath/$configFile"
+    echo -e "gwadminpw=\"$gwadminpw\"" >> "$shiot_configPath/$configFile"
   fi
 fi
 
 # save Configfile to NAS
 if [ -n "$var_nasip" ]; then
   echoLOG p "${lxc_txt_013}"
-  cp $shiot_configPath/$configFile /mnt/pve/backups/$containername/SHIoT_cfg_ioBroker.txt > /dev/null 2>&1
+  cp "$shiot_configPath/$configFile" "/mnt/backup/SHIoT_cfg_ioBroker.txt" > /dev/null 2>&1
 fi
 
 # mail Configfile to root
 echoLOG p "${lxc_txt_014}"
-cp $shiot_configPath/$configFile /tmp/SHIoT_cfg_ioBroker.txt
-sed -i 's/grafanaPW=".*"/grafanaPW=""/g' /tmp/SHIoT_cfg_ioBroker.txt
-sed -i 's/gwadminpw=".*"/gwadminpw=""/g' /tmp/SHIoT_cfg_ioBroker.txt
+cp "$shiot_configPath/$configFile" "/tmp/SHIoT_cfg_ioBroker.txt"
+sed -i 's/grafanaPW=".*"/grafanaPW=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
+sed -i 's/gwadminpw=".*"/gwadminpw=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
 echo -e "${lxc_txt_015} \"SHIoT_cfg_ioBroker\"." | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_cfg_ioBroker.txt"
 
 
