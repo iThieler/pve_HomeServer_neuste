@@ -38,7 +38,6 @@ gw=(\
 )
 
 variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 10 "${todo[@]}" 3>&1 1>&2 2>&3)
-pveRootPW=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_016!" 10 80 3>&1 1>&2 2>&3)
 if [[ $variation == "1" ]]; then
   if [ -z "$gateway" ]; then
     gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 10 "${gw[@]}" 3>&1 1>&2 2>&3)
@@ -60,7 +59,10 @@ if [[ $variation == "1" ]]; then
   for adp in $standardAdapter; do
     pct exec $ctID -- bash -ci "iobroker add iobroker.$adp > /dev/null 2>&1"
   done
-  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip $pve_ip --name root --pwd $pveRootPW > /dev/null 2>&1"
+  if [ -z "$pveRootPW" ]; then
+    pveRootPW=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_016!" 10 80 3>&1 1>&2 2>&3)
+  fi
+  pct exec $ctID -- bash -ci "iobroker set proxmox.0 --ip ${pve_ip} --name root --pwd ${pveRootPW} > /dev/null 2>&1"
   if [ -z "$var_nasip" ]; then javamirrorpath=" --mirrorPath \"/mnt/backup/$containername/javascript/\""; fi
   pct exec $ctID -- bash -ci "iobroker set javascript.0$javamirrorpath --enableSetObject true --enableExec true --enableSendToHost true > /dev/null 2>&1"
   if [ -z "$vislicensecode" ]; then
@@ -100,14 +102,9 @@ if [[ $variation == "1" ]]; then
       pct exec $ctID -- bash -ci "iobroker set unifi.0 --controllerIp $gatewayIP --controllerUsername $gwadmin --controllerPassword $gwadminpw > /dev/null 2>&1"
     fi
   fi
-  if [ -z "$var_nasip" ]; then
-    whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_011" 10 80
-    yesno=$?
-    if [[ $yesno == 0 ]]; then
-      synology=true
-      pct exec $ctID -- bash -ci "iobroker add iobroker.synology --enabled > /dev/null 2>&1"
-      pct exec $ctID -- bash -ci "iobroker set synology.0 --host $var_nasip --login $var_robotname --password $var_robotpw --select-options-eaf2de04-a533-e52b-f1f9-4397440daa4718 true > /dev/null 2>&1"
-    fi
+  if $var_synologynas; then
+    pct exec $ctID -- bash -ci "iobroker add iobroker.synology --enabled > /dev/null 2>&1"
+    pct exec $ctID -- bash -ci "iobroker set synology.0 --host $var_nasip --login $var_robotname --password $var_robotpw --select-options-eaf2de04-a533-e52b-f1f9-4397440daa4718 true > /dev/null 2>&1"
   fi
   pct exec $ctID -- bash -ci "iobroker passwd admin --password changeme > /dev/null 2>&1"
   pct exec $ctID -- bash -ci "iobroker set admin.0 --auth true > /dev/null 2>&1"
