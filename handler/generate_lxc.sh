@@ -146,6 +146,7 @@ if [ -n "$input"]; then
   echoLOG b "${txt_0902}: ${LIGHTPURPLE}$input${NOCOLOR}"
 fi
 
+# start container creation and configuration
 for choosed_lxc in $var_lxcchoice; do
   if [ $(pct list | grep -cw "$choosed_lxc") -eq 0 ]; then
     ctRootPW="$(generatePassword 12)"
