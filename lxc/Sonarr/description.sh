@@ -1,6 +1,7 @@
 #!/bin/bash
 
 nasonly=true
+userinput=false
 
 ################## Descriptions ###################
 desc_en="a PVR for Usenet and BitTorrent users"

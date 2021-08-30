@@ -1,6 +1,7 @@
 #!/bin/bash
 
 nasonly=false
+userinput=false
 
 ################## Descriptions ###################
 desc_en="VoIP Phone System"

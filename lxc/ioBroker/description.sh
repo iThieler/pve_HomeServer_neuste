@@ -1,6 +1,7 @@
 #!/bin/bash
 
 nasonly=false
+userinput=true
 
 ################## Descriptions ###################
 desc_en="SmartHome System - Automate your life"

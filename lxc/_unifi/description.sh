@@ -1,6 +1,7 @@
 #!/bin/bash
 
 nasonly=true                                      # ture or false
+userinput=false                                   # true or false
 
 ################## Descriptions ###################
 desc_en="Containerdescription"                    # is needed
