@@ -40,7 +40,7 @@ gw=(\
 if [ -z "$var_nasip" ]; then pct exec $ctID -- bash -ci "mkdir -p /mnt/backup/$containername/javascript/"; fi
 
 variation=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_001" 20 80 10 "${todo[@]}" 3>&1 1>&2 2>&3)
-pveRootPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\nFür den Proxmox Adapter wird dein Proxmox Passwort benötigt, dieses Skript speichert dieses nicht!" 10 80 3>&1 1>&2 2>&3)
+pveRootPW=$(whiptail --passwordbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_016!" 10 80 3>&1 1>&2 2>&3)
 if [[ $variation == "1" ]]; then
   if [ -z "$gateway" ]; then
     gateway=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_010" 20 80 10 "${gw[@]}" 3>&1 1>&2 2>&3)
@@ -50,7 +50,7 @@ if [[ $variation == "1" ]]; then
   fi
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
-      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\nWie lautet dein Grafana Passwort? (leer = Skript Standardpasswort)" 10 80 3>&1 1>&2 2>&3)
+      grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_017" 10 80 3>&1 1>&2 2>&3)
       if [ -n "$grafanaPW" ]; then grafanaPW="changeme"; fi
     fi
     grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "

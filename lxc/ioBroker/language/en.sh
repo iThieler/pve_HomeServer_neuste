@@ -15,3 +15,5 @@ lxc_txt_012="What is your Grafana password? (blank = script default password)"
 lxc_txt_013="The configuration file will be saved on the NAS"
 lxc_txt_014="The configuration file will be emailed to you, passwords have been removed for security reasons"
 lxc_txt_015="In the attachment you will find the ioBroker configuration file"
+lxc_txt_016="The Proxmox adapter requires your Proxmox root password, this script does not store it".
+lxc_txt_017="What is your Grafana password? (empty = script default password)"
