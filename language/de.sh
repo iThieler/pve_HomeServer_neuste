@@ -200,14 +200,15 @@ txt_0824="Die Konfigurationsdatei konnte nicht erstellt werden"
 
 # /handler/generate_lxc.sh
 txt_0901="Erstelle eine Liste mit verfügbaren Containern"
-txt_0902="Beginne mit der Erstellung des Containers"
-txt_0903="Der folgende Container wurde erstellt und wird jetzt für die Konfiguration vorbereitet"
-txt_0904="Standardsoftware wird im Container installiert"
-txt_0905="Die Installation und konfiguration des Container war erfolgreich"
-txt_0906="Die Installation und konfiguration des Container war NICHT erfolgreich"
-txt_0907="Der erstellte Container wurde nicht gefunden, es ist ein unbekannter Fehler aufgetreten"
-txt_0908="Welche/n Container möchtest Du installieren?"
-txt_0909="Der folgende Container konnte nicht erstellt werden, da er schon existiert"
+txt_0902="Die konfigueration der folgenden Container benötigen Benutzereingaben"
+txt_0903="Beginne mit der Erstellung des Containers"
+txt_0904="Der folgende Container wurde erstellt und wird jetzt für die Konfiguration vorbereitet"
+txt_0905="Standardsoftware wird im Container installiert"
+txt_0906="Die Installation und konfiguration des Container war erfolgreich"
+txt_0907="Die Installation und konfiguration des Container war NICHT erfolgreich"
+txt_0908="Der erstellte Container wurde nicht gefunden, es ist ein unbekannter Fehler aufgetreten"
+txt_0909="Welche/n Container möchtest Du installieren?"
+txt_0910="Der folgende Container konnte nicht erstellt werden, da er schon existiert"
 
 # /handler/generate_vm.sh
 txt_1001=""

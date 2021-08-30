@@ -200,14 +200,15 @@ txt_0824="The configuration file could not be created"
 
 # /handler/generate_lxc.sh
 txt_0901="Create a list of available containers"
-txt_0902="Start creating the container"
-txt_0903="The following container was created and is now prepared for configuration"
-txt_0904="Standard software is installed in the container"
-txt_0905="The installation and configuration of the container was successful"
-txt_0906="The installation and configuration of the container was NOT successful"
-txt_0907="The created container was not found, an unknown error occurred"
-txt_0908="Which container(s) do you want to install?"
-txt_0909="The following container could not be created because it already exists"
+txt_0902="The configueration of the following container(s) need user input"
+txt_0903="Begin with the creation of the container"
+txt_0904="The following container was created and is prepared now for the configuration"
+txt_0905="Standard software will be installed in the container"
+txt_0906="The installation and configuration of the container was successful"
+txt_0907="The installation and configuration of the container was NOT successful"
+txt_0908="The created container was not found, an unknown error occurred"
+txt_0909="Which container(s) do you want to install?"
+txt_0910="The following container could not be created, because it already exists"
 
 # /handler/generate_vm.sh
 txt_1001=""
