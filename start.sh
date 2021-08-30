@@ -148,22 +148,25 @@ function fristRun() {
         fi
       fi
       rm "/mnt/cfg_temp/" > /dev/null 2>&1
+
     else
       if bash "$script_path/handler/generate_config.sh" $var_language; then
         echoLOG g "${txt_0023}"
-        # Start and wait for Proxmox Basic configuration if it's not already done
-        if bash "$script_path/bin/config_pve.sh" $var_language; then
-          echo g "${txt_0024}"
-          echo "PVE config OK" >> "$shiot_configPath/helper"
-        else
-          echo r "${txt_0025}"
-          echo "PVE config not OK" >> "$shiot_configPath/helper"
-          exit 1
-        fi
       else
-        echo r "${txt_0026}"
+        echoLOG r "${txt_0026}"
         exit 1
       fi
+    fi
+
+    # Start and wait for Proxmox Basic configuration if it's not already done
+    if bash "$script_path/bin/config_pve.sh" $var_language; then
+      echoLOG g "${txt_0024}"
+      echo "PVE config OK" >> "$shiot_configPath/helper"
+      menu
+    else
+      echoLOG r "${txt_0025}"
+      echo "PVE config not OK" >> "$shiot_configPath/helper"
+      exit 1
     fi
   fi
 }
@@ -275,11 +278,6 @@ function menu() {
   fi
 }
 
-if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then
-  fristRun
-  menu
-else
-  menu
-fi
+if [ ! -f "$shiot_configPath/helper" ] || [ $(cat "$shiot_configPath/helper" | grep -cw "PVE config OK") -eq 0 ]; then fristRun; fi
 
-exit
+menu
