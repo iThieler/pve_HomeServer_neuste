@@ -37,25 +37,6 @@ echo -e ")" >> /tmp/lxclist.sh
 
 source /tmp/lxclist.sh
 
-# Check if user input is required, if yes inform user
-input=""
-for choosed_lxc in $var_lxcchoice; do
-  source "$script_path/lxc/${choosed_lxc}/description.sh" 
-  if $userinput; then
-    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input\, $choosed_lxc"; fi
-  fi
-done
-if [ -n "$input"]; then
-  NEWT_COLORS='
-      window=black,red
-      border=white,red
-      textbox=white,red
-      button=black,yellow
-    ' \
-  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}\: ${input}" 10 80
-  echoLOG r "${txt_0902}\: $input"
-fi
-
 # Get Container rootfs
 if [[ $ctTemplateDisk == "local" ]]; then
   rootfs="local-lvm"
@@ -146,6 +127,24 @@ function create() {
 }
 
 var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0909}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+
+# Check if user input is required, if yes inform user
+input=""
+for choosed_lxc in $var_lxcchoice; do
+  if $userinput; then
+    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input, $choosed_lxc"; fi
+  fi
+done
+if [ -n "$input"]; then
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}: ${input}" 10 80
+  echoLOG b "${txt_0902}: ${LIGHTPURPLE}$input${NOCOLOR}"
+fi
 
 for choosed_lxc in $var_lxcchoice; do
   if [ $(pct list | grep -cw "$choosed_lxc") -eq 0 ]; then
