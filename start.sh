@@ -220,7 +220,7 @@ function delete() {
 }
 
 function finish() {
-  echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "$shiot_configPath/$shiot_logfile"
+  echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "${var_rootmail}" -A "$shiot_configPath/$shiot_logfile"
   unset script_path
   unset var_language
   if [ -f "/tmp/lxclist.*" ]; then rm /tmp/lxclist.*; fi
