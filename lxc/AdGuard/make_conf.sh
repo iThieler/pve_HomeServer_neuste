@@ -44,10 +44,9 @@ if [ -f "/opt/AdGuardHome/AdGuardHome.yaml" ]; then
   id: 11#" /opt/AdGuardHome/AdGuardHome.yaml
 
   /opt/AdGuardHome/AdGuardHome -s start
+  rm -f ./make_conf.sh
 else
-  echo -e "You need to perform the initial setup via the web interface first. Start via the web page http:\\\\$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1):3000"
+  echo -e "You need to perform the initial setup via the web interface first. Start via the web page http:\\\\\\$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1):3000"
 fi
-
-rm -f ./make_conf.sh
 
 exit
