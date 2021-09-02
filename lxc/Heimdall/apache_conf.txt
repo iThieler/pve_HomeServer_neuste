@@ -1,0 +1,17 @@
+<VirtualHost *:80>
+
+        ServerAdmin webmaster@localhost
+        DocumentRoot /var/www/heimdall/public
+ 
+        DirectoryIndex index.php index.html default.php welcome.php
+        ErrorLog ${APACHE_LOG_DIR}/error.log
+        CustomLog ${APACHE_LOG_DIR}/access.log combined
+ 
+</VirtualHost>
+ 
+<Directory /var/www/heimdall/public/>
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride all
+        Order allow,deny
+        allow from all
+</Directory>
