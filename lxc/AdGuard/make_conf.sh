@@ -5,7 +5,7 @@ if [ -f "/opt/AdGuardHome/AdGuardHome.yaml" ]; then
 
   cp /opt/AdGuardHome/AdGuardHome.yaml /opt/AdGuardHome/AdGuardHome.yaml.bak
 
-  sed -i "s#- https://dns10.quad9.net/dns-query#  - https://cloudflare-dns.com/dns-query\n  - https://dns10.quad9.net/dns-query\n- https://dns.google/dns-query#" /opt/AdGuardHome/AdGuardHome.yaml
+  sed -i "s#- https://dns10.quad9.net/dns-query#- https://cloudflare-dns.com/dns-query\n  - https://dns10.quad9.net/dns-query\n  - https://dns.google/dns-query#" /opt/AdGuardHome/AdGuardHome.yaml
   sed -i "s#filters_update_interval: 24#filters_update_interval: 12#" /opt/AdGuardHome/AdGuardHome.yaml
   sed -i "s#safebrowsing_enabled: false#safebrowsing_enabled: true#" /opt/AdGuardHome/AdGuardHome.yaml
   sed -i "s#- enabled: false#- enabled: true#g" /opt/AdGuardHome/AdGuardHome.yaml
