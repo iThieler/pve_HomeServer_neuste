@@ -259,10 +259,10 @@ function menu() {
     install "VM"
     menu
   elif [[ $sel_menu == "5" ]]; then
-    recover "LXC"
+    backup
     menu
   elif [[ $sel_menu == "6" ]]; then
-    recover "VM"
+    recover
     menu
   elif [[ $sel_menu == "7" ]]; then
     delete "LXC"
