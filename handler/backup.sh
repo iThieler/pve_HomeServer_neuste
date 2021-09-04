@@ -9,17 +9,15 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
-if [ -d "/mnt/pve/backups/dump" ]; then
-  if [ $(ls /mnt/pve/backups/dump/*-lxc-*_manual.*.zst | grep -c "_manual.") - ge 1 ]; then
-    NEWT_COLORS='
-        window=black,red
-        border=white,red
-        textbox=white,red
-        button=black,yellow
-      ' \
-    whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1101}" 10 80
-    rm "/mnt/pve/backups/dump/*_manual.*"
-  fi
+if ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1101}" 10 80
+  rm "/mnt/pve/backups/dump/*_manual.*"
 fi
 
 if [[ $backupmode == "all"]]; then
