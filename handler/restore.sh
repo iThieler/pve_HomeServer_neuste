@@ -61,7 +61,7 @@ else
         echoLOG r "${txt_1207}"
       fi
       hostname=$(pct list | grep $ctID | awk '{print $3}')
-      pct set --hostname "${hostname}-neu"
+      pct set $ctID --hostname "${hostname}-neu"
       pct start $guest > /dev/null 2>&1
     elif [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "vma") -eq 1 ]; then
       if [ $(qm list | grep -cw 200) -eq 0 ]; then
@@ -78,7 +78,7 @@ else
         echoLOG r "${txt_1207}"
       fi
       hostname=$(qm list | grep $vmID | awk '{print $2}')
-      qm set --name "${hostname}-neu"
+      qm set $wmID --name "${hostname}-neu"
       qm start $guest > /dev/null 2>&1
     fi
   done
