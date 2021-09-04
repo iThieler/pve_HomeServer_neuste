@@ -17,10 +17,10 @@ if ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
       button=black,yellow
     ' \
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1101}" 10 80
-  rm "/mnt/pve/backups/dump/*_manual.*"
+  rm /mnt/pve/backups/dump/*_manual*
 fi
 
-if [[ $backupmode == "all"]]; then
+if [[ $backupmode == "all" ]]; then
   echoLOG y "${txt_1102}"
   echoLOG b "${txt_1103}"
   for lxc in $(pct list | sed '1d' | awk '{print $1}'); do
