@@ -8,7 +8,7 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
-if ls /mnt/pve/backups/dump/*_manual.*.zst 0> /dev/null 2>&1; then
+if ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
   NEWT_COLORS='
       window=black,red
       border=white,red
@@ -26,13 +26,15 @@ if [ $yesno -eq 0 ]; then
   for guest in $(ls -ldst /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $10}' | cut -d- -f3); do
     echoLOG y "${txt_1204} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep ${guest} | awk '{print $2}')${NOCOLOR}"
     if [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "tar") -eq 1 ]; then
-      if pct restore $guest /mnt/pve/backups/dump/*-${guest}-*_manual.tar.zst --storage ${ctTemplateDisk} --force 1; then
+      pct shutdown ${lxc} --forceStop 1 --timeout 10 > /dev/null 2>&1
+      if pct restore $guest /mnt/pve/backups/dump/*-${guest}-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
         echoLOG g "${1206}"
       else
         echoLOG r "${1207}"
       fi
     elif [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "vma") -eq 1 ]; then
-      if qmrestore $guest /mnt/pve/backups/dump/*-${guest}-*_manual.vma.zst --storage ${ctTemplateDisk} --force 1; then
+      qm shutdown ${vm} --forceStop 1 --timeout 30 > /dev/null 2>&1
+      if qmrestore $guest /mnt/pve/backups/dump/*-${guest}-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
         echoLOG g "${1206}"
       else
         echoLOG r "${1207}"
@@ -51,7 +53,11 @@ else
           ctID=$(( $ctID + 1 ))
         done
       fi
-      pct restore $ctID /mnt/pve/backups/dump/*-${guest}-*_manual.tar.zst -storage ${ctTemplateDisk}
+      if pct restore $ctID /mnt/pve/backups/dump/*-$guest-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
+        echoLOG g "${1206}"
+      else
+        echoLOG r "${1207}"
+      fi
     elif [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "vma") -eq 1 ]; then
       if [ $(qm list | grep -cw 200) -eq 0 ]; then
         vmID=200
@@ -61,7 +67,11 @@ else
           vmID=$(( $vmID + 1 ))
         done
       fi
-      qmrestore $wmID /mnt/pve/backups/dump/*-${guest}-*_manual.vma.zst -storage ${ctTemplateDisk}
+      if qmrestore $wmID /mnt/pve/backups/dump/*-$guest-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
+        echoLOG g "${1206}"
+      else
+        echoLOG r "${1207}"
+      fi
     fi
   done
 fi
