@@ -23,7 +23,7 @@ whiptail --yesno --yes-button " ${btn_13} " --no-button " ${btn_14} " --backtitl
 yesno=$?
 if [ $yesno -eq 0 ]; then
   echoLOG y "${txt_1203}"
-  for guest in $(ls -ldst /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $10}' | cut -d- -f3); do
+  for guest in $(ls -l /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $9}' | cut -d- -f3); do
     echoLOG y "${txt_1204} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep ${guest} | awk '{print $3}')${NOCOLOR}"
     if [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "tar") -eq 1 ]; then
       pct shutdown $guest --forceStop 1 --timeout 10 > /dev/null 2>&1
@@ -45,7 +45,7 @@ if [ $yesno -eq 0 ]; then
   done
 else
   echoLOG y "${txt_1203}"
-  for guest in $(ls -ldst /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $10}' | cut -d- -f3); do
+  for guest in $(ls -l /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $9}' | cut -d- -f3); do
     if [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "tar") -eq 1 ]; then
       if [ $(pct list | grep -cw 100) -eq 0 ]; then
         ctID=100
