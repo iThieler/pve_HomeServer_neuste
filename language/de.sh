@@ -11,6 +11,8 @@ btn_7="FREIGABE"
 btn_8="LOKAL"
 btn_9="DATENTRÄGER"
 btn_10="SERVER"
+btn_11="ALLE"
+btn_12="AUSWÄHLEN"
 
 # Titles
 tit_0001="ERROR"
@@ -20,6 +22,8 @@ tit_0004="PROXMOX HOMESERVER KONFIGURIEREN"
 tit_0005="LXC KONFIGURATION"
 tit_0006="BACKUP ERSTELLEN"
 tit_0007="HOMESERVER KONFIGURATION"
+tit_0008="GASTSYSTEME SICHERN"
+tit_0009="GASTSYSTEME WIEDERHERSTELLEN"
 
 # Words
 wrd_0001="ID"
@@ -84,6 +88,8 @@ txt_0034="virtuelle Maschine löschen"
 txt_0035="beenden und zurück zur Skriptauswahl"
 txt_0036="Was möchtest Du tun?"
 txt_0037="Im Anhang die aktuelle Log-Datei"
+txt_0038="Möchtest Du alle Container und virtuelle Maschinen sichern,oder einzelne auswählen"
+txt_0039="Möchtest Du alle manuell gesicherten Container und virtuelle Maschinen wiederherstellen, oder einzelne auswählen"
 
 # /bin/config_email.sh
 txt_0101="Dein E-Mailserver wird in Proxmox zum versenden von Nachrichten konfiguriert"
