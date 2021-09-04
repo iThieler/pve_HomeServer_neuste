@@ -8,7 +8,7 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
-if ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
+if ls /mnt/pve/backups/dump/*_manual.*.zst 0> /dev/null 2>&1; then
   NEWT_COLORS='
       window=black,red
       border=white,red
@@ -24,7 +24,7 @@ yesno=$?
 if [ $yesno -eq 0 ]; then
   echoLOG y "${txt_1203}"
   for guest in $(ls -ldst /mnt/pve/backups/dump/*_manual.*.zst | awk '{print $10}' | cut -d- -f3); do
-    if [ $(pct list | grep -c ${guest}) -eq 1 ]; then
+    if [ $(pct list | grep -c "${guest}") -eq 1 ]; then
       echoLOG y "${txt_1204} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep ${guest} | awk '{print $2}')${NOCOLOR}"
       if bash "$script_path/handler/delete_lxc.sh" $var_language ${guest}; then
         echoLOG g "${1205}"
@@ -36,13 +36,13 @@ if [ $yesno -eq 0 ]; then
       else
         echoLOG r "${txt_1208}"
       fi
-    elif [ $(pct list | grep -c ${guest}) -eq 0 ]; then
+    elif [ $(pct list | grep -c "${guest}") -eq 0 ]; then
       if [ $(pct restore ${guest} /mnt/pve/backups/dump/*-${guest}-*_manual.vma.zst -storage ${ctTemplateDisk}) -eq 0 ]; then
         echoLOG g "${1206}"
       else
         echoLOG r "${1207}"
       fi
-    elif [ $(qm list | grep -c ${guest}) -eq 1 ]; then
+    elif [ $(qm list | grep -c "${guest}") -eq 1 ]; then
       echoLOG y "${txt_1204} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(qm list | grep ${guest} | awk '{print $2}')${NOCOLOR}"
       if bash "$script_path/handler/delete_vm.sh" $var_language ${guest}; then
         echoLOG g "${1205}"
@@ -55,12 +55,14 @@ if [ $yesno -eq 0 ]; then
         echoLOG r "${txt_1208}"
       fi
     fi
-    elif [ $(qm list | grep -c ${guest}) -eq 0 ]; then
+    elif [ $(qm list | grep -c "${guest}") -eq 0 ]; then
       if [ $(pct restore ${guest} /mnt/pve/backups/dump/*-${guest}-*_manual.vma.zst -storage ${ctTemplateDisk}) -eq 0 ]; then
         echoLOG g "${1206}"
       else
         echoLOG r "${1207}"
       fi
+    else
+      echoLOG r "${txt_1209}"
     fi
   done
 else
