@@ -42,7 +42,7 @@ if [[ $backupmode == "all" ]]; then
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$vm${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(qm list | grep $vm | awk '{print $2}')${NOCOLOR}"
     echoLOG b "${txt_1105}"
     qm shutdown ${vm} --forceStop 1 --timeout 30 > /dev/null 2>&1
-    if vzdump ${lxc} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
+    if vzdump ${vm} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${vm}-*.vma.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       mv ${filename}.vma.zst ${filename}_manual.vma.zst
       mv ${filename}.log ${filename}_manual.log
