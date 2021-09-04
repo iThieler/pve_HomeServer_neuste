@@ -55,7 +55,7 @@ else
           ctID=$(( $ctID + 1 ))
         done
       fi
-      if pct restore $ctID /mnt/pve/backups/dump/*-$guest-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
+      if pct restore $ctID /mnt/pve/backups/dump/*-$guest-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
         echoLOG g "${txt_1206}"
       else
         echoLOG r "${txt_1207}"
@@ -70,7 +70,7 @@ else
           vmID=$(( $vmID + 1 ))
         done
       fi
-      if qmrestore $wmID /mnt/pve/backups/dump/*-$guest-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
+      if qmrestore $wmID /mnt/pve/backups/dump/*-$guest-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1; then
         echoLOG g "${txt_1206}"
       else
         echoLOG r "${txt_1207}"
