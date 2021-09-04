@@ -1,6 +1,7 @@
 #!/bin/bash
 
 var_language=$1
+var_lxcchoice=$2
 script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
 
 source "$script_path/helper/variables.sh"
@@ -23,7 +24,9 @@ echo -e ")" >> /tmp/lxclist.sh
 
 source /tmp/lxclist.sh
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0502}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+if [ -z "$var_lxcchoice" ]; then
+  var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0502}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+fi
 
 for choosed_lxc in $var_lxcchoice; do
   ctID=$(pct list | grep -w "$choosed_lxc" | awk '{print $1}')
@@ -33,7 +36,7 @@ for choosed_lxc in $var_lxcchoice; do
     textbox=white,red
     button=black,yellow
   ' \
-  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${txt_0502} " "\n${txt_0503}\n\n${wrd_0001}: ${ctID}\n${wrd_0002}: ${choosed_lxc}\n\n${txt_0504}" 15 80
+  whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0503}\n\n${wrd_0001}: ${ctID}\n${wrd_0002}: ${choosed_lxc}\n\n${txt_0504}" 15 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
     pct stop $ctID --skiplock 1

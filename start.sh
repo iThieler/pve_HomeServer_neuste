@@ -190,14 +190,18 @@ function install() {
 function backuprestore() {
   if [[ $1 == "backup" ]]; then
     if bash "$script_path/handler/backup.sh" $var_language "$2"; then
+      echoLOG g "${txt_0040}"
       return 0
     else
+      echoLOG r "${txt_0041}"
       return 1
     fi
   elif [[ $1 == "restore" ]]; then
-    if bash "$script_path/handler/restore.sh" $var_language "$2"; then
+    if bash "$script_path/handler/restore.sh" $var_language; then
+      echoLOG g "${txt_0042}"
       return 0
     else
+      echoLOG r "${txt_0043}"
       return 1
     fi
   fi
@@ -234,11 +238,13 @@ function menu() {
   sel=("1" "... ${txt_0027}" \
        "2" "... ${txt_0028}" \
        "3" "... ${txt_0029}" \
-       "4" "... ${txt_0030}" \
-       "5" "... ${txt_0031}" \
-       "6" "... ${txt_0032}" \
+       #"4" "... ${txt_0030}" \
+       if [ -n "$var_nasip" ]; then
+         "5" "... ${txt_0031}" \
+         "6" "... ${txt_0032}" \
+       fi
        "7" "... ${txt_0033}" \
-       "8" "... ${txt_0034}" \
+       #"8" "... ${txt_0034}" \
        "" "" \
        "Q" "... ${txt_0035}")
   sel_menu=$(whiptail --menu --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0004} " "\n${txt_0036}" 20 80 10 "${sel[@]}" 3>&1 1>&2 2>&3)

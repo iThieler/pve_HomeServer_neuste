@@ -13,6 +13,8 @@ btn_9="DATA CARRIER"
 btn_10="SERVER"
 btn_11="ALL"
 btn_12="SELECT"
+btn_13="REPLACE"
+btn_14="NEW IDS"
 
 # Titles
 tit_0001="ERROR"
@@ -90,6 +92,10 @@ txt_0036="What do you want to do?"
 txt_0037="Attached is the current log file"
 txt_0038="Do you want to back up all containers and virtual machines, or select individual ones"?
 txt_0039="Do you want to restore all manually backed up containers and virtual machines, or select individual ones"?
+txt_0040="Backup job executed successfully".
+txt_0041="Backup job NOT successfully executed, check the LOG for errors".
+txt_0042="Restore job executed successfully".
+txt_0043="Restore job NOT successfully executed, check the LOG for errors".
 
 # /bin/config_email.sh
 txt_0101="Your mail server will be configured in proxmox to send messages"
@@ -254,46 +260,21 @@ txt_1018=""
 txt_1019=""
 txt_1020=""
 
-# /handler/recover_lxc.sh
-txt_1101=""
-txt_1102=""
-txt_1103=""
-txt_1104=""
-txt_1105=""
-txt_1106=""
-txt_1107=""
-txt_1108=""
-txt_1109=""
-txt_1110=""
-txt_1111=""
-txt_1112=""
-txt_1113=""
-txt_1114=""
-txt_1115=""
-txt_1116=""
-txt_1117=""
-txt_1118=""
-txt_1119=""
-txt_1120=""
+# /handler/backup.sh
+txt_1101="It will delete all existing backups in the manual folder in your backup directory, if you want to keep them, back them up before you continue"
+txt_1102="A backup of all guest systems will be created"
+txt_1103="To ensure the highest possible backup quality, the respective guest system is shut down"
+txt_1104="Backup process started by guest"
+txt_1105="The guest system is shut down to ensure the highest possible backup quality"
+txt_1106="Backup completed successfully"
+txt_1107="Backup NOT successful"
 
-# /handler/recover_vm.sh
-txt_1201=""
-txt_1202=""
-txt_1203=""
-txt_1204=""
-txt_1205=""
-txt_1206=""
-txt_1207=""
-txt_1208=""
-txt_1209=""
-txt_1210=""
-txt_1211=""
-txt_1212=""
-txt_1213=""
-txt_1214=""
-txt_1215=""
-txt_1216=""
-txt_1217=""
-txt_1218=""
-txt_1219=""
-txt_1220=""
+# /handler/restore.sh
+txt_1201="No manual backups were found. To restore automatically created backups please use the Proxmox web interface"
+txt_1202="Do you want to replace any existing guest systems with the backups, or do you want to create new IDs?"
+txt_1203="All found backups will be restored"
+txt_1204="Delete existing guest system"
+txt_1205="Guest system successfully deleted"
+txt_1206="Guest system successfully restored"
+txt_1207="Guest system could NOT be restored"
+txt_1208="The guest system could NOT be deleted"
