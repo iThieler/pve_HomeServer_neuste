@@ -187,15 +187,15 @@ function install() {
   fi
 }
 
-function recover() {
-  if [[ $1 == "LXC" ]]; then
-    if bash "$script_path/handler/recover_lxc.sh" $var_language; then
+function backuprestore() {
+  if [[ $1 == "backup" ]]; then
+    if bash "$script_path/handler/backup.sh" $var_language "$2"; then
       return 0
     else
       return 1
     fi
-  elif [[ $1 == "VM" ]]; then
-    if bash "$script_path/handler/recover_vm.sh" $var_language; then
+  elif [[ $1 == "restore" ]]; then
+    if bash "$script_path/handler/restore.sh" $var_language "$2"; then
       return 0
     else
       return 1
@@ -256,10 +256,22 @@ function menu() {
     install "VM"
     menu
   elif [[ $sel_menu == "5" ]]; then
-    backup
+    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${AUSWÄHLEN} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_0038}?" 10 80
+    yesno=$?
+    if [ $yesno -eq 0 ]; then
+      backuprestore "backup" "all"
+    else
+      backuprestore "backup" "select"
+    fi
     menu
   elif [[ $sel_menu == "6" ]]; then
-    recover
+    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${AUSWÄHLEN} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0009} " "\n${txt_0039}?" 10 80
+    yesno=$?
+    if [ $yesno -eq 0 ]; then
+      backuprestore "restore" "all"
+    else
+      backuprestore "restore" "select"
+    fi
     menu
   elif [[ $sel_menu == "7" ]]; then
     delete "LXC"
