@@ -26,6 +26,7 @@ if [[ $backupmode == "all" ]]; then
   for lxc in $(pct list | sed '1d' | awk '{print $1}'); do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$lxc${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep $lxc | awk '{print $2}')${NOCOLOR}"
     echoLOG b "${txt_1105}"
+    pct shutdown ${lxc} --forceStop 1 --timeout 10
     if vzdump ${lxc} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${lxc}-*.tar.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       mv ${filename}.tar.zst ${filename}_manual.tar.zst
@@ -39,6 +40,7 @@ if [[ $backupmode == "all" ]]; then
   for vm in $(qm list | sed '1d' | awk '{print $1}'); do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$vm${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(qm list | grep $vm | awk '{print $2}')${NOCOLOR}"
     echoLOG b "${txt_1105}"
+    qm shutdown ${vm} --forceStop 1 --timeout 30
     if vzdump ${lxc} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${vm}-*.vma.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       mv ${filename}.vma.zst ${filename}_manual.vma.zst
@@ -66,6 +68,11 @@ else
   for choosed_guest in $var_guestchoice; do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$choosed_guest${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(cat /tmp/list.sh | grep $choosed_guest | awk '{print $2}')${NOCOLOR}"
     echoLOG b "${txt_11050}"
+    if [ $(pct list | grep -c $choosed_guest) -eq 1 ]; then
+      pct shutdown ${choosed_guest} --forceStop 1 --timeout 10
+    elif [ $(qm list | grep -c $choosed_guest) -eq 1 ]; then
+      qm shutdown ${choosed_guest} --forceStop 1 --timeout 30
+    fi
     if vzdump ${choosed_guest} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${choosed_guest}-*.*.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       if [ -f "${filename}.tar.zst" ]; then
