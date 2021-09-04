@@ -36,6 +36,7 @@ if [[ $backupmode == "all" ]]; then
     else
       echoLOG r "${txt_1107}"
     fi
+    pct start ${lxc} > /dev/null 2>&1
   done
   for vm in $(qm list | sed '1d' | awk '{print $1}'); do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$vm${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(qm list | grep $vm | awk '{print $2}')${NOCOLOR}"
@@ -50,6 +51,7 @@ if [[ $backupmode == "all" ]]; then
     else
       echoLOG r "${txt_1107}"
     fi
+    qm start ${vm} > /dev/null 2>&1
   done
 else
   echo -e '#!/bin/bash\n\nlist=( \\' > /tmp/list.sh
@@ -85,6 +87,11 @@ else
       echoLOG g "${txt_1106}"
     else
       echoLOG r "${txt_1107}"
+    fi
+    if [ $(pct list | grep -c $choosed_guest) -eq 1 ]; then
+      pct start ${choosed_guest} > /dev/null 2>&1
+    elif [ $(qm list | grep -c $choosed_guest) -eq 1 ]; then
+      qm start ${choosed_guest} > /dev/null 2>&1
     fi
   done
 fi
