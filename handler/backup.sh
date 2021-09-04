@@ -69,7 +69,7 @@ else
 
   for choosed_guest in $var_guestchoice; do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$choosed_guest${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(cat /tmp/list.sh | grep $choosed_guest | awk '{print $2}')${NOCOLOR}"
-    echoLOG b "${txt_11050}"
+    echoLOG b "${txt_1105}"
     if [ $(pct list | grep -c $choosed_guest) -eq 1 ]; then
       pct shutdown ${choosed_guest} --forceStop 1 --timeout 10 > /dev/null 2>&1
     elif [ $(qm list | grep -c $choosed_guest) -eq 1 ]; then
