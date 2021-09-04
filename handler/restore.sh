@@ -56,13 +56,13 @@ else
         done
       fi
       if pct restore $ctID /mnt/pve/backups/dump/*-$guest-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
-        echoLOG g "${txt_1206}"
+        hostname=$(pct list | grep $ctID | awk '{print $3}')
+        pct set $ctID --hostname "${hostname}-neu"
+        pct start $guest > /dev/null 2>&1
+        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-neu${NOCOLOR}"
       else
         echoLOG r "${txt_1207}"
       fi
-      hostname=$(pct list | grep $ctID | awk '{print $3}')
-      pct set $ctID --hostname "${hostname}-neu"
-      pct start $guest > /dev/null 2>&1
     elif [ $(ls -ldst /mnt/pve/backups/dump/*-${guest}-*_manual.*.zst | grep -c "vma") -eq 1 ]; then
       if [ $(qm list | grep -cw 200) -eq 0 ]; then
         vmID=200
@@ -73,13 +73,13 @@ else
         done
       fi
       if qmrestore $wmID /mnt/pve/backups/dump/*-$guest-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
-        echoLOG g "${txt_1206}"
+        hostname=$(qm list | grep $vmID | awk '{print $2}')
+        qm set $wmID --name "${hostname}-neu"
+        qm start $guest > /dev/null 2>&1
+        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-neu${NOCOLOR}"
       else
         echoLOG r "${txt_1207}"
       fi
-      hostname=$(qm list | grep $vmID | awk '{print $2}')
-      qm set $wmID --name "${hostname}-neu"
-      qm start $guest > /dev/null 2>&1
     fi
   done
 fi
