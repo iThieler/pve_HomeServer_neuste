@@ -143,7 +143,7 @@ if [ -n "$input"]; then
       textbox=white,red
       button=black,yellow
     ' \
-  whiptail --textbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}: ${input}" 10 80
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title "${tit_0005}" "\n${txt_0902}: ${input}" 10 80
   echoLOG b "${txt_0902}: ${LIGHTPURPLE}$input${NOCOLOR}"
 fi
 
