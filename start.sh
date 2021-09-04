@@ -280,13 +280,7 @@ function menu() {
     fi
     menu
   elif [[ $sel_menu == "6" ]]; then
-    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${btn_12} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0009} " "\n${txt_0039}?" 10 80
-    yesno=$?
-    if [ $yesno -eq 0 ]; then
-      backuprestore "restore" "all"
-    else
-      backuprestore "restore" "select"
-    fi
+    backuprestore "restore" "all"
     menu
   elif [[ $sel_menu == "7" ]]; then
     delete "LXC"
