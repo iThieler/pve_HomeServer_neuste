@@ -24,14 +24,14 @@ if [[ $backupmode == "all" ]]; then
   echoLOG y "${txt_1102}"
   echoLOG b "${txt_1103}"
   for lxc in $(pct list | sed '1d' | awk '{print $1}'); do
-    echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$lxc${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep $lxc | awk '{print $2}')${NOCOLOR}"
+    echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$lxc${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(pct list | grep $lxc | awk '{print $3}')${NOCOLOR}"
     echoLOG b "${txt_1105}"
     pct shutdown ${lxc} --forceStop 1 --timeout 10 > /dev/null 2>&1
     if vzdump ${lxc} --dumpdir /mnt/pve/backups/dump --mode stop --compress zstd --exclude-path /mnt/ --exclude-path /media/ --quiet 1; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${lxc}-*.tar.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       mv ${filename}.tar.zst ${filename}_manual.tar.zst
       mv ${filename}.log ${filename}_manual.log
-      echo "${txt_1108} SmartHome-IoT.net" > ${filename}_manual.notes
+      echo "${txt_1108} SmartHome-IoT.net" > ${filename}_manual.tar.zst.notes
       echoLOG g "${txt_1106}"
     else
       echoLOG r "${txt_1107}"
@@ -46,7 +46,7 @@ if [[ $backupmode == "all" ]]; then
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${vm}-*.vma.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       mv ${filename}.vma.zst ${filename}_manual.vma.zst
       mv ${filename}.log ${filename}_manual.log
-      echo "${txt_1108}  SmartHome-IoT.net" > ${filename}_manual.notes
+      echo "${txt_1108}  SmartHome-IoT.net" > ${filename}_manual.vma.zst.notes
       echoLOG g "${txt_1106}"
     else
       echoLOG r "${txt_1107}"
@@ -79,11 +79,12 @@ else
       filename=$(ls -ldst /mnt/pve/backups/dump/*-${choosed_guest}-*.*.zst | awk '{print $10}' | cut -d. -f1 | head -n1)
       if [ -f "${filename}.tar.zst" ]; then
         mv ${filename}.tar.zst ${filename}_manual.tar.zst
+      echo "${txt_1108}  SmartHome-IoT.net" > ${filename}_manual.tar.zst.notes
       else
         mv ${filename}.vma.zst ${filename}_manual.vma.zst
+      echo "${txt_1108}  SmartHome-IoT.net" > ${filename}_manual.vma.zst.notes
       fi
       mv ${filename}.log ${filename}_manual.log
-      echo "${txt_1108}  SmartHome-IoT.net" > ${filename}_manual.notes
       echoLOG g "${txt_1106}"
     else
       echoLOG r "${txt_1107}"
@@ -94,6 +95,7 @@ else
       qm start ${choosed_guest} > /dev/null 2>&1
     fi
   done
+  rm /tmp/list.sh
 fi
 
 if [ $(cat /opt/smarthome-iot_net/shiot_log.txt | grep -cw "${txt_1107}") -eq 0 ]; then exit 0; else exit 1; fi
