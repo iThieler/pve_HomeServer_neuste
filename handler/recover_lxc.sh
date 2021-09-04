@@ -1,9 +1,0 @@
-#!/bin/bash
-
-var_language=$1
-script_path=$(realpath "$0" | sed 's|\(.*\)/.*|\1|' | cut -d/ -f1,2,3)
-
-source "$script_path/helper/variables.sh"
-source "$script_path/helper/functions.sh"
-source "$shiot_configPath/$shiot_configFile"
-source "$script_path/language/$var_language.sh"
