@@ -261,7 +261,7 @@ txt_1019=""
 txt_1020=""
 
 # /handler/backup.sh
-txt_1101="Es werden alle vorhanden Sicherungen im Ordner manual in deinem Backupverzeichnis gelöscht, wenn Du diese behalten willst, sichere sie bevor Du fortfährst"
+txt_1101="Alle vorhandenen manuell erstellten Sicherungen in Deinem Backupverzeichnis werden gelöscht. Wenn Du sie behalten möchten, sicher sie, bevor Du fortfährst. Dies gilt nicht für Sicherungen, die automatisch durch einen Cron-Job erstellt wurden."
 txt_1102="Es wird ein Backup von allen Gastsystemen erstellt"
 txt_1103="Um eine höchstmögliche Backupqualität sicherzustellen, wird dasjeweilige Gastsystem heruntergefahren"
 txt_1104="Backupprozess von Gast gestartet"

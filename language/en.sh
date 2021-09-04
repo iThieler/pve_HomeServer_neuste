@@ -261,7 +261,7 @@ txt_1019=""
 txt_1020=""
 
 # /handler/backup.sh
-txt_1101="It will delete all existing backups in the manual folder in your backup directory, if you want to keep them, back them up before you continue"
+txt_1101="All existing manually created backups in your backup directory will be deleted, if you want to keep them, back them up before continuing. This does not apply to backups created automatically by a cron job."
 txt_1102="A backup of all guest systems will be created"
 txt_1103="To ensure the highest possible backup quality, the respective guest system is shut down"
 txt_1104="Backup process started by guest"
