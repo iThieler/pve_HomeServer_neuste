@@ -11,6 +11,8 @@ btn_7="RELEASE"
 btn_8="LOCAL"
 btn_9="DATA CARRIER"
 btn_10="SERVER"
+btn_11="ALL"
+btn_12="SELECT"
 
 # Titles
 tit_0001="ERROR"
@@ -20,6 +22,8 @@ tit_0004="CONFIGURING PROXMOX HOMESERVER"
 tit_0005="LXC CONFIGURATION"
 tit_0006="CREATE BACKUP"
 tit_0007="HOMESERVER CONFIGURATION"
+tit_0008="BACKUP GUEST SYSTEMS"
+tit_0009="RECOVER GUEST SYSTEMS"
 
 # Words
 wrd_0001="ID"
@@ -84,6 +88,8 @@ txt_0034="delete virtual machine"
 txt_0035="quit and return to script selection"
 txt_0036="What do you want to do?"
 txt_0037="Attached is the current log file"
+txt_0038="Do you want to back up all containers and virtual machines, or select individual ones"?
+txt_0039="Do you want to restore all manually backed up containers and virtual machines, or select individual ones"?
 
 # /bin/config_email.sh
 txt_0101="Your mail server will be configured in proxmox to send messages"
