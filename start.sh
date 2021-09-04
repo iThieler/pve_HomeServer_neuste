@@ -18,11 +18,11 @@ if [ -f "$shiot_configPath/$shiot_configFile" ]; then
   source "$shiot_configPath/$shiot_configFile"
 fi
 
-clear
+#clear
 if [ ! -d "$shiot_configPath/" ]; then mkdir -p $shiot_configPath; fi
 source "$script_path/images/shell_logo.sh"
 logo > "$shiot_configPath/$shiot_logfile"
-logo
+#logo
 
 # Checks if Proxmox ist installed
 if [ ! -d "/etc/pve/" ]; then
@@ -271,7 +271,7 @@ function menu() {
     install "VM"
     menu
   elif [[ $sel_menu == "5" ]]; then
-    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${AUSWÄHLEN} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_0038}?" 10 80
+    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${btn_12} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_0038}?" 10 80
     yesno=$?
     if [ $yesno -eq 0 ]; then
       backuprestore "backup" "all"
@@ -280,7 +280,7 @@ function menu() {
     fi
     menu
   elif [[ $sel_menu == "6" ]]; then
-    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${AUSWÄHLEN} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0009} " "\n${txt_0039}?" 10 80
+    whiptail --yesno --yes-button " ${btn_11} " --no-button " ${btn_12} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0009} " "\n${txt_0039}?" 10 80
     yesno=$?
     if [ $yesno -eq 0 ]; then
       backuprestore "restore" "all"
