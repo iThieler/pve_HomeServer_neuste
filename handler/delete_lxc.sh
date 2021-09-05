@@ -39,7 +39,7 @@ for choosed_lxc in $var_lxcchoice; do
   whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0503}\n\n${wrd_0001}: ${ctID}\n${wrd_0002}: ${choosed_lxc}\n\n${txt_0504}" 15 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
-    pct stop $ctID --skiplock 1
+    pct shutdown $ctID --forceStop 1 --timeout 10 > /dev/null 2>&1
     pct destroy $ctID --force 1 --purge 1 > /dev/null 2>&1
     ##################################################################
     ############# Delete firewall rules of the container #############
