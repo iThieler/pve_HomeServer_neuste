@@ -14,7 +14,7 @@ echoLOG b "${txt_0501}"
 available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 for lxc in $available_lxc; do
-  lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
+  lxc=$(pct list | grep -w ${lxc} | awk '{print $3}' | sed "s|-${wrd_0021}||g")
   source "$script_path/lxc/${lxc}/description.sh"
   desc="desc_${var_language}"
   if [ -n "${!desc}" ]; then desc="desc_en"; fi 
