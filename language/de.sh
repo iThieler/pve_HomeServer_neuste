@@ -170,6 +170,7 @@ txt_0502="Wähle die Container, die Du löschen möchtest"
 txt_0503="Der folgende Container wird gelöscht"
 txt_0504="Bist Du sicher das Du fortsetzen möchtest?"
 txt_0505="Der Container wurde gelöscht"
+txt_0506="Es wurden keine Conatiner auf deinem HomeServer gefunden, wesshalb auch keine gelöscht werden können."
 
 # /handler/delete_vm.sh
 txt_0601=""

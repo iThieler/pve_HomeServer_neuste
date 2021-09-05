@@ -9,6 +9,17 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
+if pct list; then
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_0506}" 10 80
+  exit 1
+fi
+
 # make list of available Containers, hide already existing
 echoLOG b "${txt_0501}"
 available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
