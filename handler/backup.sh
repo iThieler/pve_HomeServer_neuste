@@ -9,7 +9,7 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
-if pct list && qm list; then
+if [ $(pct list | grep -c 1.*) -eq 0 -a $(qm list | grep -c 2.*) -eq 0 ] ; then
   NEWT_COLORS='
       window=black,red
       border=white,red
