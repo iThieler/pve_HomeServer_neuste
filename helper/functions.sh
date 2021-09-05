@@ -40,7 +40,7 @@ function cleanupHistory() {
 function echoLOG() {
   typ=$1
   text=$2
-  textlog=$(echo $2 | sed 's|\033[0m||g' | sed 's|\033[1;31m||g' | sed 's|\033[1;32m||g' | sed 's|\033[1;33m||g' | sed 's|\033[1;34m||g')
+  textlog=$(echo $2 | sed -e 's|\033[0m||g' | sed -e 's|\033[1;31m||g' | sed -e 's|\033[1;32m||g' | sed -e 's|\033[1;33m||g' | sed -e 's|\033[1;34m||g')
   logfile=/opt/smarthome-iot_net/shiot_log.txt
   nc='\033[0m'
   red='\033[1;31m'
