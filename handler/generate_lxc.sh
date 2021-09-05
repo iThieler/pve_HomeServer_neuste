@@ -136,7 +136,7 @@ for choosed_lxc in $var_lxcchoice; do
     if [ -z "${input}" ]; then input="${choosed_lxc}"; else input="${input}, ${choosed_lxc}"; fi
   fi
 done
-if [ -n "$input"]; then
+if [ -n "$input" ]; then
   NEWT_COLORS='
       window=black,red
       border=white,red
