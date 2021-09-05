@@ -65,7 +65,7 @@ else
 
   source /tmp/list.sh
 
-  var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\nWelche Gastsysteme möchtest du sichern?" 20 35 15 "${list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+  var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\nWelche Gastsysteme möchtest du sichern?" 20 35 15 "${list[@]}   " 3>&1 1>&2 2>&3 | sed 's#"##g')
 
   for choosed_guest in $var_guestchoice; do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$choosed_guest${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(cat /tmp/list.sh | grep $choosed_guest | awk '{print $2}')${NOCOLOR}"
