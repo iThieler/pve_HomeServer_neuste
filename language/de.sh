@@ -48,6 +48,7 @@ wrd_0017="oder"
 wrd_0018="Einrichtung"
 wrd_0019="Verwaltung"
 wrd_0020="Logdatei"
+wrd_0021="neu"
 
 # Descriptions
 des_0001="per E-Mail versendet"
