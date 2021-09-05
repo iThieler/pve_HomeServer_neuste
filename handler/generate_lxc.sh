@@ -133,7 +133,7 @@ input=
 for choosed_lxc in $var_lxcchoice; do
   source "$script_path/lxc/$choosed_lxc/description.sh"
   if $userinput; then
-    if [ -z "$input" ]; then input="$choosed_lxc"; else input="$input, $choosed_lxc"; fi
+    if [ -z "${input}" ]; then input="${choosed_lxc}"; else input="${input}, ${choosed_lxc}"; fi
   fi
 done
 if [ -n "$input"]; then
