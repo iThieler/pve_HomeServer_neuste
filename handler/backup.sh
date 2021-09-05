@@ -20,6 +20,16 @@ if ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
   rm /mnt/pve/backups/dump/*_manual*
 fi
 
+if pct list && qm list; then
+  NEWT_COLORS='
+      window=black,red
+      border=white,red
+      textbox=white,red
+      button=black,yellow
+    ' \
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1101}" 10 80
+fi
+
 if [[ $backupmode == "all" ]]; then
   echoLOG y "${txt_1102}"
   echoLOG b "${txt_1103}"
@@ -65,7 +75,7 @@ else
 
   source /tmp/list.sh
 
-  var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\nWelche Gastsysteme möchtest du sichern?" 20 35 15 "${list[@]}   " 3>&1 1>&2 2>&3 | sed 's#"##g')
+  var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1109}?" 20 35 15 "${list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
 
   for choosed_guest in $var_guestchoice; do
     echoLOG y "${txt_1104} >> ${wrd_0001}: ${LIGHTPURPLE}$choosed_guest${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$(cat /tmp/list.sh | grep $choosed_guest | awk '{print $2}')${NOCOLOR}"

@@ -270,6 +270,8 @@ txt_1105="The guest system is shut down to ensure the highest possible backup qu
 txt_1106="Manual Backup Completed Successfully"
 txt_1107="Manual backup could NOT be completed successfully"
 txt_1108="manually created by the script of"
+txt_1109="Which guest systems do you want to back up"
+txt_1110="Neither containers nor virtual machines were found. There is nothing from which a backup could be created."
 
 # /handler/restore.sh
 txt_1201="No manual backups were found. To restore automatically created backups please use the Proxmox web interface"

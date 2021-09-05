@@ -270,6 +270,8 @@ txt_1105="Das Gastsystem wird runtergefahren, um eine hohe Sicherungsqualität s
 txt_1106="Manuelles Backup erfolgreich beendet"
 txt_1107="Manuelles Backup konnte NICHT erfolgreich abgeschlossen werden"
 txt_1108="manuell erstellt durch das Skript von"
+txt_1109="Welche Gastsysteme möchtest du sichern"
+txt_1110="Es wurden weder Container noch virtuelle Maschinen gefunden. Es gibt nichts von dem ein Backup erstellt werden könnte."
 
 # /handler/restore.sh
 txt_1201="Es wurden keine manuellen Backups gefunden. Um automatisch erzeugte Backups wiederherzustellen, nutze bitte die Proxmox Weboberfläche"
