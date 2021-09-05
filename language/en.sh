@@ -48,6 +48,7 @@ wrd_0017="or"
 wrd_0018="Setup"
 wrd_0019="Administration"
 wrd_0020="Logfile"
+wrd_0021="new"
 
 # Descriptions
 des_0001="sent by email"
