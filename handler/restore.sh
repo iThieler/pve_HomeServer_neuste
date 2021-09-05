@@ -57,9 +57,9 @@ else
       fi
       if pct restore $ctID /mnt/pve/backups/dump/*-$guest-*_manual.tar.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
         hostname=$(pct list | grep $ctID | awk '{print $3}')
-        pct set $ctID --hostname "${hostname}-neu"
+        pct set $ctID --hostname "${hostname}-${wrd_0021}"
         pct start $guest > /dev/null 2>&1
-        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-neu${NOCOLOR}"
+        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-${wrd_0021}${NOCOLOR}"
       else
         echoLOG r "${txt_1207}"
       fi
@@ -74,9 +74,9 @@ else
       fi
       if qmrestore $wmID /mnt/pve/backups/dump/*-$guest-*_manual.vma.zst --storage ${ctTemplateDisk} --pool "BackupPool" --force 1 > /dev/null 2>&1; then
         hostname=$(qm list | grep $vmID | awk '{print $2}')
-        qm set $wmID --name "${hostname}-neu"
+        qm set $wmID --name "${hostname}-${wrd_0021}"
         qm start $guest > /dev/null 2>&1
-        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-neu${NOCOLOR}"
+        echoLOG g "${txt_1206} >> ${wrd_0001}: ${LIGHTPURPLE}${guest}${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${hostname}-${wrd_0021}${NOCOLOR}"
       else
         echoLOG r "${txt_1207}"
       fi
