@@ -17,6 +17,7 @@ if pct list; then
       button=black,yellow
     ' \
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_0506}" 10 80
+  echoLOG r "${txt_0506}"
   exit 1
 fi
 
