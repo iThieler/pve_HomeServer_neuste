@@ -16,7 +16,7 @@ if pct list && qm list; then
       textbox=white,red
       button=black,yellow
     ' \
-  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1101}" 10 80
+  whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1110}" 10 80
   exit 1
 fi
 
