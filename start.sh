@@ -222,11 +222,11 @@ function delete() {
 }
 
 function finish() {
-  sed -i 's/[0m//g' "$shiot_configPath/$shiot_logfile"
-  sed -i 's/[1;31m//g' "$shiot_configPath/$shiot_logfile"
-  sed -i 's/[1;32m//g' "$shiot_configPath/$shiot_logfile"
-  sed -i 's/[1;33m//g' "$shiot_configPath/$shiot_logfile"
-  sed -i 's/[1;34m//g' "$shiot_configPath/$shiot_logfile"
+  sed -i 's/"[0m"/""/g' "$shiot_configPath/$shiot_logfile"
+  sed -i 's/"[1;31m"/""/g' "$shiot_configPath/$shiot_logfile"
+  sed -i 's/"[1;32m"/""/g' "$shiot_configPath/$shiot_logfile"
+  sed -i 's/"[1;33m"/""/g' "$shiot_configPath/$shiot_logfile"
+  sed -i 's/"[1;34m"/""/g' "$shiot_configPath/$shiot_logfile"
   echo -e "${txt_0037}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0020}" "${var_rootmail}" -A "$shiot_configPath/$shiot_logfile"
   rm "$shiot_configPath/$shiot_logfile"
   unset script_path
