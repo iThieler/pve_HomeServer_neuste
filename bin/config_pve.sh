@@ -26,12 +26,12 @@ fi
 
 # Set email notification about system hard disk errors, check every 12 hours
 echoLOG b "${txt_0305}"
-sed -i 's+#enable_smart="/dev/hda /dev/hdb"+enable_smart="/dev/'"$rootDisk"'"+' /etc/default/smartmontools
-sed -i 's+#smartd_opts="--interval=1800"+smartd_opts="--interval=43200"+' /etc/default/smartmontools
+sed -i 's|#enable_smart="/dev/hda /dev/hdb"|enable_smart="/dev/'"$rootDisk"'"|' /etc/default/smartmontools
+sed -i 's|#smartd_opts="--interval=1800"|smartd_opts="--interval=43200"|' /etc/default/smartmontools
 echo "start_smartd=yes" >> /etc/default/smartmontools
-sed -i 's+DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner+' /etc/smartd.conf
-sed -i 's+# /dev/sda -a -d sat+/dev/'"$rootDisk"' -a -d sat+' /etc/smartd.conf
-sed -i 's+#/dev/sda -d scsi -s L/../../3/18+/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root+' /etc/smartd.conf
+sed -i 's|DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner|#DEVICESCAN -d removable -n standby -m root -M exec /usr/share/smartmontools/smartd-runner|' /etc/smartd.conf
+sed -i 's|# /dev/sda -a -d sat|/dev/'"$rootDisk"' -a -d sat|' /etc/smartd.conf
+sed -i 's|#/dev/sda -d scsi -s L/../../3/18|/dev/'"$rootDisk"' -d sat -s L/../../1/02 -m root|' /etc/smartd.conf
 systemctl start smartmontools
 
 # configure Firewall in Proxmox
@@ -56,9 +56,9 @@ if [ -z $secondDisk ]; then
   pvesm set data --content iso,vztmpl,rootdir,images
 
   # Set email notification about hard disk errors, check every 12 hours
-  sed -i 's+enable_smart="/dev/'"$rootDisk"'"+enable_smart="/dev/'"$rootDisk"' /dev/'"$secondDisk"'"+' /etc/default/smartmontools
-  sed -i 's+/dev/'"$rootDisk"' -a -d sat+/dev/'"$rootDisk"' -a -d sat\n/dev/'"$secondDisk"' -a -d sat+' /etc/smartd.conf
-  sed -i 's+#/dev/sdb -d scsi -s L/../../7/01+/dev/'"$secondDisk"' -d sat -s L/../../1/03 -m root+' /etc/smartd.conf
+  sed -i 's|enable_smart="/dev/'"$rootDisk"'"|enable_smart="/dev/'"$rootDisk"' /dev/'"$secondDisk"'"|' /etc/default/smartmontools
+  sed -i 's|/dev/'"$rootDisk"' -a -d sat|/dev/'"$rootDisk"' -a -d sat\n/dev/'"$secondDisk"' -a -d sat|' /etc/smartd.conf
+  sed -i 's|#/dev/sdb -d scsi -s L/../../7/01|/dev/'"$secondDisk"' -d sat -s L/../../1/03 -m root|' /etc/smartd.conf
   systemctl restart smartmontools
 fi
 
@@ -77,8 +77,8 @@ fi
 # mail Configfile to root
 echoLOG p "${txt_0312}"
 cp $shiot_configPath/$shiot_configFile /tmp/SHIoT_configuration.txt
-sed -i 's/var_robotpw=".*"/var_robotpw=""/g' /tmp/SHIoT_configuration.txt
-sed -i 's/var_mailpassword=".*"/var_mailpassword=""/g' /tmp/SHIoT_configuration.txt
+sed -i 's|var_robotpw=".*"|var_robotpw=""|g' /tmp/SHIoT_configuration.txt
+sed -i 's|var_mailpassword=".*"|var_mailpassword=""|g' /tmp/SHIoT_configuration.txt
 echo -e "${txt_0313} \"SHIoT_configuration.txt\". ${txt_0314}" | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_configuration.txt"
 
 

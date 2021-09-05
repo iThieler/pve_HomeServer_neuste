@@ -35,7 +35,7 @@ fi
 
 # Changes the App Armor profile for the container
 if [ -n "$apparmorProfile" ]; then
-  sed -i 's#swap: '"$swap"'#swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'#' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
+  sed -i 's|swap: '"$swap"'|swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'|' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
 fi
 
 # Mounted the DVB-TV-Card to container if exist and is needed
@@ -63,7 +63,7 @@ pct start $ctID
 sleep 10
 
 # Disable SSH client option SendEnv LC_* because errors occur during automatic processing
-pct exec $ctID -- bash -ci "sed -i 's+    SendEnv LANG LC_*+#   SendEnv LANG LC_*+g' /etc/ssh/ssh_config > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "sed -i 's|    SendEnv LANG LC_*|#   SendEnv LANG LC_*|g' /etc/ssh/ssh_config > /dev/null 2>&1"
 
 # Mounted the NAS to container if exist and is set in Container Configuration Template
 if [ -n "$var_nasip" ] && $nasneeded; then
@@ -96,7 +96,7 @@ if $sambaneeded; then
       smbuserdesc="${smbuserdesc}\n#$wrd_0011:   $user\n#$wrd_0004:   $smbpasswd"
     fi
   done
-  pct exec $ctID -- bash -ci "sed -i 's#map to guest = bad user#map to guest = never#' /etc/samba/smb.conf > /dev/null 2>&1"
+  pct exec $ctID -- bash -ci "sed -i 's|map to guest = bad user|map to guest = never|' /etc/samba/smb.conf > /dev/null 2>&1"
   pct exec $ctID -- bash -ci "chown -R smb /root/sambashare"
   pct exec $ctID -- bash -ci "systemctl restart smbd.service"
 fi

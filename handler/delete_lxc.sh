@@ -23,7 +23,7 @@ fi
 
 # make list of available Containers, hide already existing
 echoLOG b "${txt_0501}"
-available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
+available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s|\n| |g')
 echo -e "#!/bin/bash\n\nlxc_list=( \\" > /tmp/lxclist.sh
 for lxc in $available_lxc; do
   lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
@@ -37,7 +37,7 @@ echo -e ")" >> /tmp/lxclist.sh
 source /tmp/lxclist.sh
 
 if [ -z "$var_lxcchoice" ]; then
-  var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0502}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+  var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0502}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's|"||g')
 fi
 
 for choosed_lxc in $var_lxcchoice; do

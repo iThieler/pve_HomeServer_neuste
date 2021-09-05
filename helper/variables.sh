@@ -24,7 +24,7 @@ pve_osname=$(cat /etc/os-release | grep VERSION_CODENAME | cut -d= -f2)
 timezone=$(timedatectl | grep "Time zone" | awk '{print $3}')
 
 # Hardware Variables
-rootDisk=$(eval $(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"'); echo $PKNAME | sed 's/[0-9]*$//')
+rootDisk=$(eval $(lsblk -oMOUNTPOINT,PKNAME -P | grep 'MOUNTPOINT="/"'); echo $PKNAME | sed 's|[0-9]*$||')
 
 # check if Variable is valid URL
 regexURL='^(https?)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]\.[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]$'  # if [[ ! $URL =~ $regexURL ]]; then; fi

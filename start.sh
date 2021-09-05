@@ -67,7 +67,7 @@ function update() {
     server
   elif [[ $1 == "all" ]]; then
     server
-    available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
+    available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s|\n| |g')
     for ctID in $available_lxc; do
       lxc=$(pct list | grep -w ${ctID} | awk '{print $3}')
       if [ -f "$script_path/lxc/${lxc}/update.sh" ]; then

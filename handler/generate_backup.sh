@@ -10,8 +10,8 @@ source "$script_path/language/$var_language.sh"
 
 # make list of available Containers, hide already existing
 echoLOG b "${txt_0701}"
-available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
-available_vm=$(qm list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s#\n# #g')
+available_lxc=$(pct list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s|\n| |g')
+available_vm=$(qm list | awk '{print $1}' | tail +2 | sed ':M;N;$!bM;s|\n| |g')
 echo -e "#!/bin/bash\n\nguest_list=( \\" > /tmp/guestlist.sh
 for lxc in $available_lxc; do
   lxc=$(pct list | grep -w ${lxc} | awk '{print $3}')
@@ -31,7 +31,7 @@ echo -e ")" >> /tmp/guestlist.sh
 
 source /tmp/guestlist.sh
 
-var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0006} " "\n${txt_0702}" 20 80 15 "${guest_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+var_guestchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0006} " "\n${txt_0702}" 20 80 15 "${guest_list[@]}" 3>&1 1>&2 2>&3 | sed 's|"||g')
 
 for choosed_guest in $var_guestchoice; do
   if [ $(pct list | grep -cw "$choosed_guest") -eq 1 ]; then guestID=$(pct list | grep -w "$choosed_guest" | awk '{print $1}'); fi

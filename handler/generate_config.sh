@@ -112,8 +112,8 @@ if [ -z "$var_nasip" ]; then
 fi
 
 # config/search second Harddisk and check if is SSD
-if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')/queue/rotational) -eq 0 ]]; then
-  secondDisk=$(lsblk -nd --output NAME | grep "s" | sed "s#$rootDisk##" | sed ':M;N;$!bM;s#\n##g')
+if [[ $(cat /sys/block/$(lsblk -nd --output NAME | grep "s" | sed "s|$rootDisk||" | sed ':M;N;$!bM;s|\n||g')/queue/rotational) -eq 0 ]]; then
+  secondDisk=$(lsblk -nd --output NAME | grep "s" | sed "s|$rootDisk||" | sed ':M;N;$!bM;s|\n||g')
   ctTemplateDisk="data"
 else
   ctTemplateDisk="local"

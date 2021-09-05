@@ -24,8 +24,8 @@ pct exec $ctID -- bash -ci "mkdir -p /media/Movies > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /root/.config/Radarr > /dev/null 2>&1"
 pct push $ctID "$script_path/lxc/$containername/radarr.service" "/etc/systemd/system/radarr.service"
 pct push $ctID "$script_path/lxc/$containername/config.xml" "/root/.config/Radarr/config.xml"
-pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#'"$networkIP"'.'"$ctIP"'#' /root/.config/Radarr/config.xml"
-pct exec $ctID -- bash -ci "sed -i 's#APIKEYTOCHANGE#'"$( generateAPIKey 32 )"'#' /root/.config/Radarr/config.xml"
+pct exec $ctID -- bash -ci "sed -i 's|IPADRESSTOCHANGE|'"$networkIP"'.'"$ctIP"'|' /root/.config/Radarr/config.xml"
+pct exec $ctID -- bash -ci "sed -i 's|APIKEYTOCHANGE|'"$( generateAPIKey 32 )"'|' /root/.config/Radarr/config.xml"
 pct exec $ctID -- bash -ci "systemctl start radarr && systemctl enable radarr > /dev/null 2>&1"
 
 exit 0

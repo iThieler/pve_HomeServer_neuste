@@ -138,8 +138,8 @@ if [[ $variation == "1" ]]; then
   # mail Configfile to root
   echoLOG p "${lxc_txt_014}"
   cp "$shiot_configPath/$configFile" "/tmp/SHIoT_cfg_ioBroker.txt"
-  sed -i 's/grafanaPW=".*"/grafanaPW=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
-  sed -i 's/gwadminpw=".*"/gwadminpw=""/g' "/tmp/SHIoT_cfg_ioBroker.txt"
+  sed -i 's|grafanaPW=".*"|grafanaPW=""|g' "/tmp/SHIoT_cfg_ioBroker.txt"
+  sed -i 's|gwadminpw=".*"|gwadminpw=""|g' "/tmp/SHIoT_cfg_ioBroker.txt"
   echo -e "${lxc_txt_015} \"SHIoT_cfg_ioBroker\"." | mail.mailutils -a "From: \"${wrd_0006}\" <${var_senderaddress}>" -s "[SHIoT] ioBroker ${wrd_0008}" "$var_rootmail" -A "/tmp/SHIoT_cfg_ioBroker.txt"
 elif [[ $variation == "2" ]]; then
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then

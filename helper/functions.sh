@@ -13,7 +13,7 @@ function pingIP() {
 function githubLatest() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | 
     grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+    sed -E 's|.*"([^"]+)".*|\1|'                                    # Pluck JSON value
 }
 
 # Function generates a random secure Linux password

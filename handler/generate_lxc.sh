@@ -100,7 +100,7 @@ function create() {
                     --unprivileged $unprivileged \
                     --start 1"
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
-  pctCreateCommand="$( echo $pctCreateCommand | sed -e 's#                     # #g')"
+  pctCreateCommand="$( echo $pctCreateCommand | sed -e 's|                     | |g')"
   pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
@@ -108,7 +108,7 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1 && apt-get upgrade -y > /dev/null 2>&1 && apt-get dist-upgrade -y > /dev/null 2>&1"
     if [[ $osType == "debian" ]]; then
       pct exec $ctID -- bash -ci "systemctl stop sshd"
-      pct exec $ctID -- bash -ci "sed -i 's+#PermitRootLogin prohibit-password+PermitRootLogin yes+' /etc/ssh/sshd_config > /dev/null 2>&1"
+      pct exec $ctID -- bash -ci "sed -i 's|#PermitRootLogin prohibit-password|PermitRootLogin yes|' /etc/ssh/sshd_config > /dev/null 2>&1"
       pct exec $ctID -- bash -ci "systemctl start sshd"
     fi
     # Install Container Standardsoftware
@@ -126,7 +126,7 @@ function create() {
   fi
 }
 
-var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0909}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's#"##g')
+var_lxcchoice=$(whiptail --checklist --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0005} " "\n${txt_0909}" 20 80 15 "${lxc_list[@]}" 3>&1 1>&2 2>&3 | sed 's|"||g')
 
 # Check if user input is required, if yes inform user
 input=

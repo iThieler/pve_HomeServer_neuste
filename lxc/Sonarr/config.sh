@@ -26,8 +26,8 @@ pct exec $ctID -- bash -ci "mkdir -p /media/Series/ > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "mkdir -p /root/.config/NzbDrone/ > /dev/null 2>&1"
 pct push $ctID "$script_path/lxc/$containername/sonarr.service" "/etc/systemd/system/sonarr.service"
 pct push $ctID "$script_path/lxc/$containername/config.xml" "/root/.config/NzbDrone/config.xml"
-pct exec $ctID -- bash -ci "sed -i 's#IPADRESSTOCHANGE#'"$networkIP"'.'"$ctIP"'#' /root/.config/NzbDrone/config.xml"
-pct exec $ctID -- bash -ci "sed -i 's#APIKEYTOCHANGE#'"$( generateAPIKey 32 )"'#' /root/.config/NzbDrone/config.xml"
+pct exec $ctID -- bash -ci "sed -i 's|IPADRESSTOCHANGE|'"$networkIP"'.'"$ctIP"'|' /root/.config/NzbDrone/config.xml"
+pct exec $ctID -- bash -ci "sed -i 's|APIKEYTOCHANGE|'"$( generateAPIKey 32 )"'|' /root/.config/NzbDrone/config.xml"
 pct exec $ctID -- bash -ci "systemctl start sonarr && systemctl enable sonarr > /dev/null 2>&1"
 pct shutdown $ctID --timeout 5
 sleep 10

@@ -5,11 +5,11 @@ if [ -f "/opt/AdGuardHome/AdGuardHome.yaml" ]; then
 
   cp /opt/AdGuardHome/AdGuardHome.yaml /opt/AdGuardHome/AdGuardHome.yaml.bak
 
-  sed -i "s#- https://dns10.quad9.net/dns-query#- https://cloudflare-dns.com/dns-query\n  - https://dns10.quad9.net/dns-query\n  - https://dns.google/dns-query#" /opt/AdGuardHome/AdGuardHome.yaml
-  sed -i "s#filters_update_interval: 24#filters_update_interval: 12#" /opt/AdGuardHome/AdGuardHome.yaml
-  sed -i "s#safebrowsing_enabled: false#safebrowsing_enabled: true#" /opt/AdGuardHome/AdGuardHome.yaml
-  sed -i "s#- enabled: false#- enabled: true#g" /opt/AdGuardHome/AdGuardHome.yaml
-  sed -i "s#id: 4#id: 3\n\
+  sed -i "s|- https://dns10.quad9.net/dns-query|- https://cloudflare-dns.com/dns-query\n  - https://dns10.quad9.net/dns-query\n  - https://dns.google/dns-query|" /opt/AdGuardHome/AdGuardHome.yaml
+  sed -i "s|filters_update_interval: 24|filters_update_interval: 12|" /opt/AdGuardHome/AdGuardHome.yaml
+  sed -i "s|safebrowsing_enabled: false|safebrowsing_enabled: true|" /opt/AdGuardHome/AdGuardHome.yaml
+  sed -i "s|- enabled: false|- enabled: true|g" /opt/AdGuardHome/AdGuardHome.yaml
+  sed -i "s|id: 4|id: 3\n\
 - enabled: true\n\
   url: https://raw.githubusercontent.com/DandelionSprout/adfilt/master/GameConsoleAdblockList.txt\n\
   name: Game Console Adblock List\n\
@@ -41,7 +41,7 @@ if [ -f "/opt/AdGuardHome/AdGuardHome.yaml" ]; then
 - enabled: true\n\
   url: https://raw.githubusercontent.com/mitchellkrogza/The-Big-List-of-Hacked-Malware-Web-Sites/master/hosts\n\
   name: The Big List of Hacked Malware Web Sites\n\
-  id: 11#" /opt/AdGuardHome/AdGuardHome.yaml
+  id: 11|" /opt/AdGuardHome/AdGuardHome.yaml
 
   /opt/AdGuardHome/AdGuardHome -s start
   rm -f ./make_conf.sh
