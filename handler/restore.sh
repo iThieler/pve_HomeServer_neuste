@@ -17,6 +17,7 @@ if ! ls /mnt/pve/backups/dump/*_manual.*.zst 1> /dev/null 2>&1; then
     ' \
   whiptail --msgbox --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0008} " "\n${txt_1201}" 10 80
   echoLOG r "${txt_1201}"
+  exit 1
 fi
 
 whiptail --yesno --yes-button " ${btn_13} " --no-button " ${btn_14} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0009} " "\n${txt_1202}?" 15 80
