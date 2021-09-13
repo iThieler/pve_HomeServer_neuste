@@ -46,7 +46,10 @@ function echoLOG() {
   green='\033[1;32m'
   yellow='\033[1;33m'
   blue='\033[1;34m'
-
+  
+  if [ ! -d "/opt/smarthome-iot_net/" ]; then mkdir -p "/opt/smarthome-iot_net/"; fi
+  if [ ! -f "$logfile" ]; then touch $logfile; fi
+  
   if [[ $typ == "r" ]]; then
     echo -e "$(date +'%Y-%m-%d  %T')  [${red}ERROR${nc}]  $text"
     echo -e "$(date +'%Y-%m-%d  %T')  [ERROR]  $text" >> $logfile
