@@ -48,7 +48,7 @@ if [[ $variation == "1" ]]; then
   if [ $(pct list | grep -cw \"iDBGrafana\") -eq 0 ]; then
     if [ -z "$grafanaPW" ]; then
       grafanaPW=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ioBroker " "\n$lxc_txt_017" 10 80 3>&1 1>&2 2>&3)
-      if [ -n "$grafanaPW" ]; then grafanaPW="changeme"; fi
+      if [ -z "$grafanaPW" ]; then grafanaPW="changeme"; fi
     fi
     grafana=" --influxDBEnabled true --grafanaEnabled true --grafanaHost $(lxc-info $(pct list | grep iDBGrafana | awk '{print $1}') -iH) --grafanaPassword \"${grafanaPW}\" "
   fi
