@@ -9,7 +9,9 @@ pve_version=$(pveversion | cut -d/ -f2 | cut -d- -f1)
 
 # Network Variables
 gatewayIP=$(ip r | grep default | cut -d" " -f3)
-pve_ip=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
+if [ -z "${pve_ip}" ]; then
+  pve_ip=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1)
+fi
 cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2)
 networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f1 | cut -d. -f1,2,3)
 publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
