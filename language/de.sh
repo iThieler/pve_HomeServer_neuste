@@ -227,6 +227,7 @@ txt_0822="Sollen deine Passwörter unverschlüsselt im Klartext in der Konfigura
 txt_0823="Konfigurationsdatei erfolgreich erstellt"
 txt_0824="Die Konfigurationsdatei konnte nicht erstellt werden"
 txt_0825="Benutzt Du eine NAS von Synology?"
+txt_0826="Welche IP-Adresse hat das Gateway in diesem VLAN (mit CIDR, also IP.AD.RE.SS/CIDR)"
 
 # /handler/generate_lxc.sh
 txt_0901="Erstelle eine Liste mit verfügbaren Containern"

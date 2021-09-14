@@ -62,13 +62,16 @@ if [ -z "$var_vlan" ]; then
   yesno=$?
   if [ $yesno -eq 0 ]; then
     if [ -z "$var_servervlan" ]; then
-      var_servervlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0806}" 10 80 100 3>&1 1>&2 2>&3)
+      var_servervlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0806}" 10 80 10 3>&1 1>&2 2>&3)
+      var_servervlannet=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
     fi
     if [ -z "$var_smarthomevlan" ]; then
-      var_smarthomevlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 200 3>&1 1>&2 2>&3)
+      var_smarthomevlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 20 3>&1 1>&2 2>&3)
+      var_smarthomevlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$(echo $networkIP | cut -d. -f1,2).$var_smarthomevlanid.1/24" 3>&1 1>&2 2>&3)
     fi
     if [ -z "$var_guestvlan" ]; then
-      var_guestvlan=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 300 3>&1 1>&2 2>&3)
+      var_guestvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 100 3>&1 1>&2 2>&3)
+      var_guestvlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80  "$(echo $networkIP | cut -d. -f1,2).$var_guestvlanid.1/24" 3>&1 1>&2 2>&3)
     fi
   fi
 fi
@@ -132,9 +135,12 @@ echo -e "\n\0043 General configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_language=\"$var_language\"" >> $shiot_configPath/$shiot_configFile
 
 echo -e "\n\0043 Network configuration" >> $shiot_configPath/$shiot_configFile
-echo -e "var_servervlan=\"$var_servervlan\"" >> $shiot_configPath/$shiot_configFile
-echo -e "var_smarthomevlan=\"$var_smarthomevlan\"" >> $shiot_configPath/$shiot_configFile
-echo -e "var_guestvlan=\"$var_guestvlan\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_smarthomevlangw=\"$var_smarthomevlangw\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_guestvlanid=\"$var_guestvlanid\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_guestvlangw=\"$var_guestvlangw\"" >> $shiot_configPath/$shiot_configFile
 
 echo -e "\n\0043 Netrobot configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_robotname=\"$var_robotname\"" >> $shiot_configPath/$shiot_configFile
