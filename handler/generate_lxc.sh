@@ -102,8 +102,7 @@ function create() {
                     --start 1"
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's|                     | |g')"
-  echoLOG b "pct create $ctID $pctCreateCommand"
-  pct create $ctID $pctCreateCommand #> /dev/null 2>&1
+  pct create $ctID $pctCreateCommand > /dev/null 2>&1
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     echoLOG g "${txt_0904} >> ${wrd_0001}: ${LIGHTPURPLE}$ctID${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$containername${NOCOLOR}"
@@ -119,7 +118,7 @@ function create() {
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
     if [ -n "${var_smarthomevlanid}" ]; then
-      pct set --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_servervlangw | cut -d/ -f1),ip=$(echo $var_servervlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_servervlangw | cut -d/ -f2),trunks=$var_servervlanid
+      pct set $ctID --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_servervlangw | cut -d/ -f1),ip=$(echo $var_servervlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_servervlangw | cut -d/ -f2) > /dev/null 2>&1
     fi
     if "$script_path/bin/config_lxc.sh" ${var_language} ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then
       echoLOG g "${txt_0906}"
