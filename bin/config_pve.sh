@@ -10,6 +10,19 @@ source "$script_path/language/$var_language.sh"
 
 echoLOG y "${txt_0301}"
 sleep 1
+# if available, create linux bridge on second Network adapter for SmartHome VLAN
+if [ -n "$smarthomenetadapter" ]; then
+  echo "auto vmbr1" >> "/etc/network/interfaces"
+  echo "iface vmbr1 inet static" >> "/etc/network/interfaces"
+  echo "        address $(echo ${var_smarthomevlangw} | cut -d. -f1,2,3).${pve_ip}/$(echo ${var_smarthomevlangw} | cut -d/ -f2)" >> "/etc/network/interfaces"
+  echo "        gateway $(echo ${var_smarthomevlangw} | cut -d/ -f1)" >> "/etc/network/interfaces"
+  echo "        bridge-ports ${smarthomenetadapter}" >> "/etc/network/interfaces"
+  echo "        bridge-stp off" >> "/etc/network/interfaces"
+  echo "        bridge-fd 0" >> "/etc/network/interfaces"
+  systemctl restart networking
+  sleep 2
+fi
+
 # if available, mount NAS in Proxmox and configure backups
 pvesh create /pools --poolid BackupPool --comment "${txt_0302}"
 if [ -n "$var_nasip" ]; then

@@ -68,6 +68,7 @@ if [ -z "$var_vlan" ]; then
     if [ -z "$var_smarthomevlan" ]; then
       var_smarthomevlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 20 3>&1 1>&2 2>&3)
       var_smarthomevlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$(echo $networkIP | cut -d. -f1,2).$var_smarthomevlanid.1/24" 3>&1 1>&2 2>&3)
+      smarthomenetadapter=$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n' | sed "s|${prinetadapter}||" | sed '/^$/d')
     fi
     if [ -z "$var_guestvlan" ]; then
       var_guestvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 100 3>&1 1>&2 2>&3)
@@ -139,6 +140,9 @@ echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_con
 echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlangw=\"$var_smarthomevlangw\"" >> $shiot_configPath/$shiot_configFile
+if [ -n "$smarthomenetadapter" ]; then
+  echo -e "smarthomenetadapter=\"$smarthomenetadapter\"" >> $shiot_configPath/$shiot_configFile
+fi
 echo -e "var_guestvlanid=\"$var_guestvlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_guestvlangw=\"$var_guestvlangw\"" >> $shiot_configPath/$shiot_configFile
 
