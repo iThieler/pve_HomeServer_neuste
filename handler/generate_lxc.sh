@@ -101,7 +101,7 @@ function create() {
                     --start 1"
   if [ -n "$features" ]; then pctCreateCommand="$pctCreateCommand --features $features"; fi
   pctCreateCommand="$( echo $pctCreateCommand | sed -e 's|                     | |g')"
-  pct create $ctID $pctCreateCommand > /dev/null 2>&1
+  pct create $ctID $pctCreateCommand #> /dev/null 2>&1
   sleep 5
   if [ $(pct list | grep -cw $containername) -eq 1 ]; then
     echoLOG g "${txt_0904} >> ${wrd_0001}: ${LIGHTPURPLE}$ctID${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}$containername${NOCOLOR}"
