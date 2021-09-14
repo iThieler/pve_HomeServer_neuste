@@ -75,6 +75,7 @@ function create() {
 
   # Create Container from Template File download Template OS if not exist
   lxcTemplateName="$(pveam available | grep "${template}" | awk '{print $2}')"
+  pve_cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2 | grep $pve_ip | cut -d/ -f2)
 
   if [[ $template == "osDevuan" ]]; then
     osType="unmanaged"
@@ -94,7 +95,7 @@ function create() {
                     --cores $cpucores \
                     --memory $memory \
                     --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$(echo $pve_ip | cut -d. -f1,2,3).$ctIP/$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2 | grep $pve_ip | cut -d/ -f2) \
+                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$(echo $pve_ip | cut -d. -f1,2,3).$ctIP/$pve_cidr \
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
@@ -117,6 +118,9 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
+    if [ -n "${var_smarthomevlanid}" ]; then
+      pct set --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_servervlangw | cut -d/ -f1),ip=$(echo $var_servervlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_servervlangw | cut -d/ -f2),trunks=$var_servervlanid \
+    fi
     if "$script_path/bin/config_lxc.sh" ${var_language} ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then
       echoLOG g "${txt_0906}"
     else
