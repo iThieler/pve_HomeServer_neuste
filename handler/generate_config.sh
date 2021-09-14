@@ -131,20 +131,18 @@ pws=$?
 echo -e "\0043\0041/bin/bash" > $shiot_configPath/$shiot_configFile
 echo -e "\0043 NOTICE: Backup Proxmox Configuration Script from SmartHome-IoT.net" >> $shiot_configPath/$shiot_configFile
 echo -e "\0043 Created on $(date)" >> $shiot_configPath/$shiot_configFile
-
 echo -e "\n\0043 General configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_language=\"$var_language\"" >> $shiot_configPath/$shiot_configFile
-
 echo -e "\n\0043 Network configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "prinetadapter=\"$prinetadapter\"" >> $shiot_configPath/$shiot_configFile
+echo -e "smarthomenetadapter=\"$smarthomenetadapter\"" >> $shiot_configPath/$shiot_configFile
 echo -e "pve_ip=\"$pve_ip\"" >> $shiot_configPath/$shiot_configFile
+echo -e "pve_gw=\"$gatewayIP\"" >> $shiot_configPath/$shiot_configFile
+echo -e "pve_ip_smarthome=\"$(echo $var_servervlangw | cut -d. -f1,2,3).$(echo ${pve_ip} | cut -d. -f4)\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlangw=\"$var_smarthomevlangw\"" >> $shiot_configPath/$shiot_configFile
-if [ -n "$smarthomenetadapter" ]; then
-  echo -e "smarthomenetadapter=\"$smarthomenetadapter\"" >> $shiot_configPath/$shiot_configFile
-fi
 echo -e "var_guestvlanid=\"$var_guestvlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_guestvlangw=\"$var_guestvlangw\"" >> $shiot_configPath/$shiot_configFile
 
