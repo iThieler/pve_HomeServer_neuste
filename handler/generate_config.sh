@@ -136,6 +136,7 @@ echo -e "\n\0043 General configuration" >> $shiot_configPath/$shiot_configFile
 echo -e "var_language=\"$var_language\"" >> $shiot_configPath/$shiot_configFile
 
 echo -e "\n\0043 Network configuration" >> $shiot_configPath/$shiot_configFile
+echo -e "prinetadapter=\"$prinetadapter\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile

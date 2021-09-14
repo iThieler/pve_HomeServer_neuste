@@ -15,7 +15,9 @@ networkIP=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ 
 publicIP=$(dig @resolver4.opendns.com myip.opendns.com +short)
 pve_fqdn=$(hostname -f)
 pve_hostname=$(hostname)
-prinetadapter=$(cat /etc/network/interfaces | grep bridge-ports | cut -d" " -f2)
+if [ -z "${prinetadapter}" ]; then
+  prinetadapter=$(cat /etc/network/interfaces | grep bridge-ports | cut -d" " -f2)
+fi
 
 # Proxmox Variables
 clusterfileFW="/etc/pve/firewall/cluster.fw"
