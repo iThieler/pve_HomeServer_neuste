@@ -94,7 +94,7 @@ function create() {
                     --cores $cpucores \
                     --memory $memory \
                     --swap $swap \
-                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$networkIP.$ctIP/$cidr \
+                    --net0 name=eth0,bridge=vmbr0,firewall=1,gw=$gatewayIP,ip=$(echo $pve_ip | cut -d. -f1,2,3).$ctIP/$cidr \
                     --onboot 1 \
                     --force 1 \
                     --unprivileged $unprivileged \
