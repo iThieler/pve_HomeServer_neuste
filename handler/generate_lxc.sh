@@ -75,7 +75,7 @@ function create() {
 
   # Create Container from Template File download Template OS if not exist
   lxcTemplateName="$(pveam available | grep "${template}" | awk '{print $2}')"
-  pve_cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | cut -d/ -f2 | grep $pve_ip | cut -d/ -f2)
+  pve_cidr=$(ip -o -f inet addr show | awk '/scope global/ {print $4}' | grep $pve_ip | cut -d/ -f2)
 
   if [[ $template == "osDevuan" ]]; then
     osType="unmanaged"
