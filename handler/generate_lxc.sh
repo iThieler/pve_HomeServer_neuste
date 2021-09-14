@@ -119,7 +119,7 @@ function create() {
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
     if [ -n "${var_smarthomevlanid}" ]; then
-      pct set --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_servervlangw | cut -d/ -f1),ip=$(echo $var_servervlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_servervlangw | cut -d/ -f2),trunks=$var_servervlanid \
+      pct set --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_servervlangw | cut -d/ -f1),ip=$(echo $var_servervlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_servervlangw | cut -d/ -f2),trunks=$var_servervlanid
     fi
     if "$script_path/bin/config_lxc.sh" ${var_language} ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then
       echoLOG g "${txt_0906}"
