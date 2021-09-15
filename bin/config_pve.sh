@@ -8,6 +8,11 @@ source "$script_path/helper/functions.sh"
 source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
+function mountNASasBackup() {
+  pvesm add cifs backups --server "10.1.10.21" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup > /dev/null 2>&1
+  if [ $? -eq 0 ]; then return 1; else return 0; fi
+}
+
 echoLOG y "${txt_0301}"
 sleep 1
 # if available, create linux bridge on second Network adapter for SmartHome VLAN
@@ -28,16 +33,16 @@ pvesh create /pools --poolid BackupPool --comment "${txt_0302}"
 if [ -n "$var_nasip" ]; then
   echoLOG b "${txt_0303}"
   i=6
-  while [ pvesm add cifs backups --server "$var_nasip" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup != 0 ] && [ $i != 0 ]; do
-    echoLOG r "Deine NAS ist nicht bereit, bitte warten..."
+  while ! mountNASasBackup && [ $i != 0 ]; do
+    echoLOG r "${txt_0317}..."
     sleep 5
     i=$(( $i - 1 ))
-    echoLOG b "Versuche erneut deine NAS einzubinden >> verbelibend $i"
+    echoLOG b "${txt_0318} >> ${wrd_0022} ${LIGHTPURPLE}$i${NOCOLOR}"
   done
   if [ $i -eq 0 ]; then
-    echoLOG r "Deine NAS konnte nicht als Backuplaufwerk eingebunden werden"
-    echoLOG b "Bitte führe den folgenden Befehl im Anschluss manuell durch und ersetzte XXXXX durch das benötigte Passwort"
-    echo -e "         pvesm add cifs backups --server \"$var_nasip\" --share \"backups\" --username \"$var_robotname\" --password \"XXXXX\" --content backup"
+    echoLOG r "${txt_0319}"
+    echoLOG b "${txt_0320}"
+    echo -e "         ${ORANGE}pvesm add cifs backups --server \"$var_nasip\" --share \"backups\" --username \"$var_robotname\" --password \"XXXXX\" --content backup${NOCOLOR}"
   fi
   echo "0 3 * * *   root   vzdump --compress zstd --mailto root --mailnotification always --exclude-path /mnt/ --exclude-path /media/ --mode snapshot --quiet 1 --pool BackupPool --maxfiles 6 --storage backups" >> /etc/cron.d/vzdump
 fi
