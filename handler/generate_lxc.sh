@@ -70,7 +70,7 @@ function create() {
     while [ $(pct list | grep -c $ctID ) -eq 1 ]; do
       ctID=$(( $ctID + 1 ))
     done
-    ctIP=$(( $(lxc-info $(pct list | awk '{print $1}' | tail -n1) -iH | grep $networkIP | cut -d. -f4) + 1 ))
+    ctIP=$(( $(lxc-info $(pct list | awk '{print $1}' | tail -n1) -iH | grep $(echo $pve_ip | cut -d. -f1,2,3) | cut -d. -f4) + 1 ))
   fi
 
   # Create Container from Template File download Template OS if not exist
