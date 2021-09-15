@@ -55,3 +55,5 @@ smtpneeded=false
 apparmorProfile=""
 sambaneeded=false
 sambaUser=""
+smarthomeVLAN=false
+guestVLAN=false

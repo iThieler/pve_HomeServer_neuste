@@ -39,4 +39,6 @@ fncneeded=false
 smtpneeded=false
 apparmorProfile=""
 sambaneeded=false
-sambaUser="User1 User2"
+sambaUser=""
+smarthomeVLAN=false
+guestVLAN=false
