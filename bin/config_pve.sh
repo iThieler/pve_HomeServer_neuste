@@ -9,9 +9,8 @@ source "$shiot_configPath/$shiot_configFile"
 source "$script_path/language/$var_language.sh"
 
 function mountNASasBackup() {
-  echo "$var_robotpw"
   pvesm add cifs backups --server "10.1.10.21" --share "backups" --username "$var_robotname" --password "$var_robotpw" --content backup > /dev/null 2>&1
-  if [ $? -eq 0 ]; then return 1; else return 0; fi
+  if [ $? -eq 0 ]; then return 0; else return 1; fi
 }
 
 echoLOG y "${txt_0301}"
