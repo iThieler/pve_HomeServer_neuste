@@ -230,6 +230,7 @@ txt_0823="Configuration file successfully created"
 txt_0824="The configuration file could not be created"
 txt_0825="Do you use a NAS from Synology?"
 txt_0826="What is the IP address of the gateway in this VLAN (with CIDR, i.e. IP.AD.RE.SS/CIDR)?"
+txt_0827="What VLAN ID are you using for your DHCP network (mobile devices)?"
 
 # /handler/generate_lxc.sh
 txt_0901="Create a list of available containers"
