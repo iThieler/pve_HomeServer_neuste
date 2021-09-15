@@ -61,16 +61,20 @@ if [ -z "$var_vlan" ]; then
   whiptail --yesno --yes-button " ${btn_3} " --no-button " ${btn_4} " --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0805}" 10 80
   yesno=$?
   if [ $yesno -eq 0 ]; then
-    if [ -z "$var_servervlan" ]; then
+    if [ -z "$var_servervlanid" ]; then
       var_servervlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0806}" 10 80 10 3>&1 1>&2 2>&3)
-      var_servervlannet=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
+      var_servervlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
     fi
-    if [ -z "$var_smarthomevlan" ]; then
+    if [ -z "$var_dhcpvlanid" ]; then
+      var_dhcpvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0827}" 10 80 10 3>&1 1>&2 2>&3)
+      var_dhcpvlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
+    fi
+    if [ -z "$var_smarthomevlanid" ]; then
       var_smarthomevlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 20 3>&1 1>&2 2>&3)
       var_smarthomevlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$(echo $networkIP | cut -d. -f1,2).$var_smarthomevlanid.1/24" 3>&1 1>&2 2>&3)
       smarthomenetadapter=$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n' | sed "s|${prinetadapter}||" | sed '/^$/d')
     fi
-    if [ -z "$var_guestvlan" ]; then
+    if [ -z "$var_guestvlanid" ]; then
       var_guestvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 100 3>&1 1>&2 2>&3)
       var_guestvlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80  "$(echo $networkIP | cut -d. -f1,2).$var_guestvlanid.1/24" 3>&1 1>&2 2>&3)
     fi
@@ -141,6 +145,8 @@ echo -e "pve_gw=\"$gatewayIP\"" >> $shiot_configPath/$shiot_configFile
 echo -e "pve_ip_smarthome=\"$(echo $var_servervlangw | cut -d. -f1,2,3).$(echo ${pve_ip} | cut -d. -f4)\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_dhcpvlanid=\"$var_dhcpvlanid\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_dhcpvlangw=\"$var_dhcpvlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlangw=\"$var_smarthomevlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_guestvlanid=\"$var_guestvlanid\"" >> $shiot_configPath/$shiot_configFile

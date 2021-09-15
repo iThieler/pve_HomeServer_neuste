@@ -52,7 +52,11 @@ echoLOG b "${txt_0306}"
 mkdir -p /etc/pve/firewall
 mkdir -p /etc/pve/nodes/$pve_hostname
 # Cluster level firewall
-echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_0005}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0307}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
+if [ -z "${var_servervlanid}" ]; then
+  echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_0005}\n$networkIP.0/$cidr\n\n[IPSET pnetwork] # ${txt_0307}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
+else
+  echo -e "[OPTIONS]\nenable: 1\n\n[IPSET network] # ${wrd_0005}\n$(echo $var_servervlangw | cut -d. -f1,2,3).0/$(echo $var_servervlangw | cut -d/ -f2)\n$(echo $var_dhcpvlangw | cut -d. -f1,2,3).0/$(echo $var_dhcpvlangw | cut -d/ -f2)\n\n[IPSET pnetwork] # ${txt_0307}\n10.0.0.0/8\n172.16.0.0/12\n192.168.0.0/16\n\n[RULES]\nGROUP proxmox\n\n[group proxmox]\nIN SSH(ACCEPT) -source +network -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 8006 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 5900:5999 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 3128 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 111 -log nolog\nIN ACCEPT -source +pnetwork -p udp -dport 5404:5405 -log nolog\nIN ACCEPT -source +pnetwork -p tcp -dport 60000:60050 -log nolog\n\n" > $clusterfileFW
+fi
 # Host level Firewall
 echo -e "[OPTIONS]\n\nenable: 1\n\n[RULES]\n\nGROUP proxmox\n\n" > $hostfileFW
 
