@@ -124,7 +124,7 @@ echo -e "#### ${!desc} ###\n####### Shell ######\n#%09$wrd_0011%3A   root\n#%09$
 
 if $webgui; then
   for ((i=0;i<=${#webguiPort[@]};i++)); do
-    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}%3A%2F%2F$networkIP.$ctIP"; else webguiAdress="${webguiProt[i]}%3A%2F%2F$networkIP.$ctIP:${webguiPort[i]}"; fi
+    if [[ ${webguiPort[i]} == "" ]]; then webguiAdress="${webguiProt[i]}%3A%2F%2F$(echo $pve_ip | cut -d. -f1,2,3).$ctIP"; else webguiAdress="${webguiProt[i]}%3A%2F%2F$(echo $pve_ip | cut -d. -f1,2,3).$ctIP:${webguiPort[i]}"; fi
     if [[ ! ${webguiPath[i]} == "" ]]; then webguiAdress="${webguiAdress}${webguiPath[i]}"; fi
     if [[ ! ${webguiName[i]} == "" ]]; then
       if [ $i -lt 1 ]; then
@@ -143,7 +143,7 @@ if [ -n "$var_nasip" ] && $nasneeded; then
 fi
 
 if $sambaneeded; then
-  echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_0016%3A   %5C%5C$networkIP.$ctIP\n#%09Mac-$wrd_0016%3A       smb%3A%2F%2F$networkIP.$ctIP\n#%09Linux-$wrd_0016%3A     smb%3A%2F%2F$networkIP.$ctIP" >> $lxcConfigFile
+  echo -e "#\n####### Samba (smb) ######\n#%09Windows-$wrd_0016%3A   %5C%5C$(echo $pve_ip | cut -d. -f1,2,3).$ctIP\n#%09Mac-$wrd_0016%3A       smb%3A%2F%2F$(echo $pve_ip | cut -d. -f1,2,3).$ctIP\n#%09Linux-$wrd_0016%3A     smb%3A%2F%2F$(echo $pve_ip | cut -d. -f1,2,3).$ctIP" >> $lxcConfigFile
   echo -e "$smbuserdesc" >> $lxcConfigFile
 fi
 echoLOG b "${txt_0212}"
