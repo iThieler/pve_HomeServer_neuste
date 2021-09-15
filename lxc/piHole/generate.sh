@@ -41,4 +41,4 @@ apparmorProfile=""
 sambaneeded=false
 sambaUser=""
 smarthomeVLAN=false
-guestVLAN=false
+guestVLAN=true

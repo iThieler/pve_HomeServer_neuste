@@ -40,5 +40,5 @@ smtpneeded=false
 apparmorProfile="unconfined"
 sambaneeded=false
 sambaUser=""
-smarthomeVLAN=false
+smarthomeVLAN=true
 guestVLAN=false
