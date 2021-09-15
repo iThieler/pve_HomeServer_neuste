@@ -145,10 +145,10 @@ echo -e "pve_gw=\"$gatewayIP\"" >> $shiot_configPath/$shiot_configFile
 echo -e "pve_ip_smarthome=\"$(echo $var_servervlangw | cut -d. -f1,2,3).$(echo ${pve_ip} | cut -d. -f4)\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlanid=\"$var_servervlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_servervlangw=\"$var_servervlangw\"" >> $shiot_configPath/$shiot_configFile
-echo -e "var_dhcpvlanid=\"$var_dhcpvlanid\"" >> $shiot_configPath/$shiot_configFile
-echo -e "var_dhcpvlangw=\"$var_dhcpvlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlanid=\"$var_smarthomevlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_smarthomevlangw=\"$var_smarthomevlangw\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_dhcpvlanid=\"$var_dhcpvlanid\"" >> $shiot_configPath/$shiot_configFile
+echo -e "var_dhcpvlangw=\"$var_dhcpvlangw\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_guestvlanid=\"$var_guestvlanid\"" >> $shiot_configPath/$shiot_configFile
 echo -e "var_guestvlangw=\"$var_guestvlangw\"" >> $shiot_configPath/$shiot_configFile
 
