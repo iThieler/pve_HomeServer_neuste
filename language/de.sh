@@ -49,6 +49,7 @@ wrd_0018="Einrichtung"
 wrd_0019="Verwaltung"
 wrd_0020="Logdatei"
 wrd_0021="neu"
+wrd_0022="verbelibend"
 
 # Descriptions
 des_0001="per E-Mail versendet"
@@ -143,6 +144,10 @@ txt_0313="Im Anhang findest du die Datei"
 txt_0314="Diese solltest du Sichern, um das Konfigurationsskript beim nächsten Mal im Wiederherstellungsmodus starten zu können"
 txt_0315="E-Mailserver erfolgreich konfiguriert"
 txt_0316="E-Mailserver NICHT erfolgreich konfiguriert"
+txt_0317="Deine NAS ist nicht bereit, bitte warten"
+txt_0318="Es wird erneut versucht deine NAS als Backuplaufwerk einzubinden"
+txt_0319="Deine NAS konnte nicht als Backuplaufwerk eingebunden werden"
+txt_0320="Bitte führe den folgenden Befehl im Anschluss manuell aus und ersetzte XXXXX durch das benötigte Passwort"
 
 # /bin/config_vm.sh
 txt_0401=""

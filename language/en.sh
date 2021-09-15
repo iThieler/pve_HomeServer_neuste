@@ -49,6 +49,7 @@ wrd_0018="Setup"
 wrd_0019="Administration"
 wrd_0020="Logfile"
 wrd_0021="new"
+wrd_0022="remaining"
 
 # Descriptions
 des_0001="sent by email"
@@ -91,12 +92,12 @@ txt_0034="delete virtual machine"
 txt_0035="quit and return to script selection"
 txt_0036="What do you want to do?"
 txt_0037="Attached is the current log file"
-txt_0038="Do you want to back up all containers and virtual machines, or select individual ones"?
-txt_0039="Do you want to restore all manually backed up containers and virtual machines, or select individual ones"?
-txt_0040="Backup job executed successfully".
-txt_0041="Backup job NOT successfully executed, check the LOG for errors".
-txt_0042="Restore job executed successfully".
-txt_0043="Restore job NOT successfully executed, check the LOG for errors".
+txt_0038="Do you want to back up all containers and virtual machines, or select individual ones"
+txt_0039="Do you want to restore all manually backed up containers and virtual machines, or select individual ones"
+txt_0040="Backup job executed successfully"
+txt_0041="Backup job NOT successfully executed, check the LOG for errors"
+txt_0042="Restore job executed successfully"
+txt_0043="Restore job NOT successfully executed, check the LOG for errors"
 
 # /bin/config_email.sh
 txt_0101="Your mail server will be configured in proxmox to send messages"
@@ -137,12 +138,16 @@ txt_0307="All private networks, important for VPN"
 txt_0308="The second SSD is bound to Proxmox as a data drive for guest disks/images and ISO files"
 txt_0309="Mailserver successfully configured"
 txt_0310="Mailserver configuration not successful"
-txt_0311="The configuration file will be backed up on the NAS".
+txt_0311="The configuration file will be backed up on the NAS"
 txt_0312="The configuration file will be sent to you by email, passwords have been removed for security reasons"
 txt_0313="In the attachment you find the file"
 txt_0314="You should save this, in order to be able to start the configuration script with the next time in the recovery mode"
 txt_0315="Email server successfully configured"
 txt_0316="Email server NOT configured successfully"
+txt_0317="Your NAS is not ready, please wait"
+txt_0318="It will try again to mount your NAS as a backup drive"
+txt_0319="Your NAS could not be mounted as a backup drive"
+txt_0320="Please execute the following command manually and replace XXXXX with the required password"
 
 # /bin/config_vm.sh
 txt_0401=""
