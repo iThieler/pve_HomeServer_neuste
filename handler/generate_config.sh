@@ -65,14 +65,14 @@ if [ -z "$var_vlan" ]; then
       var_servervlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0806}" 10 80 10 3>&1 1>&2 2>&3)
       var_servervlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
     fi
-    if [ -z "$var_dhcpvlanid" ]; then
-      var_dhcpvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0827}" 10 80 10 3>&1 1>&2 2>&3)
-      var_dhcpvlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$gatewayIP/$cidr" 3>&1 1>&2 2>&3)
-    fi
     if [ -z "$var_smarthomevlanid" ]; then
       var_smarthomevlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0807}" 10 80 20 3>&1 1>&2 2>&3)
       var_smarthomevlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$(echo $networkIP | cut -d. -f1,2).$var_smarthomevlanid.1/24" 3>&1 1>&2 2>&3)
       smarthomenetadapter=$(find /sys/class/net -type l -not -lname '*virtual*' -printf '%f\n' | sed "s|${prinetadapter}||" | sed '/^$/d')
+    fi
+    if [ -z "$var_dhcpvlanid" ]; then
+      var_dhcpvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0827}" 10 80 30 3>&1 1>&2 2>&3)
+      var_dhcpvlangw=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0826}" 10 80 "$(echo $networkIP | cut -d. -f1,2).$var_dhcpvlanid.1/24" 3>&1 1>&2 2>&3)
     fi
     if [ -z "$var_guestvlanid" ]; then
       var_guestvlanid=$(whiptail --inputbox --nocancel --backtitle "© 2021 - SmartHome-IoT.net" --title " ${tit_0007} " "\n${txt_0808}" 10 80 100 3>&1 1>&2 2>&3)
