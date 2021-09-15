@@ -57,7 +57,7 @@ for choosed_lxc in $var_lxcchoice; do
     ############# Delete firewall rules of the container #############
     ##################################################################
     sleep 5
-    echoLOG g "${txt_0505} >> ${wrd_0001}: $ctID  ${wrd_0002}: ${choosed_lxc}"
+    echoLOG g "${txt_0505} >> ${wrd_0001}: ${LIGHTPURPLE}$ctID${NOCOLOR}  ${wrd_0002}: ${LIGHTPURPLE}${choosed_lxc}${NOCOLOR}"
   fi
 done
 
