@@ -38,6 +38,18 @@ if [ -n "$apparmorProfile" ]; then
   sed -i 's|swap: '"$swap"'|swap: '"$swap"'\nlxc.apparmor.profile: '"$apparmorProfile"'|' /etc/pve/lxc/$ctID.conf > /dev/null 2>&1
 fi
 
+# Add another network card in the SmartHome network, if possible and required.
+if [ -n "${var_smarthomevlanid}" ] && $smarthomeVLAN; then
+  echoLOG b "${txt_0216}"
+  pct set $ctID --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_smarthomevlangw | cut -d/ -f1),ip=$(echo $var_smarthomevlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_smarthomevlangw | cut -d/ -f2) > /dev/null 2>&1
+fi
+
+# Add another network card in the guest network, if possible and required.
+if [ -n "${var_guestvlangw}" ] && $guestVLAN; then
+  echoLOG b "${txt_0217}"
+  pct set $ctID --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_guestvlangw | cut -d/ -f1),ip=$(echo $var_guestvlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_guestvlangw | cut -d/ -f2) > /dev/null 2>&1
+fi
+
 # Mounted the DVB-TV-Card to container if exist and is needed
 if [ $(ls -la /dev/dvb/ | grep -c adapter0) -eq 1 ] && $dvbneeded; then
   echoLOG b "${txt_0203}"
