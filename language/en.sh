@@ -123,6 +123,8 @@ txt_0212="Create container description for Proxmox WebGUI"
 txt_0213="There are more steps needed, please check your email box"
 txt_0214="The Proxmox firewall is configured for the container"
 txt_0215="The container setup is finished, history data will be deleted"
+txt_0216="Add a network card to the Conatiner in the SmartHome network"
+txt_0217="Add a network card in the guest network to the Conatiner"
 
 # /bin/config_pve.sh
 txt_0301="Start with the basic proxmox configuration"

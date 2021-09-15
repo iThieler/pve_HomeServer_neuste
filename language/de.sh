@@ -123,6 +123,8 @@ txt_0212="Erstelle Containerbeschreibung für die Proxmox WebGUI"
 txt_0213="Es sind weitere Schritte erforderlich, bitte überprüfe dein E-Mailpostfach"
 txt_0214="Die Proxmox Firewall wird für den Container konfiguriert"
 txt_0215="Die Einrichtung des Containers ist beendet, Verlaufsdaten werden gelöscht"
+txt_0216="Füge dem Conatiner eine Netzwerkkarte im SmartHome Netzwerk hinzu"
+txt_0217="Füge dem Conatiner eine Netzwerkkarte im Gäste Netzwerk hinzu"
 
 # /bin/config_pve.sh
 txt_0301="Beginne mit der Proxmox Basiskonfiguration"
