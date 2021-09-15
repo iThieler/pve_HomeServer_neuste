@@ -40,3 +40,4 @@ smtpneeded=false
 apparmorProfile=""
 sambaneeded=false
 sambaUser=""
+smarthomeVLAN=true
