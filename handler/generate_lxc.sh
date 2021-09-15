@@ -117,9 +117,6 @@ function create() {
     pct exec $ctID -- bash -ci "apt-get install -y curl wget software-properties-common apt-transport-https lsb-core lsb-release gnupg2 net-tools nfs-common cifs-utils > /dev/null 2>&1"
     pct shutdown $ctID --forceStop 1 > /dev/null 2>&1
     sleep 5
-    if [ -n "${var_smarthomevlanid}" ] && $smarthomeVLAN; then
-      pct set $ctID --net1 name=eth1,bridge=vmbr1,firewall=1,gw=$(echo $var_smarthomevlangw | cut -d/ -f1),ip=$(echo $var_smarthomevlangw | cut -d. -f1,2,3).$ctIP/$(echo $var_smarthomevlangw | cut -d/ -f2) > /dev/null 2>&1
-    fi
     if "$script_path/bin/config_lxc.sh" ${var_language} ${ctID} ${ctIP} "${ctRootpw}" "${containername}"; then
       echoLOG g "${txt_0906}"
     else
