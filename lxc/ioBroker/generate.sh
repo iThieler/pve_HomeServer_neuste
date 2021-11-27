@@ -37,7 +37,7 @@ vganeeded=false
 
 fncneeded=false
 smtpneeded=false
-apparmorProfile="unconfined"
+apparmorProfile=""
 sambaneeded=false
 sambaUser=""
 smarthomeVLAN=true
