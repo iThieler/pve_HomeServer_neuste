@@ -13,7 +13,7 @@ source "$script_path/language/$var_language.sh"
 
 pct exec $ctID -- bash -ci "add-apt-repository -y ppa:ondrej/php > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "apt-get update > /dev/null 2>&1"
-pct exec $ctID -- bash -ci "apt-get -y install git apache2 sqlite php7.3 libapache2-mod-php7.3 php7.3-mbstring php7.3-xml php7.3-common php7.3-sqlite3 php7.3-zip > /dev/null 2>&1"
+pct exec $ctID -- bash -ci "apt-get -y install git apache2 sqlite php7.4 libapache2-mod-php7.4 php7.4-mbstring php7.4-xml php7.4-common php7.4-sqlite3 php7.4-zip > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "a2enmod rewrite > /dev/null 2>&1"
 pct exec $ctID -- bash -ci "systemctl restart apache2"
 pct exec $ctID -- bash -ci "mkdir -p /var/www/heimdall"
