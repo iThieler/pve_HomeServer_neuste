@@ -9,7 +9,7 @@ if [ -f "/opt/AdGuardHome/AdGuardHome.yaml" ]; then
   sed -i "s|filters_update_interval: 24|filters_update_interval: 12|" /opt/AdGuardHome/AdGuardHome.yaml
   sed -i "s|safebrowsing_enabled: false|safebrowsing_enabled: true|" /opt/AdGuardHome/AdGuardHome.yaml
   sed -i "s|- enabled: false|- enabled: true|g" /opt/AdGuardHome/AdGuardHome.yaml
-  sed -i "s|id: 4|id: 3\n\
+  sed -i "s|id: 2|id: 2\n\
 - enabled: true\n\
   url: https://raw.githubusercontent.com/DandelionSprout/adfilt/master/GameConsoleAdblockList.txt\n\
   name: Game Console Adblock List\n\
