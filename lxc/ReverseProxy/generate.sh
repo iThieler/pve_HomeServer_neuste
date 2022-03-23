@@ -3,7 +3,7 @@
 ################### Container Configuration ###################
 
 template=${osUbuntu20_04}
-hddsize=4
+hddsize=16
 cpucores=1
 memory=512
 swap=512
